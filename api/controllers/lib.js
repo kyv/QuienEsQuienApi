@@ -8,6 +8,8 @@ const isString = require('lodash/fp/isString');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
+const removeDiacritics = require('diacritics').remove;
+
 
 function personMemberMap(doc) {
   const member = extend(doc, {
@@ -26,7 +28,14 @@ function omitEmpty(object) {
   )(object);
 }
 
+function simpleName(string) {
+  return removeDiacritics(string)
+    .replace(/[,.]/g, '') // remove commas and periods
+    .toLowerCase();
+}
+
 module.exports = {
   personMemberMap,
   omitEmpty,
+  simpleName,
 };
