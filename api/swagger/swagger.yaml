@@ -326,21 +326,12 @@ definitions:
               minLength: 1
             shares:
               type: "number"
-      contracts:
+      suppliesContracts:
         type: "array"
         uniqueItems: true
         minItems: 1
         items:
-          required:
-          - "ocid"
-          properties:
-            ocid:
-              type: string
-            title:
-              type: "string"
-              minLength: 1
-            amount:
-              type: "number"
+          $ref: '#/definitions/Contract'
 
   Organization:
     properties:
