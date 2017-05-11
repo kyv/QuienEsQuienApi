@@ -265,6 +265,76 @@ definitions:
       street:
         type: string
 
+  Membership:
+    properties:
+      person:
+        type: string
+      person_id:
+        type: string
+      org:
+        type: string
+      org_id:
+        type: string
+      role:
+        type: string
+      department:
+        type: string
+
+  ContractSubDoc:
+    properties:
+      _id:
+        type: "string"
+        minLength: 1
+      type:
+        type: "string"
+        minLength: 1
+      status:
+        type: "string"
+        minLength: 1
+      title:
+        type: "string"
+        minLength: 1
+      account_admin:
+        type: "string"
+        minLength: 1
+      ocid:
+        type: "string"
+        minLength: 1
+      procedure_type:
+        type: "string"
+        minLength: 1
+      amount:
+        type: "number"
+      currency:
+        type: "string"
+        minLength: 1
+      suppliers_org:
+        type: string
+      suppliers_person:
+        type: string
+      references:
+        type: "array"
+        items:
+          properties: {}
+      department:
+        type: "string"
+        minLength: 1
+      clave_uc:
+        type: "string"
+        minLength: 1
+      start_date:
+        type: "string"
+        format: date-time
+        minLength: 1
+      end_date:
+        type: "string"
+        minLength: 1
+      character:
+        type: "string"
+        minLength: 1
+      dependency:
+        type: string
+
   Person:
     properties:
       _id:
@@ -300,39 +370,17 @@ definitions:
         minLength: 1
       board:
         type: array
-        uniqueItems: true
-        minItems: 1
         items:
-          properties:
-            name:
-              type: string
-              minLength: 1
-            role:
-              type: string
-              minLength: 1
-            department:
-              type: string
-              minLength: 1
+          $ref: '#/definitions/Membership'
       shares:
-        type: "array"
-        uniqueItems: true
-        minItems: 1
+        type: array
         items:
-          required:
-          - "name"
-          properties:
-            name:
-              type: "string"
-              minLength: 1
-            shares:
-              type: "number"
-      suppliesContracts:
-        type: "array"
-        uniqueItems: true
-        minItems: 1
+          $ref: '#/definitions/Membership'
+      suppliesContract:
+        type: array
         items:
-          $ref: '#/definitions/Contract'
-
+          $ref: '#/definitions/ContractSubDoc'
+          
   Organization:
     properties:
       simple:
@@ -341,6 +389,10 @@ definitions:
         type: string
       category:
         type: string
+        enum:
+          - public
+          - private
+          - party
       address:
           $ref: '#/definitions/Address'
       initials:
@@ -353,49 +405,40 @@ definitions:
       source:
         type: string
         minLength: 1
+      memberships:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          $ref: '#/definitions/Membership'
+
       board:
         type: array
         uniqueItems: true
         minItems: 1
         items:
-          properties:
-            name:
-              type: string
-              minLength: 1
-            role:
-              type: string
-              minLength: 1
-            department:
-              type: string
-              minLength: 1
+          $ref: '#/definitions/Membership'
+
       shares:
         type: "array"
         uniqueItems: true
         minItems: 1
         items:
-          required:
-          - "name"
-          properties:
-            name:
-              type: "string"
-              minLength: 1
-            shares:
-              type: "number"
+          $ref: '#/definitions/Membership'
+
+      share:
+        type: "array"
+        uniqueItems: true
+        minItems: 1
+        items:
+          $ref: '#/definitions/Membership'
+
       contracts:
         type: "array"
         uniqueItems: true
         minItems: 1
         items:
-          required:
-          - "ocid"
-          properties:
-            ocid:
-              type: string
-            title:
-              type: "string"
-              minLength: 1
-            amount:
-              type: "number"
+          $ref: '#/definitions/ContractSubDoc'
 
   Contract:
     description: "Contracts"
@@ -427,9 +470,10 @@ definitions:
       currency:
         type: "string"
         minLength: 1
-      provider:
-        type: "string"
-        minLength: 1
+      suppliers_org:
+        $ref: '#/definitions/Organization'
+      suppliers_person:
+        $ref: '#/definitions/Person'
       references:
         type: "array"
         items:
@@ -451,8 +495,8 @@ definitions:
         type: "string"
         minLength: 1
       dependency:
-        type: "string"
-        minLength: 1
+        $ref: '#/definitions/Organization'
+
 
 parameters:
   name:
@@ -532,21 +576,15 @@ parameters:
     description: End Date
     type: string
     format: date-time
-    enum:
-      - 2014-04-20
+
   gt:
     in: "query"
     name: "gt"
     description: Greater than
     type: "string"
-    enum:
-      - "2014-04-20"
-      - "100000"
+
   lt:
     in: "query"
     name: "lt"
     description: Less than
     type: "string"
-    enum:
-      - "2014-04-20"
-      - "100000"
