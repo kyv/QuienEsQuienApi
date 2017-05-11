@@ -27,6 +27,9 @@ paths:
     get:
       description: Returns Array of Person Object to the caller
       operationId: allPersons
+      tags:
+        - Persons
+        - Get
       parameters:
        - $ref: "#/parameters/_id"
        - $ref: "#/parameters/simple"
@@ -37,7 +40,7 @@ paths:
        - $ref: "#/parameters/sort"
        - $ref: "#/parameters/sortd"
        - $ref: "#/parameters/limit"
-       - $ref: "#/parameters/skip"
+       - $ref: "#/parameters/offset"
        - $ref: "#/parameters/gt"
        - $ref: "#/parameters/lt"
        - $ref: "#/parameters/exists"
@@ -99,7 +102,7 @@ paths:
        - $ref: "#/parameters/sort"
        - $ref: "#/parameters/sortd"
        - $ref: "#/parameters/limit"
-       - $ref: "#/parameters/skip"
+       - $ref: "#/parameters/offset"
        - $ref: "#/parameters/gt"
        - $ref: "#/parameters/lt"
        - $ref: "#/parameters/exists"
@@ -221,7 +224,7 @@ paths:
         - $ref: "#/parameters/sort"
         - $ref: "#/parameters/sortd"
         - $ref: "#/parameters/limit"
-        - $ref: "#/parameters/skip"
+        - $ref: "#/parameters/offset"
         - $ref: "#/parameters/gt"
         - $ref: "#/parameters/lt"
         - $ref: "#/parameters/exists"
@@ -466,22 +469,16 @@ parameters:
     in: query
     description: The entity's name
     type: string
-    enum:
-    - Carlos A. Motta
   _id:
     in: query
     name: _id
     description: Internal ID of entity
     type: string
-    enum:
-    - "Knk2AoEw4hXe7Fx2F"
   simple:
     in: query
     name: simple
     description: Simpified name of person
     type: string
-    enum:
-    - fabrizio pagani
   description:
     in: query
     name: description
@@ -492,9 +489,6 @@ parameters:
     name: fields
     description: fields to return in results
     type: string
-    enum:
-      - title
-      - dependency
   text:
     in: query
     name: text
@@ -516,39 +510,23 @@ parameters:
     name: sort
     description: Sort by given field.
     type: string
-    enum:
-      - end_date
-      - amount
   sortd:
     in: query
     name: sortd
     description: Sort direction.
     type: string
-    enum:
-      - end_date
-      - amount
   limit:
     name: limit
     in: query
     description: Number of returned documents
     type: integer
     default: 100
-    enum:
-      - 1
-      - 5
-      - 10
-      - 100
-  skip:
-    name: skip
+  offset:
+    name: offset
     in: query
     description: Number of returned documents
     type: integer
-    default: 100
-    enum:
-      - 1
-      - 5
-      - 10
-      - 100
+    default: 0
   start_date:
     in: query
     name: start_date
