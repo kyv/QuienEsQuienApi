@@ -8,7 +8,9 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "lodash": "^4.17.4",
     "monk": "^4.0.0",
+    "qs": "^6.4.0",
     "query-to-mongo": "^0.6.2",
     "raml-object-to-raml": "0.0.7",
     "restify": "^4.0.2",
