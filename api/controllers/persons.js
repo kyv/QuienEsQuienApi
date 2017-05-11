@@ -1,38 +1,133 @@
-'use strict';
-
 const db = require('../db');
 const persons = db.get('persons', { castIds: false });
 const q2m = require('query-to-mongo');
+const qs = require('qs');
+const omit = require('lodash/omit');
+const pickBy = require('lodash/pickBy');
+const mapValues = require('lodash/mapValues');
+const personMemberMap = require('./lib').personMemberMap;
+const omitEmpty = require('./lib').omitEmpty;
 
-module.exports = {
-  allPersons: allPersons,
-  singlePerson: singlePerson,
+function personDataMap(array) {
+  return array.map(o => {
+    const object = o;
+    const memberships = o.memberships.map(m => (personMemberMap(m)));
+    const board = memberships.filter(b => (b.department === 'board'));
+    const shares = memberships.filter(b => (b.role === 'shareholder'));
+
+    object.board = board;
+    object.shares = shares;
+    return omitEmpty(omit(object, 'memberships'));
+  });
+}
+
+const defaultProjection = {
+  user_id: 0,
+  'contracts.user_id': 0,
+  'memberships._id': 0,
+  'memberships.user_id': 0,
+  'memberships.person': 0,
+  'memberships.person_id': 0,
 };
 
+function queryToPipeline(query) {
+  let projection = defaultProjection;
+
+  if (query.options.fields) {
+    projection = query.options.fields;
+  }
+  const pipeline = [
+    { $match: query.criteria },
+    {
+      $lookup: {
+        from: 'contracts',
+        localField: 'simple',
+        foreignField: 'suppliers_person',
+        as: 'suppliesContracts',
+      },
+    },
+    {
+      $lookup: {
+        from: 'memberships',
+        localField: 'simple',
+        foreignField: 'person_id',
+        as: 'memberships',
+      },
+    },
+  ];
+
+  if (query.options.skip) {
+    pipeline.push({ $skip: query.options.skip });
+  }
+  if (query.options.limit) {
+    pipeline.push({ $limit: query.options.limit });
+  }
+
+  if (query.options.sort) {
+    pipeline.push({ $sort: query.options.sort });
+  }
+
+  pipeline.push({ $project: projection });
+  return pipeline;
+}
+
 function allPersons(req, res, next) {
+  const params = pickBy(req.swagger.params, p => (p.value));
+  const mapped = mapValues(params, p => (p.value));
+  const string = qs.stringify(mapped);
+  const query = q2m(string);
+  const pipeline = queryToPipeline(query);
 
-  const params = req.swagger.params;
-  console.log(req.swagger);
-
-  persons.find({}, { limit: 10 }).then(docs => {
+  persons.aggregate(pipeline).then(docs => {
+    res.charSet('utf-8');
     res.json({
-        status: 'success',
-        data: docs,
-        size: docs.length,
-        message: 'Retrieved ALL persons',
-      });
+      status: 'success',
+      data: personDataMap(docs),
+      size: docs.length,
+    });
   });
 }
 
 function singlePerson(req, res) {
-  // variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
-  var id = req.swagger.params._id.value;
-  persons.find({ _id: id }).then(docs => {
+  const id = req.swagger.params._id.value;
+
+  persons.aggregate([
+    { $match: { _id: id } },
+    {
+      $lookup: {
+        from: 'contracts',
+        localField: 'simple',
+        foreignField: 'suppliers_person',
+        as: 'suppliesContracts',
+      },
+    },
+    {
+      $lookup: {
+        from: 'memberships',
+        localField: 'simple',
+        foreignField: 'person_id',
+        as: 'memberships',
+      },
+    },
+    { $project: {
+      user_id: 0,
+      'contracts._id': 0,
+      'contracts.user_id': 0,
+      'memberships._id': 0,
+      'memberships.user_id': 0,
+      'memberships.person': 0,
+      'memberships.person_id': 0,
+    } },
+  ]).then(docs => {
+    res.charSet('utf-8');
     res.json({
-        status: 'success',
-        data: docs,
-        message: 'Retrieved person',
-      });
+      status: 'success',
+      data: personDataMap(docs),
+    });
   });
-  // this sends back a JSON response which is a single string
 }
+
+module.exports = {
+  allPersons,
+  singlePerson,
+};
