@@ -1,13 +1,11 @@
 'use strict';
 
-var SwaggerRestify = require('swagger-restify-mw');
-var restify = require('restify');
-var app = restify.createServer();
+const SwaggerRestify = require('swagger-restify-mw');
+const restify = require('restify');
+const app = restify.createServer();
 
-module.exports = app; // for testing
-
-var config = {
-  appRoot: __dirname // required config
+const config = {
+  appRoot: __dirname, // required config
 };
 
 SwaggerRestify.create(config, function(err, swaggerRestify) {
@@ -15,9 +13,8 @@ SwaggerRestify.create(config, function(err, swaggerRestify) {
 
   swaggerRestify.register(app);
 
-  var port = process.env.PORT || 10010;
+  const port = process.env.PORT || 10010;
   app.listen(port);
-
   if (swaggerRestify.runner.swagger.paths['/hello']) {
     console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
   }
