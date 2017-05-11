@@ -23,7 +23,7 @@ function personDataMap(array) {
 
 const defaultProjection = {
   user_id: 0,
-  'contracts.user_id': 0,
+  'suppliesContracts.user_id': 0,
   'memberships._id': 0,
   'memberships.user_id': 0,
   'memberships.person': 0,
