@@ -1,0 +1,65 @@
+image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay
+
+stages:
+  - lint
+  - test
+  - deploy
+
+lint:
+  image: node:alpine
+  stage: lint
+  tags:
+    - docker
+  script:
+    - npm install --silent
+    - npm run lint
+
+test:
+  image: node:alpine
+  stage: test
+  services:
+    - name: mvertes/alpine-mongo
+      alias: mongo
+  tags:
+    - docker
+  variables:
+    MONGODB_URI: 'mongodb://mongo/runner'
+    NODE_ENV: 'test'
+  script:
+    - npm install --silent
+    - npm run test
+
+deploy staging:
+  image: tmaier/dpl
+  type: deploy
+  tags:
+    - heroku
+  only:
+    - dev
+  except:
+   - tags
+  environment:
+    name: stageing
+    url: https://quienesquienapi.herokuapp.com
+  script:
+    - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+
+deploy docker:
+  stage: deploy
+  services:
+    - docker:dind
+  tags:
+   - docker
+  only:
+   - master
+  except:
+   - tags
+  script:
+    - apk --no-cache add jq
+    - export VERSION=$(cat package.json | jq -r .version)
+    - docker login --username=$DOCKER_ID_USER --password=$DOCKER_ID_PASSWORD
+    - docker build -t poder/quienesquienapi:$VERSION .
+    - docker push poder/quienesquienapi:$VERSION

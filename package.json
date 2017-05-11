@@ -1,19 +1,19 @@
 {
   "name": "api.quienesquien.wiki",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "New Swagger API Project",
   "keywords": [],
   "license": "GPL-3.0",
-  "author": {
-    "name": "Kevin Brown",
-    "email": "kevin@rindecuentas.org"
+  "engines": {
+    "node": "8.3.x",
+    "npm": "5.3.x"
   },
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "./node_modules/.bin/mocha test/api/controllers/*.js",
-    "build": "cd v1/docs && minify --output style.css swagger-ui.css fonts.css quienesquien.css"
+    "lint": "./node_modules/.bin/eslint '**/*.js'"
   },
   "dependencies": {
     "diacritics": "^1.3.0",
@@ -32,9 +32,10 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "chai": "^3.0.0",
     "dotenv": "^1.2.0",
-    "eslint": "^4.0.0",
+    "eslint": "^4.6.1",
     "eslint-config-eslint": "^4.0.0",
     "mocha": "^2.2.5",
     "request": "^2.58.0",
