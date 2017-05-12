@@ -18,7 +18,6 @@ info:
 basePath: /
 consumes:
   - application/json
-# format of the responses to the client (Accepts)
 produces:
   - application/json
 paths:
@@ -63,7 +62,6 @@ paths:
       operationId: singlePerson
       tags:
         - Persons
-        - Get
       parameters:
         - name: _id
           in: path
@@ -74,9 +72,7 @@ paths:
         "200":
           description: Success
           schema:
-            # a pointer to a definition
             $ref: "#/definitions/Person"
-        # responses may fall through to errors
         default:
           description: Error
           schema:
@@ -87,11 +83,8 @@ paths:
     get:
      tags:
        - Organizations
-       - Get
      description: Returns all organizations
      operationId: allOrganizations
-     produces:
-       - application/json
      parameters:
        - $ref: "#/parameters/_id"
        - $ref: "#/parameters/simple"
@@ -108,9 +101,13 @@ paths:
        - $ref: "#/parameters/exists"
      responses:
        200:
-         description: An array of persons
+         description: An array of organizations
          schema:
            $ref: '#/definitions/Organization'
+       default:
+         description: Error
+         schema:
+           $ref: "#/definitions/ErrorResponse"
 
   /organizations/{_id}:
     x-swagger-router-controller: organizations
@@ -120,8 +117,6 @@ paths:
        - Get
      description: Returns an organizations
      operationId: singleOrganization
-     produces:
-       - application/json
      parameters:
        - name: _id
          in: path
@@ -133,27 +128,19 @@ paths:
          description: An array of organizations
          schema:
            $ref: '#/definitions/Organization'
+       default:
+         description: Error
+         schema:
+           $ref: "#/definitions/ErrorResponse"
 
   /contracts:
     x-swagger-router-controller: contracts
     get:
       operationId: allContracts
-      description: "API Method Description"
+      description: "Returns all contracts"
       tags:
         - Contracts
-        - Get
       summary: "Short Summary of API Method"
-      externalDocs:
-        description: "Find out more"
-        url: "http://docs.example.com/management/apis/get/entities"
-      produces:
-        - "application/json; charset=utf-8"
-      responses:
-        200:
-          description: "OK"
-          schema:
-            $ref: "#/definitions/Contract"
-      security: []
       parameters:
         -
           in: "query"
@@ -228,7 +215,15 @@ paths:
         - $ref: "#/parameters/gt"
         - $ref: "#/parameters/lt"
         - $ref: "#/parameters/exists"
-
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Contract"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /contracts/{_id}:
     x-swagger-router-controller: contracts
@@ -236,21 +231,23 @@ paths:
      tags:
        - Contracts
        - Get
-     description: Returns an organizations
+     description: Returns a contract
      operationId: singleContract
-     produces:
-       - application/json
      parameters:
        - name: _id
          in: path
-         description: Internal ID of organization
+         description: Internal ID of contract
          required: true
          type: string
      responses:
        200:
-         description: An array of organizations
+         description: An array of contracts
          schema:
            $ref: '#/definitions/Contract'
+       default:
+         description: Error
+         schema:
+           $ref: "#/definitions/ErrorResponse"
 
 definitions:
   ErrorResponse:
@@ -471,9 +468,13 @@ definitions:
         type: "string"
         minLength: 1
       suppliers_org:
-        $ref: '#/definitions/Organization'
+        type: "array"
+        items:
+          $ref: '#/definitions/Organization'
       suppliers_person:
-        $ref: '#/definitions/Person'
+        type: array
+        items:
+          $ref: '#/definitions/Person'
       references:
         type: "array"
         items:
