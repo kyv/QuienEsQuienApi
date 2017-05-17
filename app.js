@@ -6,6 +6,12 @@ const config = {
   appRoot: __dirname, // required config
 };
 
+app.get(/\/v1\/docs\/?.*/, restify.serveStatic({
+  directory: __dirname,
+  default: 'index.html',
+  //charSet: 'utf-8',
+}));
+
 SwaggerRestify.create(config, (err, swaggerRestify) => {
   if (err) {
     throw err;
