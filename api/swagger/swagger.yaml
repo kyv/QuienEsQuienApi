@@ -4,7 +4,7 @@ schemes:
 - http
 - https
 info:
-  description: "API Program description"
+  description: "QuienEsQuien.Wiki API"
   title: "api.quienesquien.wiki"
   version: "1"
   termsOfService: "http://example.com/about/terms"
@@ -15,12 +15,14 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://example.com"
-basePath: /
+basePath: /v1
 consumes:
   - application/json
 produces:
   - application/json
 paths:
+  /spec.json:
+    x-swagger-pipe: swagger_raw
   /persons:
     x-swagger-router-controller: persons
     get:
@@ -28,7 +30,6 @@ paths:
       operationId: allPersons
       tags:
         - Persons
-        - Get
       parameters:
        - $ref: "#/parameters/_id"
        - $ref: "#/parameters/simple"
@@ -37,7 +38,7 @@ paths:
        - $ref: "#/parameters/text"
        - $ref: "#/parameters/fields"
        - $ref: "#/parameters/sort"
-       - $ref: "#/parameters/sortd"
+       - $ref: "#/parameters/embed"
        - $ref: "#/parameters/limit"
        - $ref: "#/parameters/offset"
        - $ref: "#/parameters/gt"
@@ -58,7 +59,7 @@ paths:
   /persons/{_id}:
     x-swagger-router-controller: persons
     get:
-      description: Returns Person Object to the caller
+      description: Returns Person Object
       operationId: singlePerson
       tags:
         - Persons
@@ -86,6 +87,11 @@ paths:
      description: Returns all organizations
      operationId: allOrganizations
      parameters:
+       - name: "limit"
+         in: query
+         description: Number of returned documents
+         type: integer
+         default: 25
        - $ref: "#/parameters/_id"
        - $ref: "#/parameters/simple"
        - $ref: "#/parameters/name"
@@ -93,12 +99,12 @@ paths:
        - $ref: "#/parameters/text"
        - $ref: "#/parameters/fields"
        - $ref: "#/parameters/sort"
-       - $ref: "#/parameters/sortd"
-       - $ref: "#/parameters/limit"
+       - $ref: "#/parameters/embed"
        - $ref: "#/parameters/offset"
        - $ref: "#/parameters/gt"
        - $ref: "#/parameters/lt"
        - $ref: "#/parameters/exists"
+
      responses:
        200:
          description: An array of organizations
@@ -114,7 +120,6 @@ paths:
     get:
      tags:
        - Organizations
-       - Get
      description: Returns an organizations
      operationId: singleOrganization
      parameters:
@@ -188,7 +193,13 @@ paths:
           required: false
         -
           in: "query"
-          name: "provider"
+          name: "suppliers_person"
+          description: "Provider of given service"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "suppliers_org"
           description: "Provider of given service"
           type: "string"
           required: false
@@ -209,7 +220,7 @@ paths:
         - $ref: "#/parameters/text"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/sort"
-        - $ref: "#/parameters/sortd"
+        - $ref: "#/parameters/embed"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/offset"
         - $ref: "#/parameters/gt"
@@ -219,7 +230,9 @@ paths:
         200:
           description: "OK"
           schema:
-            $ref: "#/definitions/Contract"
+            type: array
+            items:
+              $ref: '#/definitions/Contract'
         default:
           description: Error
           schema:
@@ -230,7 +243,6 @@ paths:
     get:
      tags:
        - Contracts
-       - Get
      description: Returns a contract
      operationId: singleContract
      parameters:
@@ -260,6 +272,34 @@ definitions:
   Address:
     properties:
       street:
+        type: string
+      city:
+        type: string
+      state:
+        type: string
+      postal_code:
+        type: string
+      country:
+        type: string
+      phones:
+        type: string
+      emails:
+        type: string
+      website:
+        type: string
+
+  Reference:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      author:
+        type: string
+      publication_date:
+        type: string
+        format: date-time
+      publication_place:
         type: string
 
   Membership:
@@ -310,24 +350,24 @@ definitions:
       suppliers_person:
         type: string
       references:
-        type: "array"
+        type: array
         items:
-          properties: {}
+          $ref: '#/definitions/Reference'
       department:
-        type: "string"
+        type: string
         minLength: 1
       clave_uc:
-        type: "string"
+        type: string
         minLength: 1
       start_date:
-        type: "string"
+        type: string
         format: date-time
         minLength: 1
       end_date:
-        type: "string"
+        type: string
         minLength: 1
       character:
-        type: "string"
+        type: string
         minLength: 1
       dependency:
         type: string
@@ -365,6 +405,8 @@ definitions:
       source:
         type: string
         minLength: 1
+      contract_count:
+        type: number
       board:
         type: array
         items:
@@ -377,7 +419,44 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ContractSubDoc'
-          
+
+  PersonSubDoc:
+    properties:
+      _id:
+        type: string
+        minLength: 1
+      simple:
+        type: string
+        minLength: 1
+      name:
+        type: string
+        minLength: 1
+      names:
+        type: array
+        items:
+          properties: {}
+      first_name:
+        type: string
+        minLength: 1
+      family_name:
+        type: string
+        minLength: 1
+      prefix:
+        type: string
+        minLength: 1
+      suffix:
+        type: string
+        minLength: 1
+      created_at:
+        type: string
+        minLength: 1
+      source:
+        type: string
+        minLength: 1
+      contract_count:
+        type: number
+
+
   Organization:
     properties:
       simple:
@@ -402,6 +481,9 @@ definitions:
       source:
         type: string
         minLength: 1
+      contract_count:
+        type: number
+
       memberships:
         type: array
         uniqueItems: true
@@ -437,8 +519,35 @@ definitions:
         items:
           $ref: '#/definitions/ContractSubDoc'
 
+  OrganizationSubDoc:
+    properties:
+      simple:
+        type: string
+      name:
+        type: string
+      category:
+        type: string
+        enum:
+          - public
+          - private
+          - party
+      address:
+          $ref: '#/definitions/Address'
+      initials:
+         type: string
+      description:
+         type: string
+      created_at:
+        type: string
+        minLength: 1
+      source:
+        type: string
+        minLength: 1
+      contract_count:
+        type: number
+
   Contract:
-    description: "Contracts"
+    description: "A Contract"
     type: "object"
     properties:
       _id:
@@ -468,35 +577,39 @@ definitions:
         type: "string"
         minLength: 1
       suppliers_org:
-        type: "array"
+        type: array
         items:
-          $ref: '#/definitions/Organization'
+          $ref: '#/definitions/OrganizationSubDoc'
       suppliers_person:
         type: array
         items:
-          $ref: '#/definitions/Person'
+          $ref: '#/definitions/PersonSubDoc'
       references:
-        type: "array"
+        type: array
         items:
           properties: {}
       department:
-        type: "string"
+        type: string
         minLength: 1
       clave_uc:
-        type: "string"
+        type: string
         minLength: 1
       start_date:
-        type: "string"
+        type: string
         format: date-time
         minLength: 1
       end_date:
-        type: "string"
+        type: string
+        format: date-time
         minLength: 1
       character:
-        type: "string"
+        type: string
         minLength: 1
       dependency:
-        $ref: '#/definitions/Organization'
+        type: string
+      # FIXME remove
+      country:
+        type: string
 
 
 parameters:
@@ -546,23 +659,25 @@ parameters:
     name: sort
     description: Sort by given field.
     type: string
-  sortd:
+  embed:
     in: query
-    name: sortd
-    description: Sort direction.
-    type: string
+    name: embed
+    description: Embed related documents
+    type: boolean
+    default: false
   limit:
     name: limit
     in: query
     description: Number of returned documents
     type: integer
-    default: 100
+    default: 25
   offset:
     name: offset
     in: query
     description: Number of returned documents
     type: integer
     default: 0
+    minimum: 0
   start_date:
     in: query
     name: start_date
