@@ -17,7 +17,16 @@ function personDataMap(array) {
 
     object.board = board;
     object.shares = shares;
-    return omitEmpty(omit(object, 'memberships'));
+    return omitEmpty(omit(object, [
+      'memberships',
+      'user_id',
+      'contracts._id',
+      'contracts.user_id',
+      'memberships._id',
+      'memberships.user_id',
+      'memberships.person',
+      'memberships.person_id',
+    ]));
   });
 }
 
@@ -67,7 +76,6 @@ function queryToPipeline(query) {
     pipeline.push({ $sort: query.options.sort });
   }
 
-  pipeline.push({ $project: projection });
   return pipeline;
 }
 
@@ -109,15 +117,6 @@ function singlePerson(req, res) {
         as: 'memberships',
       },
     },
-    { $project: {
-      user_id: 0,
-      'contracts._id': 0,
-      'contracts.user_id': 0,
-      'memberships._id': 0,
-      'memberships.user_id': 0,
-      'memberships.person': 0,
-      'memberships.person_id': 0,
-    } },
   ]).then(docs => {
     res.charSet('utf-8');
     res.json({
