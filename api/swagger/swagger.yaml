@@ -4,7 +4,7 @@ schemes:
 - http
 - https
 info:
-  description: "API Program description"
+  description: "QuienEsQuien.Wiki API"
   title: "api.quienesquien.wiki"
   version: "1"
   termsOfService: "http://example.com/about/terms"
