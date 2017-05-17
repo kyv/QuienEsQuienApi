@@ -6,6 +6,8 @@ const config = {
   appRoot: __dirname, // required config
 };
 
+app.use(restify.acceptParser(app.acceptable));
+
 app.get(/\/v1\/docs\/?.*/, restify.serveStatic({
   directory: __dirname,
   default: 'index.html',
@@ -22,7 +24,10 @@ SwaggerRestify.create(config, (err, swaggerRestify) => {
   const port = process.env.PORT || 10010;
 
   app.listen(port);
-  if (swaggerRestify.runner.swagger.paths['/hello']) {
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
-  }
+
 });
+
+// FIXME gzip breaks swagger-ui
+// app.use(restify.gzipResponse());
+
+app.use(restify.CORS());
