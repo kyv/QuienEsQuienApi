@@ -54,7 +54,7 @@ function contractMapData(object) {
   return omitEmpty(data);
 }
 
-function allContracts(req, res, next) {
+function allContracts(req, res) {
   const query = getQuery(req);
 
   res.charSet('utf-8');

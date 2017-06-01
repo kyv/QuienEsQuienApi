@@ -50,14 +50,12 @@ function orgDataMap(o) {
   object.shareholders = sob.filter(b => (b.role === 'shareholder'))
     .map(b => (omit(b, 'role')));
 
-  object.memberships = sob.filter(b => {
-    return (b.role !== 'shareholder' && b.department !== 'board');
-  });
+  object.memberships = sob.filter(b => (b.role !== 'shareholder' && b.department !== 'board'));
 
   return omitEmpty(object);
 }
 
-function allOrganizations(req, res, next) {
+function allOrganizations(req, res) {
   const query = getQuery(req);
 
   res.charSet('utf-8');
