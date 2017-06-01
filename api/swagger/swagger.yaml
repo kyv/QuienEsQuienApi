@@ -193,7 +193,13 @@ paths:
           required: false
         -
           in: "query"
-          name: "provider"
+          name: "suppliers_person"
+          description: "Provider of given service"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "suppliers_org"
           description: "Provider of given service"
           type: "string"
           required: false
