@@ -48,7 +48,7 @@ function personDataMap(array) {
   });
 }
 
-function allPersons(req, res, next) {
+function allPersons(req, res) {
   const query = getQuery(req);
 
   res.charSet('utf-8');
