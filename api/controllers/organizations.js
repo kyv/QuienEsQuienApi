@@ -3,8 +3,8 @@ const organizations = db.get('organizations', { castIds: false });
 const omit = require('lodash/omit');
 const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
-const arrayResultsOptions = require('./lib').arrayResultsOptions;
 const getQuery = require('./lib').getQuery;
+const allDocuments = require('./lib').allDocuments;
 
 const JOINS = [
   {
@@ -59,42 +59,25 @@ function orgDataMap(o) {
 
 function allOrganizations(req, res, next) {
   const query = getQuery(req);
-  const countP = organizations.count(query.criteria);
 
-  if (query.embed) {
-    const p = queryToPipeline(query, JOINS);
-    const pipeline = arrayResultsOptions(query, p);
-    const resultsP = organizations.aggregate(pipeline);
+  res.charSet('utf-8');
+  allDocuments(query, organizations, JOINS)
+  .then(array => {
+    let data = array[1];
+    const size = array[1].length;
 
-    Promise.all([countP, resultsP])
-    .then(array => {
-      const size = array[1].length;
+    if (query.embed) {
+      data = array[1].map(o => (orgDataMap(o)));
+    }
 
-      res.charSet('utf-8');
-      res.json({
-        status: 'success',
-        data: array[1].map(o => (orgDataMap(o))),
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
+    res.json({
+      status: 'success',
+      data,
+      size,
+      offset: query.options.skip,
+      pages: Math.ceil((array[0] / size)),
     });
-  } else {
-    const resultsP = organizations.find(query.criteria, query.options);
-    Promise.all([countP, resultsP])
-    .then(array => {
-      const size = array[1].length;
-
-      res.charSet('utf-8');
-      res.json({
-        status: 'success',
-        data: array[1],
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
-  }
+  });
 }
 
 function singleOrganization(req, res) {
