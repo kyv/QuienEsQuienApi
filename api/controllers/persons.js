@@ -1,12 +1,30 @@
 const db = require('../db');
 const persons = db.get('persons', { castIds: false });
-const q2m = require('query-to-mongo');
-const qs = require('qs');
 const omit = require('lodash/omit');
-const pickBy = require('lodash/pickBy');
-const mapValues = require('lodash/mapValues');
 const personMemberMap = require('./lib').personMemberMap;
 const omitEmpty = require('./lib').omitEmpty;
+const queryToPipeline = require('./lib').queryToPipeline;
+const arrayResultsOptions = require('./lib').arrayResultsOptions;
+const getQuery = require('./lib').getQuery;
+
+const JOINS = [
+  {
+    $lookup: {
+      from: 'contracts',
+      localField: 'simple',
+      foreignField: 'suppliers_person',
+      as: 'suppliesContracts',
+    },
+  },
+  {
+    $lookup: {
+      from: 'memberships',
+      localField: 'simple',
+      foreignField: 'person_id',
+      as: 'memberships',
+    },
+  },
+];
 
 function personDataMap(array) {
   return array.map(o => {
@@ -30,94 +48,51 @@ function personDataMap(array) {
   });
 }
 
-const defaultProjection = {
-  user_id: 0,
-  'suppliesContracts.user_id': 0,
-  'memberships._id': 0,
-  'memberships.user_id': 0,
-  'memberships.person': 0,
-  'memberships.person_id': 0,
-};
-
-function queryToPipeline(query) {
-  let projection = defaultProjection;
-
-  if (query.options.fields) {
-    projection = query.options.fields;
-  }
-  const pipeline = [
-    { $match: query.criteria },
-    {
-      $lookup: {
-        from: 'contracts',
-        localField: 'simple',
-        foreignField: 'suppliers_person',
-        as: 'suppliesContracts',
-      },
-    },
-    {
-      $lookup: {
-        from: 'memberships',
-        localField: 'simple',
-        foreignField: 'person_id',
-        as: 'memberships',
-      },
-    },
-  ];
-
-  if (query.options.skip) {
-    pipeline.push({ $skip: query.options.skip });
-  }
-  if (query.options.limit) {
-    pipeline.push({ $limit: query.options.limit });
-  }
-
-  if (query.options.sort) {
-    pipeline.push({ $sort: query.options.sort });
-  }
-
-  return pipeline;
-}
-
 function allPersons(req, res, next) {
-  const params = pickBy(req.swagger.params, p => (p.value));
-  const mapped = mapValues(params, p => (p.value));
-  const string = qs.stringify(mapped);
-  const query = q2m(string);
-  const pipeline = queryToPipeline(query);
+  const query = getQuery(req);
+  const countP = persons.count(query.criteria);
 
-  persons.aggregate(pipeline).then(docs => {
-    res.charSet('utf-8');
-    res.json({
-      status: 'success',
-      data: personDataMap(docs),
-      size: docs.length,
+  if (query.embed) {
+    const p = queryToPipeline(query, JOINS);
+    const pipeline = arrayResultsOptions(query, p);
+    const resultsP = persons.aggregate(pipeline);
+
+    Promise.all([countP, resultsP])
+    .then(array => {
+      const size = array[1].length;
+
+      res.charSet('utf-8');
+      res.json({
+        status: 'success',
+        data: personDataMap(array[1]),
+        size,
+        offset: query.options.skip,
+        pages: Math.ceil((array[0] / size)),
+      });
     });
-  });
+  } else {
+    const resultsP = persons.find(query.criteria, query.options);
+    Promise.all([countP, resultsP])
+    .then(array => {
+      const size = array[1].length;
+
+      res.charSet('utf-8');
+      res.json({
+        status: 'success',
+        data: array[1],
+        size,
+        offset: query.options.skip,
+        pages: Math.ceil((array[0] / size)),
+      });
+    });
+  }
 }
 
 function singlePerson(req, res) {
-  const id = req.swagger.params._id.value;
+  const query = getQuery(req);
+  const pipeline = queryToPipeline(query, JOINS);
 
-  persons.aggregate([
-    { $match: { _id: id } },
-    {
-      $lookup: {
-        from: 'contracts',
-        localField: 'simple',
-        foreignField: 'suppliers_person',
-        as: 'suppliesContracts',
-      },
-    },
-    {
-      $lookup: {
-        from: 'memberships',
-        localField: 'simple',
-        foreignField: 'person_id',
-        as: 'memberships',
-      },
-    },
-  ]).then(docs => {
+  persons.aggregate(pipeline).then(docs => {
     res.charSet('utf-8');
     res.json({
       status: 'success',
