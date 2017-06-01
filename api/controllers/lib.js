@@ -54,6 +54,22 @@ function personMemberMap(doc) {
   return omit(member, ['sob_org']);
 }
 
+function allDocuments(query, collection, JOINS) {
+  const countP = collection.count(query.criteria);
+
+  if (query.embed) {
+    const p = queryToPipeline(query, JOINS);
+    const pipeline = arrayResultsOptions(query, p);
+    const resultsP = collection.aggregate(pipeline);
+
+    return Promise.all([countP, resultsP]);
+  }
+
+  const resultsP = collection.find(query.criteria, query.options);
+
+  return Promise.all([countP, resultsP]);
+}
+
 function omitEmpty(object) {
   return flow(
     omitBy(isNil),
@@ -76,4 +92,5 @@ module.exports = {
   queryToPipeline,
   arrayResultsOptions,
   getQuery,
+  allDocuments,
 };

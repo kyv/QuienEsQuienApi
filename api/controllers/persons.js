@@ -4,8 +4,8 @@ const omit = require('lodash/omit');
 const personMemberMap = require('./lib').personMemberMap;
 const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
-const arrayResultsOptions = require('./lib').arrayResultsOptions;
 const getQuery = require('./lib').getQuery;
+const allDocuments = require('./lib').allDocuments;
 
 const JOINS = [
   {
@@ -50,50 +50,33 @@ function personDataMap(array) {
 
 function allPersons(req, res, next) {
   const query = getQuery(req);
-  const countP = persons.count(query.criteria);
 
-  if (query.embed) {
-    const p = queryToPipeline(query, JOINS);
-    const pipeline = arrayResultsOptions(query, p);
-    const resultsP = persons.aggregate(pipeline);
+  res.charSet('utf-8');
+  allDocuments(query, persons, JOINS)
+  .then(array => {
+    let data = array[1];
+    const size = array[1].length;
 
-    Promise.all([countP, resultsP])
-    .then(array => {
-      const size = array[1].length;
+    if (query.embed) {
+      data = personDataMap(array[1]);
+    }
 
-      res.charSet('utf-8');
-      res.json({
-        status: 'success',
-        data: personDataMap(array[1]),
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
+    res.json({
+      status: 'success',
+      data,
+      size,
+      offset: query.options.skip,
+      pages: Math.ceil((array[0] / size)),
     });
-  } else {
-    const resultsP = persons.find(query.criteria, query.options);
-    Promise.all([countP, resultsP])
-    .then(array => {
-      const size = array[1].length;
-
-      res.charSet('utf-8');
-      res.json({
-        status: 'success',
-        data: array[1],
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
-  }
+  });
 }
 
 function singlePerson(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
+  res.charSet('utf-8');
   persons.aggregate(pipeline).then(docs => {
-    res.charSet('utf-8');
     res.json({
       status: 'success',
       data: personDataMap(docs),
