@@ -8,8 +8,43 @@ const isString = require('lodash/fp/isString');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
+const q2m = require('query-to-mongo');
+const qs = require('qs');
+const pickBy = require('lodash/pickBy');
+const mapValues = require('lodash/mapValues');
 const removeDiacritics = require('diacritics').remove;
 
+function getQuery(req) {
+  const params = pickBy(req.swagger.params, p => (p.value));
+  const mapped = mapValues(params, p => (p.value));
+  const string = qs.stringify(mapped);
+  const query = q2m(string, { ignore: 'embed' });
+
+  query.embed = mapped.embed;
+  return query;
+}
+
+function queryToPipeline(query, JOINS) {
+  const pipeline = [{ $match: query.criteria }];
+
+  JOINS.forEach(o => pipeline.push(o));
+  return pipeline;
+}
+
+function arrayResultsOptions(query, pipeline) {
+  if (query.options.skip) {
+    pipeline.push({ $skip: query.options.skip });
+  }
+  if (query.options.limit) {
+    pipeline.push({ $limit: query.options.limit });
+  }
+
+  if (query.options.sort) {
+    pipeline.push({ $sort: query.options.sort });
+  }
+
+  return pipeline;
+}
 
 function personMemberMap(doc) {
   const member = extend(doc, {
@@ -38,4 +73,7 @@ module.exports = {
   personMemberMap,
   omitEmpty,
   simpleName,
+  queryToPipeline,
+  arrayResultsOptions,
+  getQuery,
 };
