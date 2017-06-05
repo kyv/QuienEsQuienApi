@@ -8,19 +8,25 @@ const isString = require('lodash/fp/isString');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
+const keys = require('lodash/keys');
 const q2m = require('query-to-mongo');
 const qs = require('qs');
 const pickBy = require('lodash/pickBy');
 const mapValues = require('lodash/mapValues');
 const removeDiacritics = require('diacritics').remove;
+const sanitize = require('mongo-sanitize');
 
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
+  const sane = sanitize(req.query);
   const mapped = mapValues(params, p => (p.value));
-  const string = qs.stringify(mapped);
+
+  extend(sane, mapped);
+  const string = qs.stringify(sane);
   const query = q2m(string, { ignore: 'embed' });
 
-  query.embed = mapped.embed;
+  query.embed = (isString(sane.embed));
+  console.log(query);
   return query;
 }
 
