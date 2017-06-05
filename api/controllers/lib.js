@@ -19,25 +19,14 @@ const sanitize = require('mongo-sanitize');
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
   const sane = sanitize(req.query);
-
-  // account for empty fields ($exists)
-  const maybeEmpty = pickBy(req.swagger.params, p => (p.parameterObject.allowEmptyValue));
-  const paramsEmpty = pickBy(sane, (value, key) => {
-    return (keys(maybeEmpty).indexOf(key) > -1);
-  });
-
-  // acount for dot notation
-  const dotted = pickBy(sane, (value, key) => {
-    return (key.indexOf('.') > -1);
-  });
-
   const mapped = mapValues(params, p => (p.value));
 
-  extend(mapped, paramsEmpty, dotted);
-  const string = qs.stringify(mapped);
+  extend(sane, mapped);
+  const string = qs.stringify(sane);
   const query = q2m(string, { ignore: 'embed' });
 
-  query.embed = mapped.embed;
+  query.embed = (isString(sane.embed));
+  console.log(query);
   return query;
 }
 
