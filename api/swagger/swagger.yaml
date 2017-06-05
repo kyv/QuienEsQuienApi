@@ -26,24 +26,26 @@ paths:
   /persons:
     x-swagger-router-controller: persons
     get:
-      description: Returns Array of Person Object to the caller
+      description: Returns array of Person Documents
       operationId: allPersons
       tags:
         - Persons
       parameters:
-       - $ref: "#/parameters/_id"
-       - $ref: "#/parameters/simple"
-       - $ref: "#/parameters/name"
-       - $ref: "#/parameters/description"
-       - $ref: "#/parameters/text"
-       - $ref: "#/parameters/fields"
-       - $ref: "#/parameters/sort"
-       - $ref: "#/parameters/embed"
-       - $ref: "#/parameters/limit"
-       - $ref: "#/parameters/offset"
-       - $ref: "#/parameters/gt"
-       - $ref: "#/parameters/lt"
-       - $ref: "#/parameters/exists"
+        - $ref: "#/parameters/_id"
+        - $ref: "#/parameters/simple"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/description"
+        - $ref: "#/parameters/contract_count"
+        - $ref: "#/parameters/text"
+        - $ref: "#/parameters/fields"
+        - $ref: "#/parameters/omit"
+        - $ref: "#/parameters/sort"
+        - $ref: "#/parameters/embed"
+        - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/offset"
+        - $ref: "#/parameters/gt"
+        - $ref: "#/parameters/lt"
+        - $ref: "#/parameters/exists"
       responses:
         "200":
           description: Success
@@ -82,38 +84,39 @@ paths:
   /organizations:
     x-swagger-router-controller: organizations
     get:
-     tags:
-       - Organizations
-     description: Returns all organizations
-     operationId: allOrganizations
-     parameters:
-       - name: "limit"
-         in: query
-         description: Number of returned documents
-         type: integer
-         default: 25
-       - $ref: "#/parameters/_id"
-       - $ref: "#/parameters/simple"
-       - $ref: "#/parameters/name"
-       - $ref: "#/parameters/description"
-       - $ref: "#/parameters/text"
-       - $ref: "#/parameters/fields"
-       - $ref: "#/parameters/sort"
-       - $ref: "#/parameters/embed"
-       - $ref: "#/parameters/offset"
-       - $ref: "#/parameters/gt"
-       - $ref: "#/parameters/lt"
-       - $ref: "#/parameters/exists"
+      tags:
+        - Organizations
+      description: Returns all organizations
+      operationId: allOrganizations
+      parameters:
+        - name: company
+          in: query
+          description: is a company
+          required: false
+          type: string
+          allowEmptyValue: true
+        - $ref: "#/parameters/_id"
+        - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/simple"
+        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/description"
+        - $ref: "#/parameters/contract_count"
+        - $ref: "#/parameters/text"
+        - $ref: "#/parameters/fields"
+        - $ref: "#/parameters/omit"
+        - $ref: "#/parameters/sort"
+        - $ref: "#/parameters/embed"
+        - $ref: "#/parameters/offset"
 
-     responses:
-       200:
-         description: An array of organizations
-         schema:
-           $ref: '#/definitions/Organization'
-       default:
-         description: Error
-         schema:
-           $ref: "#/definitions/ErrorResponse"
+      responses:
+        200:
+          description: An array of organizations
+          schema:
+            $ref: '#/definitions/Organization'
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /organizations/{_id}:
     x-swagger-router-controller: organizations
@@ -219,13 +222,11 @@ paths:
         - $ref: "#/parameters/end_date"
         - $ref: "#/parameters/text"
         - $ref: "#/parameters/fields"
+        - $ref: "#/parameters/omit"
         - $ref: "#/parameters/sort"
         - $ref: "#/parameters/embed"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/offset"
-        - $ref: "#/parameters/gt"
-        - $ref: "#/parameters/lt"
-        - $ref: "#/parameters/exists"
       responses:
         200:
           description: "OK"
@@ -261,6 +262,87 @@ paths:
          schema:
            $ref: "#/definitions/ErrorResponse"
 
+  /memberships:
+    x-swagger-router-controller: memberships
+    get:
+      operationId: allMemberships
+      description: "Returns array of memberships"
+      tags:
+        - Memberships
+      summary: "Short Summary of API Method"
+      parameters:
+        -
+          in: "query"
+          name: "department"
+          description: "department"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "role"
+          description: "role"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "person"
+          description: "person"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "person_id"
+          description: "id of person"
+          type: "string"
+          required: false
+        -
+          in: "query"
+          name: "org_id"
+          description: "id of org"
+          type: "string"
+          required: false
+        - $ref: "#/parameters/text"
+        - $ref: "#/parameters/fields"
+        - $ref: "#/parameters/sort"
+        - $ref: "#/parameters/embed"
+        - $ref: "#/parameters/limit"
+        - $ref: "#/parameters/offset"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Membership'
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /memberships/{_id}:
+    x-swagger-router-controller: memberships
+    get:
+     tags:
+       - Memberships
+     description: Returns a single membership
+     operationId: singleMembership
+     parameters:
+       - name: _id
+         in: path
+         description: Internal ID of membership
+         required: true
+         type: string
+     responses:
+       200:
+         description: An array of Memberships
+         schema:
+           $ref: '#/definitions/Membership'
+       default:
+         description: Error
+         schema:
+           $ref: "#/definitions/ErrorResponse"
+
+
 definitions:
   ErrorResponse:
     required:
@@ -287,6 +369,51 @@ definitions:
         type: string
       website:
         type: string
+
+  Company:
+    properties:
+      sector:
+        type: string
+      classification:
+        type: string
+      tickers:
+        type: string
+      employees:
+        type: number
+        format: float
+      assets:
+        type: number
+        format: float
+      current_assets:
+        type: number
+        format: float
+      liabilities:
+        type: number
+        format: float
+      current_ratio:
+        type: number
+        format: float
+      quick_ratio:
+        type: number
+        format: float
+      revenue:
+        type: number
+        format: float
+      c_o_g_s:
+        type: number
+        format: float
+      gross_profit:
+        type: number
+        format: float
+      grossprofit_margin:
+        type: number
+        format: float
+      market_cap:
+        type: number
+        format: float
+      total_dept:
+        type: number
+        format: float
 
   Reference:
     properties:
@@ -471,6 +598,8 @@ definitions:
           - party
       address:
           $ref: '#/definitions/Address'
+      company:
+          $ref: '#/definitions/Company'
       initials:
          type: string
       description:
@@ -633,10 +762,21 @@ parameters:
     name: description
     description: Description of entity
     type: string
+  contract_count:
+    in: query
+    name: contract_count
+    description: Number of contracts
+    type: string
+    allowEmptyValue: true
   fields:
     in: query
     name: fields
     description: fields to return in results
+    type: string
+  omit:
+    in: query
+    name: omit
+    description: fields to omit from results
     type: string
   text:
     in: query
@@ -663,8 +803,8 @@ parameters:
     in: query
     name: embed
     description: Embed related documents
-    type: boolean
-    default: false
+    type: string
+    allowEmptyValue: true
   limit:
     name: limit
     in: query
