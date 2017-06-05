@@ -60,10 +60,10 @@ function singleMembership(req, res) {
   const pipeline = queryToPipeline(query, JOINS);
 
   res.charSet('utf-8');
-  persons.aggregate(pipeline).then(docs => {
+  memberships.aggregate(pipeline).then(docs => {
     res.json({
       status: 'success',
-      // data: personDataMap(docs),
+      data: docs,
     });
   });
 }
