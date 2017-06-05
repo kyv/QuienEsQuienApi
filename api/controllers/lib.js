@@ -14,18 +14,20 @@ const qs = require('qs');
 const pickBy = require('lodash/pickBy');
 const mapValues = require('lodash/mapValues');
 const removeDiacritics = require('diacritics').remove;
+const sanitize = require('mongo-sanitize');
 
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
+  const sane = sanitize(req.query);
 
   // account for empty fields ($exists)
   const maybeEmpty = pickBy(req.swagger.params, p => (p.parameterObject.allowEmptyValue));
-  const paramsEmpty = pickBy(req.query, (value, key) => {
+  const paramsEmpty = pickBy(sane, (value, key) => {
     return (keys(maybeEmpty).indexOf(key) > -1);
   });
 
   // acount for dot notation
-  const dotted = pickBy(req.query, (value, key) => {
+  const dotted = pickBy(sane, (value, key) => {
     return (key.indexOf('.') > -1);
   });
 
