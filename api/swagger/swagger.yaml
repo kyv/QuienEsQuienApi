@@ -156,8 +156,6 @@ paths:
           description: "Title of contract."
           type: "string"
           required: false
-          enum:
-            - "Red%20Local"
         -
           in: "query"
           name: "type"
