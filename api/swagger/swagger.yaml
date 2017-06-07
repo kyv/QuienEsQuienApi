@@ -14,7 +14,7 @@ info:
     email: "admin@quienesquien.wiki"
   license:
     name: "Apache 2.0"
-    url: "http://example.com"
+    url: "https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE"
 basePath: /v1
 consumes:
   - application/json
@@ -36,23 +36,52 @@ paths:
         - $ref: "#/parameters/name"
         - $ref: "#/parameters/description"
         - $ref: "#/parameters/contract_count"
-        - $ref: "#/parameters/text"
+        - name: first_name
+          in: query
+          description: first name
+          type: string
+        - name: family_name
+          in: query
+          description: family name
+          type: string
+        - name: prefix
+          in: query
+          description: prefix
+          type: string
+        - name: suffix
+          in: query
+          description: suffix
+          type: string
+        - name: gender
+          in: query
+          description: gender
+          type: string
+          enum:
+            - Male
+            - Female
+            - Other
+        - name: date_birth
+          in: query
+          description: birthday
+          type: string
+          format: date
+        - name: date_death
+          in: query
+          description: day of departure
+          type: string
+          format: date
+        - $ref: "#/parameters/address"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/omit"
         - $ref: "#/parameters/sort"
         - $ref: "#/parameters/embed"
         - $ref: "#/parameters/limit"
         - $ref: "#/parameters/offset"
-        - $ref: "#/parameters/gt"
-        - $ref: "#/parameters/lt"
-        - $ref: "#/parameters/exists"
       responses:
         "200":
           description: Success
           schema:
-            # a pointer to a definition
             $ref: "#/definitions/Person"
-        # responses may fall through to errors
         default:
           description: Error
           schema:
@@ -71,6 +100,7 @@ paths:
           description: Internal ID of person
           required: true
           type: string
+          pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
       responses:
         "200":
           description: Success
@@ -89,19 +119,50 @@ paths:
       description: Returns all organizations
       operationId: allOrganizations
       parameters:
-        - name: company
-          in: query
-          description: is a company
-          required: false
-          type: string
-          allowEmptyValue: true
+
         - $ref: "#/parameters/_id"
-        - $ref: "#/parameters/limit"
         - $ref: "#/parameters/simple"
         - $ref: "#/parameters/name"
         - $ref: "#/parameters/description"
+        - $ref: "#/parameters/initials"
         - $ref: "#/parameters/contract_count"
-        - $ref: "#/parameters/text"
+        - name: type
+          in: query
+          description: type of organization
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: category
+          in: query
+          description: category of organization
+          required: false
+          type: string
+          allowEmptyValue: true
+          enum:
+            - public
+            - company
+            - non-profit
+            - party
+        - name: parent
+          in: query
+          description: ultimate parent
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: immediate_parent
+          in: query
+          description: immediate parent
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: suborgs
+          in: query
+          description: subsidiaries
+          required: false
+          type: string
+          allowEmptyValue: true
+        - $ref: "#/parameters/address"
+        - $ref: "#/parameters/limit"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/omit"
         - $ref: "#/parameters/sort"
@@ -131,6 +192,7 @@ paths:
          description: Internal ID of organization
          required: true
          type: string
+         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
      responses:
        200:
          description: An array of organizations
@@ -156,69 +218,80 @@ paths:
           description: "Title of contract."
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "type"
           description: "Contract type"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "status"
           description: "Contract Status"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "ocid"
           description: "Open Contracting Identifier"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "procedure_type"
           description: "Type of contractural proceedure"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "amount"
           description: "Monetary amount paid to supplier"
-          type: "number"
+          type: number
+          format: float
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "currency"
           description: "Currency of given amount"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "suppliers_person"
           description: "Provider of given service"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "suppliers_org"
           description: "Provider of given service"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "department"
           description: "responsible public department"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "dependency"
           description: "responsible public dependency"
           type: string
           required: false
+          allowEmptyValue: true
         - $ref: "#/parameters/start_date"
         - $ref: "#/parameters/end_date"
-        - $ref: "#/parameters/text"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/omit"
         - $ref: "#/parameters/sort"
@@ -250,6 +323,7 @@ paths:
          description: Internal ID of contract
          required: true
          type: string
+         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
      responses:
        200:
          description: An array of contracts
@@ -275,31 +349,60 @@ paths:
           description: "department"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "role"
           description: "role"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "person"
           description: "person"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "person_id"
           description: "id of person"
           type: "string"
           required: false
+          allowEmptyValue: true
         -
           in: "query"
           name: "org_id"
           description: "id of org"
           type: "string"
           required: false
-        - $ref: "#/parameters/text"
+          allowEmptyValue: true
+        -
+          in: "query"
+          name: "label"
+          description: "membership label"
+          type: "string"
+          required: false
+          allowEmptyValue: true
+        -
+          in: "query"
+          name: "shares"
+          description: "number of sheares"
+          type: "number"
+          format: float
+          required: false
+          allowEmptyValue: true
+        -
+          in: "query"
+          name: "salary"
+          description: "amount paid out"
+          type: "number"
+          format: float
+          required: false
+          allowEmptyValue: true
+        - $ref: "#/parameters/start_date"
+        - $ref: "#/parameters/end_date"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/sort"
         - $ref: "#/parameters/embed"
@@ -330,6 +433,7 @@ paths:
          description: Internal ID of membership
          required: true
          type: string
+         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
      responses:
        200:
          description: An array of Memberships
@@ -339,7 +443,6 @@ paths:
          description: Error
          schema:
            $ref: "#/definitions/ErrorResponse"
-
 
 definitions:
   ErrorResponse:
@@ -353,20 +456,41 @@ definitions:
     properties:
       street:
         type: string
+        maxLength: 100
+      zone:
+        type: string
+        maxLength: 50
       city:
         type: string
+        maxLength: 50
       state:
         type: string
+        maxLength: 50
       postal_code:
         type: string
+        maxLength: 50
       country:
         type: string
+        format: CCA2
       phones:
-        type: string
+        type: array
+        items:
+          type: string
+          maxLength: 50
       emails:
-        type: string
+        type: array
+        items:
+          type: string
+          format: email
+          pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
       website:
         type: string
+        format: url
+        maxLength: 50
+      ocd_id:
+        type: string
+        format: OCDID
+        maxLength: 110
 
   Company:
     properties:
@@ -429,6 +553,10 @@ definitions:
 
   Membership:
     properties:
+      _id:
+        type: string
+        minLength: 1
+        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
       person:
         type: string
       person_id:
@@ -441,67 +569,19 @@ definitions:
         type: string
       department:
         type: string
-
-  ContractSubDoc:
-    properties:
-      _id:
-        type: "string"
-        minLength: 1
-      type:
-        type: "string"
-        minLength: 1
-      status:
-        type: "string"
-        minLength: 1
-      title:
-        type: "string"
-        minLength: 1
-      account_admin:
-        type: "string"
-        minLength: 1
-      ocid:
-        type: "string"
-        minLength: 1
-      procedure_type:
-        type: "string"
-        minLength: 1
-      amount:
-        type: "number"
-      currency:
-        type: "string"
-        minLength: 1
-      suppliers_org:
-        type: string
-      suppliers_person:
-        type: string
-      references:
-        type: array
-        items:
-          $ref: '#/definitions/Reference'
-      department:
-        type: string
-        minLength: 1
-      clave_uc:
-        type: string
-        minLength: 1
-      start_date:
-        type: string
-        format: date-time
-        minLength: 1
-      end_date:
-        type: string
-        minLength: 1
-      character:
-        type: string
-        minLength: 1
-      dependency:
-        type: string
+      salary:
+        type: number
+        format: float
+      shares:
+        type: number
+        format: float
 
   Person:
     properties:
       _id:
         type: string
         minLength: 1
+        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
       simple:
         type: string
         minLength: 1
@@ -511,7 +591,7 @@ definitions:
       names:
         type: array
         items:
-          properties: {}
+          type: string
       first_name:
         type: string
         minLength: 1
@@ -526,12 +606,23 @@ definitions:
         minLength: 1
       created_at:
         type: string
+        format: date
         minLength: 1
       source:
         type: string
         minLength: 1
+        enum:
+          - BMV
+          - NAICM
+          - compranet
       contract_count:
-        type: number
+        type: integer
+      address:
+          $ref: '#/definitions/Address'
+      references:
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
       board:
         type: array
         items:
@@ -543,51 +634,20 @@ definitions:
       suppliesContract:
         type: array
         items:
-          $ref: '#/definitions/ContractSubDoc'
+          $ref: '#/definitions/Contract'
 
-  PersonSubDoc:
+  Organization:
     properties:
       _id:
         type: string
         minLength: 1
+        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
       simple:
         type: string
         minLength: 1
       name:
         type: string
         minLength: 1
-      names:
-        type: array
-        items:
-          properties: {}
-      first_name:
-        type: string
-        minLength: 1
-      family_name:
-        type: string
-        minLength: 1
-      prefix:
-        type: string
-        minLength: 1
-      suffix:
-        type: string
-        minLength: 1
-      created_at:
-        type: string
-        minLength: 1
-      source:
-        type: string
-        minLength: 1
-      contract_count:
-        type: number
-
-
-  Organization:
-    properties:
-      simple:
-        type: string
-      name:
-        type: string
       category:
         type: string
         enum:
@@ -604,12 +664,17 @@ definitions:
          type: string
       created_at:
         type: string
+        format: date
         minLength: 1
       source:
         type: string
         minLength: 1
+        enum:
+          - BMV
+          - NAICM
+          - compranet
       contract_count:
-        type: number
+        type: integer
 
       memberships:
         type: array
@@ -632,7 +697,7 @@ definitions:
         items:
           $ref: '#/definitions/Membership'
 
-      share:
+      shareholders:
         type: "array"
         uniqueItems: true
         minItems: 1
@@ -644,42 +709,16 @@ definitions:
         uniqueItems: true
         minItems: 1
         items:
-          $ref: '#/definitions/ContractSubDoc'
-
-  OrganizationSubDoc:
-    properties:
-      simple:
-        type: string
-      name:
-        type: string
-      category:
-        type: string
-        enum:
-          - public
-          - private
-          - party
-      address:
-          $ref: '#/definitions/Address'
-      initials:
-         type: string
-      description:
-         type: string
-      created_at:
-        type: string
-        minLength: 1
-      source:
-        type: string
-        minLength: 1
-      contract_count:
-        type: number
+          $ref: '#/definitions/Contract'
 
   Contract:
     description: "A Contract"
     type: "object"
     properties:
       _id:
-        type: "string"
+        type: string
         minLength: 1
+        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
       type:
         type: "string"
         minLength: 1
@@ -699,45 +738,34 @@ definitions:
         type: "string"
         minLength: 1
       amount:
-        type: "number"
+        type: number
+        format: float
       currency:
         type: "string"
         minLength: 1
       suppliers_org:
         type: array
         items:
-          $ref: '#/definitions/OrganizationSubDoc'
+          type: string
       suppliers_person:
         type: array
         items:
-          $ref: '#/definitions/PersonSubDoc'
+          type: string
       references:
         type: array
         items:
-          properties: {}
+          $ref: '#/definitions/Reference'
       department:
         type: string
         minLength: 1
       clave_uc:
         type: string
         minLength: 1
-      start_date:
-        type: string
-        format: date-time
-        minLength: 1
-      end_date:
-        type: string
-        format: date-time
-        minLength: 1
       character:
         type: string
         minLength: 1
       dependency:
         type: string
-      # FIXME remove
-      country:
-        type: string
-
 
 parameters:
   name:
@@ -766,6 +794,14 @@ parameters:
     description: Number of contracts
     type: string
     allowEmptyValue: true
+  address:
+    in: query
+    name: address
+    description: address
+    required: false
+    type: string
+    format: 'dot notation'
+    allowEmptyValue: true
   fields:
     in: query
     name: fields
@@ -776,22 +812,6 @@ parameters:
     name: omit
     description: fields to omit from results
     type: string
-  text:
-    in: query
-    name: text
-    description: Perform a text search
-    type: boolean
-    enum:
-      - true
-      - false
-  exists:
-    in: query
-    name: exists
-    description: Perform a text search
-    type: boolean
-    enum:
-      - true
-      - false
   sort:
     in: query
     name: sort
@@ -822,23 +842,18 @@ parameters:
     description: Beginning Date
     type: string
     format: date-time
-    enum:
-      - 2014-04-20
+    allowEmptyValue: true
   end_date:
     in: query
     name: end_date
     description: End Date
     type: string
     format: date-time
-
-  gt:
-    in: "query"
-    name: "gt"
-    description: Greater than
-    type: "string"
-
-  lt:
-    in: "query"
-    name: "lt"
-    description: Less than
-    type: "string"
+    allowEmptyValue: true
+  initials:
+    in: query
+    name: initials
+    description: initials
+    required: false
+    type: string
+    allowEmptyValue: true
