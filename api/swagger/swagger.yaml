@@ -11,7 +11,7 @@ info:
   contact:
     name: "API Docs"
     url: "https://quienesquien.wiki/contact"
-    email: "admin@quienesquien.wiki"
+    email: "info@quienesquien.wiki"
   license:
     name: "Apache 2.0"
     url: "https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE"
@@ -100,7 +100,7 @@ paths:
           description: Internal ID of person
           required: true
           type: string
-          pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+          pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       responses:
         "200":
           description: Success
@@ -192,7 +192,7 @@ paths:
          description: Internal ID of organization
          required: true
          type: string
-         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+         pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
      responses:
        200:
          description: An array of organizations
@@ -323,7 +323,7 @@ paths:
          description: Internal ID of contract
          required: true
          type: string
-         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+         pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
      responses:
        200:
          description: An array of contracts
@@ -433,7 +433,7 @@ paths:
          description: Internal ID of membership
          required: true
          type: string
-         pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+    #     pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
      responses:
        200:
          description: An array of Memberships
