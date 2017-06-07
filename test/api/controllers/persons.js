@@ -3,7 +3,10 @@ const request = require('supertest');
 const server = require('../../../app');
 const db = require('../../../api/db');
 const collection = db.get('persons', { castIds: false });
-const testData = require('./persons-test-data.json');
+const cName = collection.name;
+const PATH = `/v1/${cName}`;
+const testDataJson = require('./test-data.json');
+const testData = testDataJson[cName];
 
 describe('controllers', function() {
 
@@ -17,44 +20,6 @@ describe('controllers', function() {
 
       after(function(done) {
         collection.drop(() => (done()))
-      });
-
-      it('should return 3 persons', function(done) {
-
-        request(server)
-          .get('/v1/persons')
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end(function(err, res) {
-            should.not.exist(err);
-            res.body.status.should.eql('success');
-            res.body.data.length.should.eql(5);
-
-            done();
-          });
-      });
-
-      it('should accept a path parameter', function(done) {
-
-        collection.findOne().then((doc) => {
-          const id = doc._id;
-          const path = `/v1/persons/${id}`;
-
-          request(server)
-            .get(path)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end(function(err, res) {
-              should.not.exist(err);
-              res.body.status.should.eql('success');
-              res.body.data[0]._id.should.eql(id);
-
-              done();
-            });
-        });
-
       });
 
       it('should accept a query parameter', function(done) {
