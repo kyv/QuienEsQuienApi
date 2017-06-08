@@ -7,6 +7,7 @@ const contracts = db.get('contracts', { castIds: false });
 const persons = db.get('persons', { castIds: false });
 const organizations = db.get('organizations', { castIds: false });
 const testDataJson = require('./test-data.json');
+const extend = require('lodash/extend');
 
 // test generic capabilities which should be good for all resources
 
@@ -30,7 +31,8 @@ describe('controllers', function() {
       describe(`GET ${PATH}`, function() {
 
         before(function(done) {
-          collection.insert(testData).then((docs) => done());
+          const mapped = testData.map(o => (extend(o, {created_at: new Date('2016-06-10')})));
+          collection.insert(mapped).then((docs) => done());
         });
 
         after(function(done) {
@@ -72,8 +74,74 @@ describe('controllers', function() {
                 done();
               });
           });
-
         });
+
+        it(`should accept query param`, function(done) {
+
+          collection.findOne().then((doc) => {
+            const id = doc._id;
+            const path = `${PATH}/${id}`;
+
+            request(server)
+              .get(PATH)
+              .query({ _id: id })
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end(function(err, res) {
+                should.not.exist(err);
+                res.body.status.should.eql('success');
+                res.body.data[0]._id.should.eql(id);
+
+                done();
+              });
+          });
+        });
+
+        it(`should accept multiple comma sepereated query param`, function(done) {
+
+          collection.find({}, {limit: 2}).then((docs) => {
+            const ids = docs.map(o => (o._id));
+            const CSV = ids.join(',');
+            const path = `${PATH}?_id=${CSV}`;
+
+            request(server)
+              .get(path)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end(function(err, res) {
+                should.not.exist(err);
+                res.body.status.should.eql('success');
+                res.body.data.map(o => o._id).should.eql(ids);
+
+                done();
+              });
+          });
+        });
+
+        it(`should accept range query param`, function(done) {
+          const dateString = '2016-06-6';
+          const dateObject = new Date(dateString);
+          collection.find({ created_at: { $gt: dateObject }})
+          .then((docs) => {
+            const ids = docs.map(o => (o._id));
+            const path = `${PATH}?created_at>${dateString}`;
+            request(server)
+              .get(path)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end(function(err, res) {
+                should.not.exist(err);
+                res.body.status.should.eql('success');
+                res.body.data.map(o => o._id).should.eql(ids);
+
+                done();
+              });
+          });
+        });
+
       });
     });
 
