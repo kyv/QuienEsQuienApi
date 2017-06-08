@@ -6,6 +6,7 @@ const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
+const getDistinct = require('./lib').getDistinct;
 
 const JOINS = [
   {
@@ -93,6 +94,9 @@ function allPersonsPost(req, res) {
   });
 }
 
+function distinctPerson(req, res) {
+  getDistinct(req, res, collection);
+}
 
 function singlePerson(req, res) {
   const query = getQuery(req);
@@ -111,4 +115,5 @@ module.exports = {
   allPersons,
   singlePerson,
   allPersonsPost,
+  distinctPerson,
 };

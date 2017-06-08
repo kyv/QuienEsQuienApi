@@ -130,6 +130,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /persons/distinct/{field}:
+    x-swagger-router-controller: persons
+    get:
+      description: View uniq values for field
+      operationId: distinctPerson
+      tags:
+        - Persons
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Distinct"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /organizations:
     x-swagger-router-controller: organizations
@@ -243,6 +265,28 @@ paths:
          description: Error
          schema:
            $ref: "#/definitions/ErrorResponse"
+  /organizations/distinct/{field}:
+    x-swagger-router-controller: organizations
+    get:
+      description: View uniq values for field
+      operationId: distinctOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Distinct"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /contracts:
     x-swagger-router-controller: contracts
@@ -395,6 +439,28 @@ paths:
          description: Error
          schema:
            $ref: "#/definitions/ErrorResponse"
+  /contracts/distinct/{field}:
+    x-swagger-router-controller: contracts
+    get:
+      description: View uniq values for field
+      operationId: distinctContract
+      tags:
+        - Contracts
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Distinct"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
   /memberships:
     x-swagger-router-controller: memberships
@@ -526,6 +592,29 @@ paths:
          description: Error
          schema:
            $ref: "#/definitions/ErrorResponse"
+  /memberships/distinct/{field}:
+    x-swagger-router-controller: memberships
+    get:
+      description: View uniq values for field
+      operationId: distinctMembership
+      tags:
+        - Memberships
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Distinct"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 
 definitions:
   ErrorResponse:
@@ -534,6 +623,15 @@ definitions:
     properties:
       message:
         type: string
+
+  Distinct:
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: string
 
   Address:
     properties:

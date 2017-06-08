@@ -39,6 +39,27 @@ describe('controllers', function() {
 
       describe(`GET ${PATH}`, function() {
 
+        it(`should return distinct values ${cName}`, function(done) {
+          const path = `${PATH}/distinct/source`;
+
+          collection.distinct('source').then(docs => {
+            request(server)
+              .get(path)
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end(function(err, res) {
+                should.not.exist(err);
+                res.body.status.should.eql('success');
+                res.body.data.length.should.eql(docs.length);
+
+                done();
+              });
+          });
+
+        });
+
+
         it(`should return 5 ${cName}`, function(done) {
 
           request(server)
