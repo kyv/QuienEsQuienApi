@@ -142,6 +142,49 @@ describe('controllers', function() {
           });
         });
 
+        it('should post query', function(done) {
+
+          collection.findOne()
+          .then(doc => {
+            const id = doc._id;
+            request(server)
+              .post(PATH)
+              .send({ query: { _id: id } })
+              .set('Accept', 'application/json')
+              .expect('Content-Type', /json/)
+              .expect(200)
+              .end(function(err, res) {
+                should.not.exist(err);
+                res.body.status.should.eql('success');
+                res.body.data.map(o => o._id).should.eql([id]);
+
+                done();
+              });
+          });
+        });
+
+      it('should post query multiple', function(done) {
+        collection.find()
+        .then(docs => {
+          const ids = docs.map(o => (o._id));
+
+          request(server)
+            .post(PATH)
+            .send({ query: { _id: { $in: ids } } })
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
+              should.not.exist(err);
+              res.body.status.should.eql('success');
+              res.body.data.map(o => o._id).should.eql(ids
+              );
+
+              done();
+            });
+        });
+      });
+
       });
     });
 
