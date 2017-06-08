@@ -120,13 +120,15 @@ describe('controllers', function() {
           });
         });
 
-        it(`should accept range query param`, function(done) {
+        it('should accept range query param', function(done) {
           const dateString = '2016-06-6';
           const dateObject = new Date(dateString);
-          collection.find({ created_at: { $gt: dateObject }})
-          .then((docs) => {
+
+          collection.find({ created_at: { $gt: dateObject } })
+          .then(docs => {
             const ids = docs.map(o => (o._id));
             const path = `${PATH}?created_at>${dateString}`;
+
             request(server)
               .get(path)
               .set('Accept', 'application/json')
