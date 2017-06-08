@@ -17,6 +17,7 @@ const sanitize = require('mongo-sanitize');
 const parser = require('mongo-parse');
 const moment = require('moment');
 // FIXME we should modify or replace `swagger_params_parser`
+// fitting instead of reparsing params here
 
 // https://www.npmjs.com/package/query-to-mongo#field-selection
 
