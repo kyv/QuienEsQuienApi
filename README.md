@@ -8,4 +8,4 @@ Built on [Swagger/OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/mas
 
 # query
 
-we use [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) to parse querys so you have a lot of flexibility for [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and [field selection](https://www.npmjs.com/package/query-to-mongo#field-selection).
+Please see [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) for references for [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and [field selection](https://www.npmjs.com/package/query-to-mongo#field-selection) with *GET*.
