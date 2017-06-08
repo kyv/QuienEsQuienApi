@@ -28,16 +28,16 @@ describe('controllers', function() {
 
     describe(cName, function() {
 
+      before(function(done) {
+        const mapped = testData.map(o => (extend(o, {created_at: new Date('2016-06-10')})));
+        collection.insert(mapped).then((docs) => done());
+      });
+
+      after(function(done) {
+        collection.drop(() => (done()))
+      });
+
       describe(`GET ${PATH}`, function() {
-
-        before(function(done) {
-          const mapped = testData.map(o => (extend(o, {created_at: new Date('2016-06-10')})));
-          collection.insert(mapped).then((docs) => done());
-        });
-
-        after(function(done) {
-          collection.drop(() => (done()))
-        });
 
         it(`should return 5 ${cName}`, function(done) {
 
@@ -143,6 +143,9 @@ describe('controllers', function() {
               });
           });
         });
+      });
+
+      describe(`POST ${PATH}`, function() {
 
         it('should post query', function(done) {
 
@@ -188,6 +191,7 @@ describe('controllers', function() {
       });
 
       });
+
     });
 
   }
