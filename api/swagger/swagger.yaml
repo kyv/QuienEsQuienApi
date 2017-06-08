@@ -25,6 +25,27 @@ paths:
     x-swagger-pipe: swagger_raw
   /persons:
     x-swagger-router-controller: persons
+    post:
+      description: Returns array of Person Documents
+      operationId: allPersonsPost
+      tags:
+        - Persons
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Mongo query"
+        required: true
+        schema:
+          $ref: "#/definitions/QueryObject"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Person"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     get:
       description: Returns array of Person Documents
       operationId: allPersons
@@ -86,7 +107,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-
   /persons/{_id}:
     x-swagger-router-controller: persons
     get:
@@ -113,6 +133,27 @@ paths:
 
   /organizations:
     x-swagger-router-controller: organizations
+    post:
+      description: Returns array of Organization Documents
+      operationId: allOrganizationsPost
+      tags:
+        - Organizations
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Mongo query"
+        required: true
+        schema:
+          $ref: "#/definitions/Organization"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Organization"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     get:
       tags:
         - Organizations
@@ -205,6 +246,27 @@ paths:
 
   /contracts:
     x-swagger-router-controller: contracts
+    post:
+      description: Returns array of Contract Documents
+      operationId: allContractsPost
+      tags:
+        - Contracts
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Mongo query"
+        required: true
+        schema:
+          $ref: "#/definitions/Contract"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Contract"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     get:
       operationId: allContracts
       description: "Returns all contracts"
@@ -336,6 +398,27 @@ paths:
 
   /memberships:
     x-swagger-router-controller: memberships
+    post:
+      description: Returns array of Membership Documents
+      operationId: allMembershipsPost
+      tags:
+        - Memberships
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Mongo query"
+        required: true
+        schema:
+          $ref: "#/definitions/Membership"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Membership"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     get:
       operationId: allMemberships
       description: "Returns array of memberships"
@@ -537,6 +620,20 @@ definitions:
         type: number
         format: float
 
+  QueryObject:
+    properties:
+      query:
+        type: object
+        description: mongo style query https://docs.mongodb.com/manual/tutorial/query-documents
+      project:
+        type: object
+        description: mongo style projection https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
+      aggregate:
+        type: array
+        description: mongo style aggregation pipeline https://docs.mongodb.com/manual/core/aggregation-pipeline/
+        items:
+          type: object
+
   Reference:
     properties:
       name:
@@ -556,7 +653,7 @@ definitions:
       _id:
         type: string
         minLength: 1
-        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+        # pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       person:
         type: string
       person_id:
@@ -581,7 +678,7 @@ definitions:
       _id:
         type: string
         minLength: 1
-        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       simple:
         type: string
         minLength: 1
@@ -641,7 +738,7 @@ definitions:
       _id:
         type: string
         minLength: 1
-        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       simple:
         type: string
         minLength: 1
@@ -718,7 +815,7 @@ definitions:
       _id:
         type: string
         minLength: 1
-        pattern: /^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$/
+        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       type:
         type: "string"
         minLength: 1
