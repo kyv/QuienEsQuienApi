@@ -5,6 +5,7 @@ const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
+const getDistinct = require('./lib').getDistinct;
 
 const JOINS = [
   {
@@ -100,6 +101,11 @@ function allOrganizationsPost(req, res) {
   });
 }
 
+function distinctOrganization(req, res) {
+  getDistinct(req, res, collection);
+}
+
+
 function singleOrganization(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
@@ -118,4 +124,5 @@ module.exports = {
   allOrganizations,
   singleOrganization,
   allOrganizationsPost,
+  distinctOrganization,
 };
