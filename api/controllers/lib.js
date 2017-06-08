@@ -14,11 +14,21 @@ const pickBy = require('lodash/pickBy');
 const mapValues = require('lodash/mapValues');
 const removeDiacritics = require('diacritics').remove;
 const sanitize = require('mongo-sanitize');
-const parser = require('mongo-parse')
+const parser = require('mongo-parse');
 const moment = require('moment');
 // FIXME we should modify or replace `swagger_params_parser`
 
 // https://www.npmjs.com/package/query-to-mongo#field-selection
+
+function parseDates(string) {
+  const object = new Date(string);
+  const isValidDate = moment(object).isValid();
+
+  if (isValidDate) {
+    return object;
+  }
+  return string;
+}
 
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
@@ -30,12 +40,7 @@ function getQuery(req) {
   const query = q2m(string, { ignore: 'embed' });
   const parsed = parser.parse(query.criteria);
 
-  query.criteria = parsed.mapValues((field, value) => {
-    if (moment(value).isValid()) {
-      return new Date(value)
-    }
-    return value
-  });
+  query.criteria = parsed.mapValues((field, value) => (parseDates(value)));
   query.embed = (isString(sane.embed));
   return query;
 }
