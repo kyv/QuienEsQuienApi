@@ -30,7 +30,7 @@ describe('controllers', function() {
 
       before(function(done) {
         const mapped = testData.map(o => (extend(o, {created_at: new Date('2016-06-10')})));
-        collection.insert(mapped).then((docs) => done());
+        collection.insert(mapped).then(() => done());
       });
 
       after(function(done) {
@@ -210,11 +210,7 @@ describe('controllers', function() {
             });
         });
       });
-
       });
-
     });
-
   }
-
 });
