@@ -46,6 +46,22 @@ function getQuery(req) {
   return query;
 }
 
+function getDistinct(req, res, collection) {
+  const field = req.swagger.params.field.value;
+
+  res.charSet('utf-8');
+  return collection.distinct(field)
+  .then(data => {
+    const size = data.length;
+
+    res.json({
+      status: 'success',
+      data,
+      size,
+    });
+  });
+}
+
 function queryToPipeline(query, JOINS) {
   const pipeline = [{ $match: query.criteria }];
 
@@ -115,4 +131,5 @@ module.exports = {
   arrayResultsOptions,
   getQuery,
   allDocuments,
+  getDistinct,
 };

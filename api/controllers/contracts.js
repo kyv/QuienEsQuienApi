@@ -5,6 +5,7 @@ const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
+const getDistinct = require('./lib').getDistinct;
 
 const JOINS = [
   { $unwind: {
@@ -99,6 +100,10 @@ function allContractsPost(req, res) {
   });
 }
 
+function distinctContract(req, res) {
+  getDistinct(req, res, collection);
+}
+
 function singleContract(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
@@ -117,4 +122,5 @@ module.exports = {
   allContracts,
   singleContract,
   allContractsPost,
+  distinctContract,
 };
