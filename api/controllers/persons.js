@@ -1,5 +1,5 @@
 const db = require('../db');
-const persons = db.get('persons', { castIds: false });
+const collection = db.get('persons', { castIds: false });
 const omit = require('lodash/omit');
 const personMemberMap = require('./lib').personMemberMap;
 const omitEmpty = require('./lib').omitEmpty;
@@ -52,7 +52,7 @@ function allPersons(req, res) {
   const query = getQuery(req);
 
   res.charSet('utf-8');
-  allDocuments(query, persons, JOINS)
+  allDocuments(query, collection, JOINS)
   .then(array => {
     let data = array[1];
     const size = array[1].length;
@@ -71,12 +71,35 @@ function allPersons(req, res) {
   });
 }
 
+function allPersonsPost(req, res) {
+  const query = req.body.query;
+  const project = req.body.project;
+  const resultsP = collection.find(query);
+  const countP = collection.count(query);
+
+  res.charSet('utf-8');
+  return Promise.all([countP, resultsP])
+  .then(array => {
+    const data = array[1];
+    const size = data.length;
+
+    res.json({
+      status: 'success',
+      data,
+      size,
+      offset: project && project.limit || 0,
+      pages: Math.ceil((array[0] / size)),
+    });
+  });
+}
+
+
 function singlePerson(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
   res.charSet('utf-8');
-  persons.aggregate(pipeline).then(docs => {
+  collection.aggregate(pipeline).then(docs => {
     res.json({
       status: 'success',
       data: personDataMap(docs),
@@ -87,4 +110,5 @@ function singlePerson(req, res) {
 module.exports = {
   allPersons,
   singlePerson,
+  allPersonsPost,
 };
