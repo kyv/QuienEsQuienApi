@@ -10,7 +10,7 @@ info:
   termsOfService: "http://example.com/about/terms"
   contact:
     name: "API Docs"
-    url: "https://quienesquien.wiki/contact"
+    url: "https://www.quienesquien.wiki/contact"
     email: "info@quienesquien.wiki"
   license:
     name: "Apache 2.0"
