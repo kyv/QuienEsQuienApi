@@ -1,5 +1,5 @@
 const db = require('../db');
-const memberships = db.get('memberships', { castIds: false });
+const collection = db.get('memberships', { castIds: false });
 const omit = require('lodash/omit');
 const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
@@ -37,7 +37,7 @@ function allMemberships(req, res) {
   const query = getQuery(req);
 
   res.charSet('utf-8');
-  allDocuments(query, memberships, JOINS)
+  allDocuments(query, collection, JOINS)
   .then(array => {
     const data = array[1].map(o => (mapData(o)));
     const size = array[1].length;
@@ -55,12 +55,34 @@ function allMemberships(req, res) {
   });
 }
 
+function allMembershipsPost(req, res) {
+  const query = req.body.query;
+  const project = req.body.project;
+  const resultsP = collection.find(query);
+  const countP = collection.count(query);
+
+  res.charSet('utf-8');
+  return Promise.all([countP, resultsP])
+  .then(array => {
+    const data = array[1];
+    const size = data.length;
+
+    res.json({
+      status: 'success',
+      data,
+      size,
+      offset: project && project.limit || 0,
+      pages: Math.ceil((array[0] / size)),
+    });
+  });
+}
+
 function singleMembership(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
   res.charSet('utf-8');
-  memberships.aggregate(pipeline).then(docs => {
+  collection.aggregate(pipeline).then(docs => {
     res.json({
       status: 'success',
       data: docs,
@@ -71,4 +93,5 @@ function singleMembership(req, res) {
 module.exports = {
   allMemberships,
   singleMembership,
+  allMembershipsPost,
 };
