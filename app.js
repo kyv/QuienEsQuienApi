@@ -32,4 +32,10 @@ SwaggerRestify.create(config, (err, swaggerRestify) => {
 // FIXME gzip breaks swagger-ui
 // app.use(restify.gzipResponse());
 
-app.use(restify.CORS());
+app.use((request, response, next) => {
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
+  response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+  return next();
+});
