@@ -61,22 +61,27 @@ paths:
           in: query
           description: first name
           type: string
+          allowEmptyValue: true
         - name: family_name
           in: query
           description: family name
           type: string
+          allowEmptyValue: true
         - name: prefix
           in: query
           description: prefix
           type: string
+          allowEmptyValue: true
         - name: suffix
           in: query
           description: suffix
           type: string
+          allowEmptyValue: true
         - name: gender
           in: query
           description: gender
           type: string
+          allowEmptyValue: true
           enum:
             - Male
             - Female
@@ -86,11 +91,13 @@ paths:
           description: birthday
           type: string
           format: date
+          allowEmptyValue: true
         - name: date_death
           in: query
           description: day of departure
           type: string
           format: date
+          allowEmptyValue: true
         - $ref: "#/parameters/address"
         - $ref: "#/parameters/fields"
         - $ref: "#/parameters/omit"
@@ -963,21 +970,25 @@ parameters:
     in: query
     description: The entity's name
     type: string
+    allowEmptyValue: true
   _id:
     in: query
     name: _id
     description: Internal ID of entity
     type: string
+    allowEmptyValue: true
   simple:
     in: query
     name: simple
     description: Simpified name of person
     type: string
+    allowEmptyValue: true
   description:
     in: query
     name: description
     description: Description of entity
     type: string
+    allowEmptyValue: true
   contract_count:
     in: query
     name: contract_count
