@@ -135,6 +135,7 @@ describe('controllers', function() {
               .end(function(err, res) {
                 should.not.exist(err);
                 res.body.status.should.eql('success');
+                res.body.data.should.not.eql([]);
                 res.body.data.map(o => o._id).should.eql(ids);
 
                 done();
@@ -159,6 +160,7 @@ describe('controllers', function() {
               .end(function(err, res) {
                 should.not.exist(err);
                 res.body.status.should.eql('success');
+                res.body.data.should.not.eql([]);
                 res.body.data.map(o => o._id).should.eql(ids);
 
                 done();
@@ -183,6 +185,7 @@ describe('controllers', function() {
               .end(function(err, res) {
                 should.not.exist(err);
                 res.body.status.should.eql('success');
+                res.body.data.should.not.eql([]);
                 res.body.data.map(o => o._id).should.eql([id]);
 
                 done();
@@ -204,6 +207,7 @@ describe('controllers', function() {
             .end(function(err, res) {
               should.not.exist(err);
               res.body.status.should.eql('success');
+              res.body.data.should.not.eql([]);
               res.body.data.map(o => o._id).should.eql(ids
               );
 
