@@ -726,11 +726,6 @@ definitions:
       project:
         type: object
         description: mongo style projection https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
-      aggregate:
-        type: array
-        description: mongo style aggregation pipeline https://docs.mongodb.com/manual/core/aggregation-pipeline/
-        items:
-          type: object
 
   Reference:
     properties:
