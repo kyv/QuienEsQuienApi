@@ -51,6 +51,7 @@ describe('controllers', function() {
               .end(function(err, res) {
                 should.not.exist(err);
                 res.body.status.should.eql('success');
+                res.body.data.should.not.eql([]);
                 res.body.data.length.should.eql(docs.length);
 
                 done();
