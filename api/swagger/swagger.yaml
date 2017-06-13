@@ -166,7 +166,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   /organizations:
     x-swagger-router-controller: organizations
     post:
@@ -175,12 +174,12 @@ paths:
       tags:
         - Organizations
       parameters:
-      - in: 'body'
-        name: 'body'
-        description: 'Mongo query'
-        required: true
-        schema:
-          $ref: '#/definitions/Organization'
+        - in: body
+          name: body
+          description: Mongo query
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
       responses:
         '200':
           description: Success
@@ -196,7 +195,6 @@ paths:
       description: Returns all organizations
       operationId: allOrganizations
       parameters:
-
         - $ref: '#/parameters/_id'
         - $ref: '#/parameters/simple'
         - $ref: '#/parameters/name'
@@ -245,7 +243,6 @@ paths:
         - $ref: '#/parameters/sort'
         - $ref: '#/parameters/embed'
         - $ref: '#/parameters/offset'
-
       responses:
         200:
           description: An array of organizations
@@ -255,13 +252,12 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  /organizations/{_id}:
+  '/organizations/{_id}':
     x-swagger-router-controller: organizations
     get:
      tags:
        - Organizations
-     description: Returns an organizations
+     description: Returns an organization
      operationId: singleOrganization
      parameters:
        - name: _id
@@ -269,9 +265,9 @@ paths:
          description: Internal ID of organization
          required: true
          type: string
-         pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
      responses:
-       200:
+       '200':
          description: An array of organizations
          schema:
            $ref: '#/definitions/Organization'
