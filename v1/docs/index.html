@@ -74,8 +74,10 @@
 <script>
 window.onload = function() {
   // Build a system
+  const host = `${location.protocol}//${location.host}`;
+  const spec = `${host}/v1/spec.json` || 'https://api.quienesquien.wiki/v1/spec.json';
   const ui = SwaggerUIBundle({
-    url: "/v1/spec.json",
+    url: spec,
     dom_id: '#swagger-ui',
     presets: [
       SwaggerUIBundle.presets.apis,
