@@ -9,7 +9,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "ENVIORNMENT=testing swagger project test"
+    "test": "ENVIORNMENT=testing swagger project test",
+    "build": "cd v1/docs && minify --output style.css swagger-ui.css fonts.css quienesquien.css"
   },
   "dependencies": {
     "diacritics": "^1.3.0",
