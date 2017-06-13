@@ -38,12 +38,12 @@ paths:
       tags:
         - Persons
       parameters:
-      - in: 'body'
-        name: 'body'
-        description: 'Mongo query'
-        required: true
-        schema:
-          $ref: '#/definitions/QueryObject'
+        - in: body
+          name: body
+          description: Mongo query
+          required: true
+          schema:
+            $ref: '#/definitions/QueryObject'
       responses:
         '200':
           description: Success
@@ -121,7 +121,7 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /persons/{_id}:
+  '/persons/{_id}':
     x-swagger-router-controller: persons
     get:
       description: Returns Person Object
@@ -134,7 +134,7 @@ paths:
           description: Internal ID of person
           required: true
           type: string
-          pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+          pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
       responses:
         '200':
           description: Success
@@ -144,7 +144,7 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /persons/distinct/{field}:
+  '/persons/distinct/{field}':
     x-swagger-router-controller: persons
     get:
       description: View uniq values for field
