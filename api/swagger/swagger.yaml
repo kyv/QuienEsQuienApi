@@ -609,7 +609,30 @@ definitions:
     properties:
       message:
         type: string
-
+  Planning:
+    properties:
+      brand:
+        type: number
+      program_key:
+        type: string
+      federal_funding:
+        type: number
+        format: float
+      projectID:
+        type: string
+  Tender:
+    properties:
+      tenderID:
+        type: number
+        format: float
+      tenderPeriod:
+        type: object
+      character:
+        type: string
+      procurementMethodDetails:
+        type: string
+      submissionMethod:
+        type: string
   Distinct:
     required:
       - data
@@ -618,7 +641,6 @@ definitions:
         type: array
         items:
           type: string
-
   Address:
     properties:
       street:
