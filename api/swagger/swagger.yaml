@@ -7,11 +7,10 @@ info:
   description: >-
     QuienEsQuien.Wiki API. Please see
     [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) for
-    references for
     [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and
     [field
     selection](https://www.npmjs.com/package/query-to-mongo#field-selection)
-    with *GET*.
+    references with *GET* method.
   title: api.quienesquien.wiki
   version: '1'
   termsOfService: 'http://example.com/about/terms'
@@ -33,7 +32,8 @@ paths:
   /persons:
     x-swagger-router-controller: persons
     post:
-      description: Returns array of Person Documents
+      summary: Retrieve array of Person Documents
+      description: Retrieve array of Person Documents
       operationId: allPersonsPost
       tags:
         - Persons
@@ -54,7 +54,8 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
     get:
-      description: Returns array of Person Documents
+      description: Retrieve array of Person Documents
+      summary: Retrieve array of Person Documents
       operationId: allPersons
       tags:
         - Persons
@@ -124,7 +125,8 @@ paths:
   '/persons/{_id}':
     x-swagger-router-controller: persons
     get:
-      description: Returns Person Object
+      description: Retrieve Person Document by _id
+      summary: Retrieve Person Document by _id
       operationId: singlePerson
       tags:
         - Persons
@@ -147,7 +149,8 @@ paths:
   '/persons/distinct/{field}':
     x-swagger-router-controller: persons
     get:
-      description: View uniq values for field
+      summary: Retrieve unique values for field
+      description: Retrieve uniq values for field
       operationId: distinctPerson
       tags:
         - Persons
@@ -169,7 +172,8 @@ paths:
   /organizations:
     x-swagger-router-controller: organizations
     post:
-      description: Returns array of Organization Documents
+      summary: Retrieve array of Organization Documents
+      description: Retrieve array of Organization Documents
       operationId: allOrganizationsPost
       tags:
         - Organizations
@@ -192,7 +196,8 @@ paths:
     get:
       tags:
         - Organizations
-      description: Returns all organizations
+      summary: Retrieve array of Organization Documents
+      description: Retrieve array of Organization Documents
       operationId: allOrganizations
       parameters:
         - $ref: '#/parameters/_id'
@@ -257,7 +262,8 @@ paths:
     get:
      tags:
        - Organizations
-     description: Returns an organization
+     summary: Retrieve Organization Document by _id
+     description: Retrieve Organization Document by _id
      operationId: singleOrganization
      parameters:
        - name: _id
@@ -278,7 +284,8 @@ paths:
   /organizations/distinct/{field}:
     x-swagger-router-controller: organizations
     get:
-      description: View uniq values for field
+      summary: Retrieve unique values for field
+      description: Retrieve uniq values for field
       operationId: distinctOrganization
       tags:
         - Organizations
@@ -301,7 +308,8 @@ paths:
   /contracts:
     x-swagger-router-controller: contracts
     post:
-      description: Returns array of Contract Documents
+      summary: Retrieve array of Contract Documents
+      description: Retrieve array of Contract Documents
       operationId: allContractsPost
       tags:
         - Contracts
@@ -323,10 +331,10 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     get:
       operationId: allContracts
-      description: 'Returns all contracts'
+      summary: Retrieve array of Contract Documents
+      description: Retrieve array of Contract Documents
       tags:
         - Contracts
-      summary: 'Short Summary of API Method'
       parameters:
         - in: query
           name: title
@@ -420,7 +428,8 @@ paths:
     get:
      tags:
        - Contracts
-     description: Returns a contract
+     description: Retrieve Contract Document by _id
+     summary: Retrieve Contract Document by _id
      operationId: singleContract
      parameters:
        - name: _id
@@ -441,7 +450,8 @@ paths:
   /contracts/distinct/{field}:
     x-swagger-router-controller: contracts
     get:
-      description: View uniq values for field
+      summary: Retrieve unique values for field
+      description: Retrieve unique values for field
       operationId: distinctContract
       tags:
         - Contracts
@@ -463,7 +473,8 @@ paths:
   /memberships:
     x-swagger-router-controller: memberships
     post:
-      description: Returns array of Membership Documents
+      description: Retrieve array of Membership Documents
+      summary: Retrieve array of Membership Documents
       operationId: allMembershipsPost
       tags:
         - Memberships
@@ -485,10 +496,10 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     get:
       operationId: allMemberships
-      description: Returns array of memberships
+      description: Retrieve array of Membership Documents
+      summary: Retrieve array of Membership Documents
       tags:
         - Memberships
-      summary: Short Summary of API Method
       parameters:
         - in: query
           name: department
@@ -563,7 +574,8 @@ paths:
     get:
       tags:
         - Memberships
-      description: Returns a single membership
+      summary: Retreive Membership Document by _id
+      description: Retreive Membership Document by _id
       operationId: singleMembership
       parameters:
         - name: _id
@@ -583,7 +595,8 @@ paths:
   '/memberships/distinct/{field}':
     x-swagger-router-controller: memberships
     get:
-      description: View uniq values for field
+      summary: Retieve unique values for field
+      description: Retieve unique values for field
       operationId: distinctMembership
       tags:
         - Memberships
