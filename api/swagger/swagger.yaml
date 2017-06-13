@@ -468,12 +468,12 @@ paths:
       tags:
         - Memberships
       parameters:
-      - in: 'body'
-        name: 'body'
-        description: 'Mongo query'
-        required: true
-        schema:
-          $ref: '#/definitions/Membership'
+        - in: body
+          name: body
+          description: Mongo query
+          required: true
+          schema:
+            $ref: '#/definitions/Membership'
       responses:
         '200':
           description: Success
@@ -485,66 +485,58 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     get:
       operationId: allMemberships
-      description: 'Returns array of memberships'
+      description: Returns array of memberships
       tags:
         - Memberships
-      summary: 'Short Summary of API Method'
+      summary: Short Summary of API Method
       parameters:
-        -
-          in: 'query'
-          name: 'department'
-          description: 'department'
-          type: 'string'
+        - in: query
+          name: department
+          description: department
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'role'
-          description: 'role'
-          type: 'string'
+        - in: query
+          name: role
+          description: role
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'person'
-          description: 'person'
-          type: 'string'
+        - in: query
+          name: person
+          description: person
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'person_id'
-          description: 'id of person'
-          type: 'string'
+        - in: query
+          name: person_id
+          description: id of person
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'org_id'
-          description: 'id of org'
-          type: 'string'
+        - in: query
+          name: org_id
+          description: id of org
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'label'
-          description: 'membership label'
-          type: 'string'
+        - in: query
+          name: label
+          description: membership label
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'shares'
-          description: 'number of sheares'
-          type: 'number'
+        - in: query
+          name: shares
+          description: number of sheares
+          type: number
           format: float
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'salary'
-          description: 'amount paid out'
-          type: 'number'
+        - in: query
+          name: salary
+          description: amount paid out
+          type: number
           format: float
           required: false
           allowEmptyValue: true
@@ -556,8 +548,8 @@ paths:
         - $ref: '#/parameters/limit'
         - $ref: '#/parameters/offset'
       responses:
-        200:
-          description: 'OK'
+        '200':
+          description: OK
           schema:
             type: array
             items:
@@ -566,31 +558,29 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  /memberships/{_id}:
+  '/memberships/{_id}':
     x-swagger-router-controller: memberships
     get:
-     tags:
-       - Memberships
-     description: Returns a single membership
-     operationId: singleMembership
-     parameters:
-       - name: _id
-         in: path
-         description: Internal ID of membership
-         required: true
-         type: string
-    #     pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
-     responses:
-       200:
-         description: An array of Memberships
-         schema:
-           $ref: '#/definitions/Membership'
-       default:
-         description: Error
-         schema:
-           $ref: '#/definitions/ErrorResponse'
-  /memberships/distinct/{field}:
+      tags:
+        - Memberships
+      description: Returns a single membership
+      operationId: singleMembership
+      parameters:
+        - name: _id
+          in: path
+          description: Internal ID of membership
+          required: true
+          type: string
+      responses:
+        '200':
+          description: An array of Memberships
+          schema:
+            $ref: '#/definitions/Membership'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/memberships/distinct/{field}':
     x-swagger-router-controller: memberships
     get:
       description: View uniq values for field
@@ -612,8 +602,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-
 definitions:
   ErrorResponse:
     required:
