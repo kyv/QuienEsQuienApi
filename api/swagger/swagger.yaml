@@ -671,7 +671,8 @@ definitions:
         items:
           type: string
           format: email
-          pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+          pattern: >-
+            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
       website:
         type: string
         format: url
@@ -680,7 +681,6 @@ definitions:
         type: string
         format: OCDID
         maxLength: 110
-
   Company:
     properties:
       sector:
@@ -725,16 +725,25 @@ definitions:
       total_dept:
         type: number
         format: float
-
   QueryObject:
     properties:
       query:
         type: object
-        description: mongo style query https://docs.mongodb.com/manual/tutorial/query-documents
+        description: >-
+          mongo style query
+          https://docs.mongodb.com/manual/tutorial/query-documents
       project:
         type: object
-        description: mongo style projection https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
-
+        description: >-
+          mongo style projection
+          https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
+      aggregate:
+        type: array
+        description: >-
+          mongo style aggregation pipeline
+          https://docs.mongodb.com/manual/core/aggregation-pipeline/
+        items:
+          type: object
   Reference:
     properties:
       name:
@@ -748,7 +757,6 @@ definitions:
         format: date-time
       publication_place:
         type: string
-
   Membership:
     properties:
       _id:
@@ -773,13 +781,12 @@ definitions:
       shares:
         type: number
         format: float
-
   Person:
     properties:
       _id:
         type: string
         minLength: 1
-        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
       simple:
         type: string
         minLength: 1
@@ -816,7 +823,7 @@ definitions:
       contract_count:
         type: integer
       address:
-          $ref: '#/definitions/Address'
+        $ref: '#/definitions/Address'
       references:
         type: array
         items:
@@ -833,13 +840,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Contract'
-
   Organization:
     properties:
       _id:
         type: string
         minLength: 1
-        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
       simple:
         type: string
         minLength: 1
@@ -853,13 +859,13 @@ definitions:
           - private
           - party
       address:
-          $ref: '#/definitions/Address'
+        $ref: '#/definitions/Address'
       company:
-          $ref: '#/definitions/Company'
+        $ref: '#/definitions/Company'
       initials:
-         type: string
+        type: string
       description:
-         type: string
+        type: string
       created_at:
         type: string
         format: date
@@ -873,73 +879,67 @@ definitions:
           - compranet
       contract_count:
         type: integer
-
       memberships:
         type: array
         uniqueItems: true
         minItems: 1
         items:
           $ref: '#/definitions/Membership'
-
       board:
         type: array
         uniqueItems: true
         minItems: 1
         items:
           $ref: '#/definitions/Membership'
-
       shares:
         type: 'array'
         uniqueItems: true
         minItems: 1
         items:
           $ref: '#/definitions/Membership'
-
       shareholders:
-        type: 'array'
+        type: array
         uniqueItems: true
         minItems: 1
         items:
           $ref: '#/definitions/Membership'
-
       contracts:
-        type: 'array'
+        type: array
         uniqueItems: true
         minItems: 1
         items:
           $ref: '#/definitions/Contract'
-
   Contract:
-    description: 'A Contract'
-    type: 'object'
+    description: A Contract
+    type: object
     properties:
       _id:
         type: string
         minLength: 1
-        pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
       type:
-        type: 'string'
+        type: string
         minLength: 1
       status:
-        type: 'string'
+        type: string
         minLength: 1
       title:
-        type: 'string'
+        type: string
         minLength: 1
       account_admin:
-        type: 'string'
+        type: string
         minLength: 1
       ocid:
-        type: 'string'
+        type: string
         minLength: 1
       procedure_type:
-        type: 'string'
+        type: string
         minLength: 1
       amount:
         type: number
         format: float
       currency:
-        type: 'string'
+        type: string
         minLength: 1
       suppliers_org:
         type: array
@@ -964,7 +964,6 @@ definitions:
         minLength: 1
       dependency:
         type: string
-
 parameters:
   name:
     name: name
@@ -1002,7 +1001,7 @@ parameters:
     description: address
     required: false
     type: string
-    format: 'dot notation'
+    format: dot notation
     allowEmptyValue: true
   fields:
     in: query
