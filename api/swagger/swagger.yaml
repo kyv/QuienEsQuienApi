@@ -328,81 +328,70 @@ paths:
         - Contracts
       summary: 'Short Summary of API Method'
       parameters:
-        -
-          in: 'query'
-          name: 'title'
-          description: 'Title of contract.'
-          type: 'string'
+        - in: query
+          name: title
+          description: Title of contract.
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'type'
-          description: 'Contract type'
-          type: 'string'
+        - in: query
+          name: type
+          description: Contract type
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'status'
-          description: 'Contract Status'
-          type: 'string'
+        - in: query
+          name: status
+          description: Contract Status
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'ocid'
-          description: 'Open Contracting Identifier'
-          type: 'string'
+        - in: query
+          name: ocid
+          description: Open Contracting Identifier
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'procedure_type'
-          description: 'Type of contractural proceedure'
-          type: 'string'
+        - in: query
+          name: procedure_type
+          description: Type of contractural proceedure
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'amount'
-          description: 'Monetary amount paid to supplier'
+        - in: query
+          name: amount
+          description: Monetary amount paid to supplier
           type: number
           format: float
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'currency'
-          description: 'Currency of given amount'
-          type: 'string'
+        - in: query
+          name: currency
+          description: Currency of given amount
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'suppliers_person'
-          description: 'Provider of given service'
-          type: 'string'
+        - in: query
+          name: suppliers_person
+          description: Provider of given service
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'suppliers_org'
-          description: 'Provider of given service'
-          type: 'string'
+        - in: query
+          name: suppliers_org
+          description: Provider of given service
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'department'
-          description: 'responsible public department'
-          type: 'string'
+        - in: query
+          name: department
+          description: responsible public department
+          type: string
           required: false
           allowEmptyValue: true
-        -
-          in: 'query'
-          name: 'dependency'
-          description: 'responsible public dependency'
+        - in: query
+          name: dependency
+          description: responsible public dependency
           type: string
           required: false
           allowEmptyValue: true
@@ -415,8 +404,8 @@ paths:
         - $ref: '#/parameters/limit'
         - $ref: '#/parameters/offset'
       responses:
-        200:
-          description: 'OK'
+        '200':
+          description: OK
           schema:
             type: array
             items:
@@ -471,7 +460,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   /memberships:
     x-swagger-router-controller: memberships
     post:
