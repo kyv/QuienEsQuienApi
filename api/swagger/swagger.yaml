@@ -4,16 +4,23 @@ schemes:
 - http
 - https
 info:
-  description: 'QuienEsQuien.Wiki API. Please see [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) for references for [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and [field selection](https://www.npmjs.com/package/query-to-mongo#field-selection) with *GET*.'
-  title: 'api.quienesquien.wiki'
+  description: >-
+    QuienEsQuien.Wiki API. Please see
+    [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) for
+    references for
+    [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and
+    [field
+    selection](https://www.npmjs.com/package/query-to-mongo#field-selection)
+    with *GET*.
+  title: api.quienesquien.wiki
   version: '1'
   termsOfService: 'http://example.com/about/terms'
   contact:
-    name: 'API Docs'
+    name: API Docs
     url: 'https://www.quienesquien.wiki/contact'
-    email: 'info@quienesquien.wiki'
+    email: info@quienesquien.wiki
   license:
-    name: 'Apache 2.0'
+    name: Apache 2.0
     url: 'https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE'
 basePath: /v1
 consumes:
