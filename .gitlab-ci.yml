@@ -1,0 +1,13 @@
+image: node:alpine
+
+services:
+  - mongo
+
+variables:
+  MONGODB_URI: 'mongodb://mongo/runner'
+  NODE_ENV: 'test'
+
+test_UI:
+  script:
+   - npm install --silent
+   - npm run test
