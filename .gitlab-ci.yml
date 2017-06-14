@@ -9,8 +9,7 @@ variables:
 
 build:
   tags:
-   - node
-   - mongo
+   - dev
   script:
    - npm install --silent
    - npm run test
