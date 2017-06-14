@@ -8,6 +8,8 @@ variables:
   NODE_ENV: 'test'
 
 build:
+  tags:
+   - dev
   script:
    - npm install --silent
    - npm run test
