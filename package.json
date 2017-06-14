@@ -9,7 +9,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "ENVIORNMENT=testing swagger project test",
+    "test": "ENVIORNMENT=testing ./node_modules/.bin/mocha test/api/controllers/*.js",
     "build": "cd v1/docs && minify --output style.css swagger-ui.css fonts.css quienesquien.css"
   },
   "dependencies": {
