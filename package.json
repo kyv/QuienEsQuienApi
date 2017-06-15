@@ -1,6 +1,6 @@
 {
   "name": "api.quienesquien.wiki",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "New Swagger API Project",
   "keywords": [],
@@ -9,7 +9,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "ENVIORNMENT=testing ./node_modules/.bin/mocha test/api/controllers/*.js",
+    "test": "./node_modules/.bin/mocha test/api/controllers/*.js",
     "build": "cd v1/docs && minify --output style.css swagger-ui.css fonts.css quienesquien.css"
   },
   "dependencies": {

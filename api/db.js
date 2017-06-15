@@ -1,10 +1,5 @@
 const monk = require('monk');
-
-const HOST = 'localhost:27017';
-const DB = process.env.ENVIORNMENT || 'meteor';
-const defaultDB = `${HOST}/${DB}`;
-
-const dbConnect = process.env.MONGODB_URI || defaultDB;
+const dbConnect = process.env.MONGODB_URI || 'localhost:27017/da39a3ee5';
 const db = monk(dbConnect);
 
 db.then(() => {
