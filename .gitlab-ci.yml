@@ -3,9 +3,31 @@ image: node:alpine
 services:
   - mongo
 
-variables:
-  MONGODB_URI: 'mongodb://mongo/runner'
-  NODE_ENV: 'test'
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  tags:
+   - dev
+  variables:
+    MONGODB_URI: 'mongodb://mongo/runner'
+    NODE_ENV: 'test'
+  script:
+   - npm install --silent
+   - npm run test
+
+deploy staging:
+  type: deploy
+  only:
+    - dev
+  environment:
+    name: stageing
+    url: https://quienesquienapi.herokuapp.com
+  script:
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/quienesquienapi.git
+    - git push -f heroku master
 
 build:
   tags:
