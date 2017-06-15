@@ -1,14 +1,13 @@
 image: node:alpine
 
-services:
-  - mongo
-
 stages:
   - test
   - deploy
 
 test:
   stage: test
+  services:
+    - mongo
   tags:
    - dev
   variables:
@@ -28,9 +27,11 @@ deploy staging:
     name: stageing
     url: https://quienesquienapi.herokuapp.com
   script:
-    - apk add --update git
+    - apk add --no-cache bash git openssh
     - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/quienesquienapi.git
-    - git push -f heroku master
+    - git remote -v
+    - git branch
+    - git push -f heroku dev:master
 
 deploy production:
   stage: deploy
