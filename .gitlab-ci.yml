@@ -29,9 +29,16 @@ deploy staging:
     - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/quienesquienapi.git
     - git push -f heroku master
 
-build:
+deploy production:
+  stage: deploy
   tags:
    - dev
+  only:
+   - tags
+   - master
+  environment:
+    name: production
+    url: https://www.quienesquien.wiki
   script:
    - npm install --silent
    - npm run test
