@@ -20,6 +20,8 @@ test:
 
 deploy staging:
   type: deploy
+  tags:
+    - dev
   only:
     - dev
   environment:
