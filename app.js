@@ -2,6 +2,10 @@ const SwaggerRestify = require('swagger-restify-mw');
 const restify = require('restify');
 const app = restify.createServer();
 
+if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
+  throw 'please configure MONGODB_URI\n'
+}
+
 module.exports = app; // for testing
 
 const config = {
