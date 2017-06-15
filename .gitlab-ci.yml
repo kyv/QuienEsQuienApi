@@ -28,6 +28,7 @@ deploy staging:
     name: stageing
     url: https://quienesquienapi.herokuapp.com
   script:
+    - apk add --update git
     - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/quienesquienapi.git
     - git push -f heroku master
 
