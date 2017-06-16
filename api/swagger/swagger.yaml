@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-swagger: '2.0'
-host: 'localhost:10010'
-=======
 swagger: "2.0"
 host: "quienesquienapi.herokuapp.com"
->>>>>>> modify spec for hosting on heroku
 schemes:
 - https
 info:
