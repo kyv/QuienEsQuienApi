@@ -30,15 +30,3 @@ deploy staging:
     url: https://quienesquienapi.herokuapp.com
   script:
     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
-
-deploy production:
-  stage: deploy
-  tags:
-   - dev
-  only:
-   - tags
-   - master
-  environment:
-    name: production
-    url: https://api.quienesquien.wiki
-  script:
