@@ -19,7 +19,7 @@ test:
    - npm run test
 
 deploy staging:
-  image: docker-dpl
+  image: tmaier/dpl
   type: deploy
   tags:
     - dev
