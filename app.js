@@ -17,7 +17,7 @@ app.use(restify.acceptParser(app.acceptable));
 app.get(/\/v1\/docs\/?.*/, restify.serveStatic({
   directory: __dirname,
   default: 'index.html',
-  //charSet: 'utf-8',
+  // charSet: 'utf-8',
 }));
 
 SwaggerRestify.create(config, (err, swaggerRestify) => {
