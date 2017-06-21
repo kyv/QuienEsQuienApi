@@ -4,8 +4,11 @@
   "private": true,
   "description": "New Swagger API Project",
   "keywords": [],
-  "author": "",
-  "license": "",
+  "license": "GPL-3.0",
+  "author": {
+    "name": "Kevin Brown",
+    "email": "kevin@rindecuentas.org"
+  },
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
