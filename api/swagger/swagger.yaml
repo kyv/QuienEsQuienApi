@@ -1,4 +1,4 @@
-swagger: "2.0"
+swagger: '2.0'
 host: "localhost:10010"
 schemes:
 - http
@@ -304,7 +304,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   /contracts:
     x-swagger-router-controller: contracts
     post:
@@ -422,7 +421,6 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   '/contracts/{_id}':
     x-swagger-router-controller: contracts
     get:
@@ -761,40 +759,30 @@ definitions:
       parties:
         type: array
         items:
-          type: object
           $ref: '#/definitions/Organization'
       buyer:
-        type: object
         $ref: '#/definitions/Organization'
       planning:
-        type: object
         $ref: '#/definitions/Planning'
       tender:
-        type: object
         $ref: '#/definitions/Tender'
       awards:
         type: array
         items:
-          type: object
           $ref: '#/definitions/Award'
       contracts:
         type: array
         items:
-          type: object
           $ref: '#/definitions/Contract'
       language:
         type: string
   Planning:
     properties:
-      brand:
-        type: number
-      program_key:
-        type: string
+      budget:
+        $ref: '#/definitions/Budget'
       federal_funding:
         type: number
         format: float
-      projectID:
-        type: string
   Tender:
     properties:
       tenderID:
@@ -1095,7 +1083,7 @@ definitions:
         items:
           $ref: '#/definitions/Membership'
       shares:
-        type: 'array'
+        type: array
         uniqueItems: true
         minItems: 1
         items:
@@ -1152,17 +1140,19 @@ definitions:
   Budget:
     properties:
       id:
-        type:
-          - string
+        type: string
+      branch:
+        type: number
+        format: integer
+      source:
+        type: string
       amount:
         type: number
         format: float
       project:
         type: string
       projectID:
-        type:
-          - string
-          - integer
+        type: string
       foreign_credit:
         type: boolean
       int_fin_org:
