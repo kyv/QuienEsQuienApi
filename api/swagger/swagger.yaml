@@ -1,7 +1,6 @@
 swagger: '2.0'
-host: "localhost:10010"
+host: "quienesquienapi.herokuapp.com"
 schemes:
-- http
 - https
 info:
   description: >-
