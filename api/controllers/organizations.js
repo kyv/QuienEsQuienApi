@@ -110,8 +110,8 @@ function singleOrganization(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
+  res.charSet('utf-8');
   collection.aggregate(pipeline).then(docs => {
-    res.charSet('utf-8');
     res.json({
       status: 'success',
       data: docs.map(o => (orgDataMap(o))),
