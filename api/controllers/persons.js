@@ -27,26 +27,24 @@ const JOINS = [
   },
 ];
 
-function personDataMap(array) {
-  return array.map(o => {
-    const object = o;
-    const memberships = o.memberships.map(m => (personMemberMap(m)));
-    const board = memberships.filter(b => (b.department === 'board'));
-    const shares = memberships.filter(b => (b.role === 'shareholder'));
+function personDataMap(o) {
+  const object = o;
+  const memberships = o.memberships.map(m => (personMemberMap(m)));
+  const board = memberships.filter(b => (b.department === 'board'));
+  const shares = memberships.filter(b => (b.role === 'shareholder'));
 
-    object.board = board;
-    object.shares = shares;
-    return omitEmpty(omit(object, [
-      'memberships',
-      'user_id',
-      'contracts._id',
-      'contracts.user_id',
-      'memberships._id',
-      'memberships.user_id',
-      'memberships.person',
-      'memberships.person_id',
-    ]));
-  });
+  object.board = board;
+  object.shares = shares;
+  return omitEmpty(omit(object, [
+    'memberships',
+    'user_id',
+    'contracts._id',
+    'contracts.user_id',
+    'memberships._id',
+    'memberships.user_id',
+    'memberships.person',
+    'memberships.person_id',
+  ]));
 }
 
 function allPersons(req, res) {
@@ -59,7 +57,7 @@ function allPersons(req, res) {
       const size = array[1].length;
 
       if (query.embed) {
-        data = personDataMap(array[1]);
+        data = array[1].map(o => (personDataMap(o)));
       }
 
       res.json({
@@ -106,7 +104,8 @@ function singlePerson(req, res) {
   collection.aggregate(pipeline).then(docs => {
     res.json({
       status: 'success',
-      data: personDataMap(docs),
+      data: docs.map(o => (personDataMap(o))),
+      size: docs.length,
     });
   });
 }
