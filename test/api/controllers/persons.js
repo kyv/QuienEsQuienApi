@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const should = require('should');
 const request = require('supertest');
 const server = require('../../../app');
@@ -8,18 +9,18 @@ const PATH = `/v1/${cName}`;
 const testDataJson = require('./test-data.json');
 const testData = testDataJson[cName];
 
-describe('controllers', function() {
+describe('controllers', () => {
 
-  describe('persons', function() {
+  describe('persons', () => {
 
-    describe('GET /v1/persons', function() {
+    describe('GET /v1/persons', () => {
 
-      before(function(done) {
-        collection.insert(testData).then((docs) => done());
+      before(done => {
+        collection.insert(testData).then(() => done());
       });
 
-      after(function(done) {
-        collection.drop(() => (done()))
+      after(done => {
+        collection.drop(() => (done()));
       });
 
       it('should simplify person simple param', done => {
@@ -44,14 +45,14 @@ describe('controllers', function() {
 
       });
 
-      it('should accept a query parameter', function(done) {
+      it('should accept a query parameter', done => {
         request(server)
           .get('/v1/persons')
-          .query({ simple: 'martha puente castillo'})
+          .query({ simple: 'martha puente castillo' })
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data[0].simple.should.eql('martha puente castillo');
@@ -60,14 +61,14 @@ describe('controllers', function() {
           });
       });
 
-      it('should accept a regex query parameter', function(done) {
+      it('should accept a regex query parameter', done => {
         request(server)
           .get('/v1/persons')
-          .query({ name: '/martha/i'})
+          .query({ name: '/martha/i' })
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data[0].simple.should.eql('martha puente castillo');
@@ -76,13 +77,13 @@ describe('controllers', function() {
           });
       });
 
-      it('should accept query for $exists', function(done) {
+      it('should accept query for $exists', done => {
         request(server)
           .get('/v1/persons?contract_count')
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             // console.log(res.body);
             res.body.status.should.eql('success');
@@ -92,7 +93,6 @@ describe('controllers', function() {
           });
       });
     });
-
 
   });
 
