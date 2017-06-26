@@ -61,15 +61,15 @@ function getDistinct(req, res, collection) {
 
   res.charSet('utf-8');
   return collection.distinct(field)
-  .then(data => {
-    const size = data.length;
+    .then(data => {
+      const size = data.length;
 
-    res.json({
-      status: 'success',
-      data,
-      size,
+      res.json({
+        status: 'success',
+        data,
+        size,
+      });
     });
-  });
 }
 
 function queryToPipeline(query, JOINS) {
@@ -112,7 +112,6 @@ function allDocuments(query, collection, JOINS) {
 
     return Promise.all([countP, resultsP]);
   }
-
   const resultsP = collection.find(query.criteria, query.options);
 
   return Promise.all([countP, resultsP]);
