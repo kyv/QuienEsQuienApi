@@ -19,7 +19,6 @@
   rules: {
     "require-jsdoc": 'off',
     "lines-around-comment": off,
-    "no-console": off,
     "indent": ["error", 2],
     "quotes": ["error", "single"],
     "comma-dangle": ["error", "always-multiline"],
