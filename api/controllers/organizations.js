@@ -61,22 +61,22 @@ function allOrganizations(req, res) {
 
   res.charSet('utf-8');
   allDocuments(query, collection, JOINS)
-  .then(array => {
-    let data = array[1];
-    const size = array[1].length;
+    .then(array => {
+      let data = array[1];
+      const size = array[1].length;
 
-    if (query.embed) {
-      data = array[1].map(o => (orgDataMap(o)));
-    }
+      if (query.embed) {
+        data = array[1].map(o => (orgDataMap(o)));
+      }
 
-    res.json({
-      status: 'success',
-      data,
-      size,
-      offset: query.options.skip,
-      pages: Math.ceil((array[0] / size)),
+      res.json({
+        status: 'success',
+        data,
+        size,
+        offset: query.options.skip,
+        pages: Math.ceil((array[0] / size)),
+      });
     });
-  });
 }
 
 function allOrganizationsPost(req, res) {
@@ -87,18 +87,18 @@ function allOrganizationsPost(req, res) {
 
   res.charSet('utf-8');
   return Promise.all([countP, resultsP])
-  .then(array => {
-    const data = array[1];
-    const size = data.length;
+    .then(array => {
+      const data = array[1];
+      const size = data.length;
 
-    res.json({
-      status: 'success',
-      data,
-      size,
-      offset: project && project.limit || 0,
-      pages: Math.ceil((array[0] / size)),
+      res.json({
+        status: 'success',
+        data,
+        size,
+        offset: project && project.limit || 0,
+        pages: Math.ceil((array[0] / size)),
+      });
     });
-  });
 }
 
 function distinctOrganization(req, res) {
