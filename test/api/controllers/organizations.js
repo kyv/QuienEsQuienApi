@@ -22,6 +22,28 @@ describe('controllers', function() {
         collection.drop(() => (done()))
       });
 
+      it('should simplify person simple param', done => {
+
+        collection.findOne().then(doc => {
+          request(server)
+            .get(PATH)
+            .set('Accept', 'application/json')
+            .query({ simple: doc.name })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end((err, res) => {
+              should.not.exist(err);
+              res.body.status.should.eql('success');
+              res.body.data.should.not.eql([]);
+              res.body.data[0].name.should.eql(doc.name);
+              res.body.data[0].simple.should.eql(doc.simple);
+
+              done();
+            });
+        });
+
+      });
+
       it('should accept a query parameter', function(done) {
         request(server)
           .get(PATH)

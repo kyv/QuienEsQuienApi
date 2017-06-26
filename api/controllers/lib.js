@@ -31,15 +31,25 @@ function parseDates(string) {
   return string;
 }
 
+function simpleName(string) {
+  return removeDiacritics(string)
+    .replace(/[,.]/g, '') // remove commas and periods
+    .toLowerCase();
+}
+
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
   const sane = sanitize(req.query);
   const mapped = mapValues(params, p => (p.value));
 
+  if (mapped.simple) {
+    mapped.simple = simpleName(mapped.simple);
+  }
   extend(sane, mapped);
   const string = qs.stringify(sane);
   const query = q2m(string, { ignore: 'embed' });
   const parsed = parser.parse(query.criteria);
+
 
   query.criteria = parsed.mapValues((field, value) => (parseDates(value)));
   query.embed = (isString(sane.embed));
@@ -115,12 +125,6 @@ function omitEmpty(object) {
     omitBy(v => (isString(v) && isEmpty(v))),
     omitBy(v => (!isDate(v) && isObject(v) && isEmpty(v)))
   )(object);
-}
-
-function simpleName(string) {
-  return removeDiacritics(string)
-    .replace(/[,.]/g, '') // remove commas and periods
-    .toLowerCase();
 }
 
 module.exports = {
