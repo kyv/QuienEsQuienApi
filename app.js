@@ -3,7 +3,7 @@ const restify = require('restify');
 const app = restify.createServer();
 
 if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
-  throw 'please configure MONGODB_URI\n';
+  throw 'please configure MONGODB_URI\nwith "localhost:27017/foo" or similar';
 }
 
 module.exports = app; // for testing
