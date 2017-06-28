@@ -7,6 +7,7 @@ const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
+const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
   {
@@ -49,47 +50,21 @@ function personDataMap(o) {
 
 function allPersons(req, res) {
   const query = getQuery(req);
+  const offset = query.options.skip || 0;
 
-  res.charSet('utf-8');
   allDocuments(query, collection, JOINS)
-    .then(array => {
-      let data = array[1];
-      const size = array[1].length;
-
-      if (query.embed) {
-        data = array[1].map(o => (personDataMap(o)));
-      }
-
-      res.json({
-        status: 'success',
-        data,
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
+  .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
 function allPersonsPost(req, res) {
   const query = req.body.query;
   const project = req.body.project;
+  const offset = project && project.skip || 0;
   const resultsP = collection.find(query);
   const countP = collection.count(query);
 
-  res.charSet('utf-8');
   return Promise.all([countP, resultsP])
-    .then(array => {
-      const data = array[1];
-      const size = data.length;
-
-      res.json({
-        status: 'success',
-        data,
-        size,
-        offset: project && project.limit || 0,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
+  .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
 function distinctPerson(req, res) {
@@ -100,14 +75,8 @@ function singlePerson(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
-  res.charSet('utf-8');
-  collection.aggregate(pipeline).then(docs => {
-    res.json({
-      status: 'success',
-      data: docs.map(o => (personDataMap(o))),
-      size: docs.length,
-    });
-  });
+  collection.aggregate(pipeline)
+  .then(docs => (dataReturn(res, [1, docs], 0, true, personDataMap)));
 }
 
 module.exports = {
