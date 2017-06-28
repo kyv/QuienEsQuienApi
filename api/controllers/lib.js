@@ -126,6 +126,24 @@ function omitEmpty(object) {
   )(object);
 }
 
+function dataReturn(res, array, offset, embed, objectFormat) {
+  let data = array[1];
+  const size = array[1].length;
+
+  if (embed) {
+    data = array[1].map(o => (objectFormat(o)));
+  }
+
+  res.charSet('utf-8');
+  res.json({
+    status: 'success',
+    data,
+    size,
+    offset,
+    pages: Math.ceil((array[0] / size)),
+  });
+}
+
 module.exports = {
   personMemberMap,
   omitEmpty,
@@ -135,4 +153,5 @@ module.exports = {
   getQuery,
   allDocuments,
   getDistinct,
+  dataReturn,
 };

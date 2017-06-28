@@ -6,6 +6,7 @@ const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
+const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
   {
@@ -58,47 +59,22 @@ function orgDataMap(o) {
 
 function allOrganizations(req, res) {
   const query = getQuery(req);
+  const offset = query.options.skip || 0;
 
-  res.charSet('utf-8');
   allDocuments(query, collection, JOINS)
-    .then(array => {
-      let data = array[1];
-      const size = array[1].length;
-
-      if (query.embed) {
-        data = array[1].map(o => (orgDataMap(o)));
-      }
-
-      res.json({
-        status: 'success',
-        data,
-        size,
-        offset: query.options.skip,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
+  .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
 function allOrganizationsPost(req, res) {
   const query = req.body.query;
   const project = req.body.project;
+  const offset = project && project.skip || 0;
   const resultsP = collection.find(query);
   const countP = collection.count(query);
 
-  res.charSet('utf-8');
   return Promise.all([countP, resultsP])
-    .then(array => {
-      const data = array[1];
-      const size = data.length;
+  .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 
-      res.json({
-        status: 'success',
-        data,
-        size,
-        offset: project && project.limit || 0,
-        pages: Math.ceil((array[0] / size)),
-      });
-    });
 }
 
 function distinctOrganization(req, res) {
@@ -110,14 +86,8 @@ function singleOrganization(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
-  res.charSet('utf-8');
-  collection.aggregate(pipeline).then(docs => {
-    res.json({
-      status: 'success',
-      data: docs.map(o => (orgDataMap(o))),
-      size: docs.length,
-    });
-  });
+  collection.aggregate(pipeline)
+  .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap)));
 }
 
 module.exports = {
