@@ -62,7 +62,7 @@ function allOrganizations(req, res) {
   const offset = query.options.skip || 0;
 
   allDocuments(query, collection, JOINS)
-  .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
+    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
 function allOrganizationsPost(req, res) {
@@ -73,7 +73,7 @@ function allOrganizationsPost(req, res) {
   const countP = collection.count(query);
 
   return Promise.all([countP, resultsP])
-  .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
+    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 
 }
 
@@ -87,7 +87,7 @@ function singleOrganization(req, res) {
   const pipeline = queryToPipeline(query, JOINS);
 
   collection.aggregate(pipeline)
-  .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap)));
+    .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap)));
 }
 
 module.exports = {
