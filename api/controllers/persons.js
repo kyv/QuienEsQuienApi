@@ -53,7 +53,7 @@ function allPersons(req, res) {
   const offset = query.options.skip || 0;
 
   allDocuments(query, collection, JOINS)
-  .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
+    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
 function allPersonsPost(req, res) {
@@ -64,7 +64,7 @@ function allPersonsPost(req, res) {
   const countP = collection.count(query);
 
   return Promise.all([countP, resultsP])
-  .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
+    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
 function distinctPerson(req, res) {
@@ -76,7 +76,7 @@ function singlePerson(req, res) {
   const pipeline = queryToPipeline(query, JOINS);
 
   collection.aggregate(pipeline)
-  .then(docs => (dataReturn(res, [1, docs], 0, true, personDataMap)));
+    .then(docs => (dataReturn(res, [1, docs], 0, true, personDataMap)));
 }
 
 module.exports = {

@@ -61,7 +61,7 @@ function allContracts(req, res) {
   const offset = query.options.skip || 0;
 
   allDocuments(query, collection, JOINS)
-  .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
+    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
 }
 
 function allContractsPost(req, res) {
@@ -73,7 +73,7 @@ function allContractsPost(req, res) {
 
   res.charSet('utf-8');
   return Promise.all([countP, resultsP])
-  .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
+    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
 }
 
 function distinctContract(req, res) {
@@ -85,7 +85,7 @@ function singleContract(req, res) {
   const pipeline = queryToPipeline(query, JOINS);
 
   collection.aggregate(pipeline)
-  .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));
+    .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));
 
 }
 
