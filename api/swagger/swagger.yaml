@@ -468,7 +468,9 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
   /contracts/releases.json:
+    x-swagger-router-controller: ocds
     get:
+      operationId: allReleases
       summary: Returns OCDS releases
       description: >-
         This should return an object and in it should be a OCDS releases list
@@ -512,7 +514,9 @@ paths:
           type: string
           description: Filter results for only releases with this ocid
   /contracts/records.json:
+    x-swagger-router-controller: ocds
     get:
+      operationId: allRecords
       summary: Returns OCDS records
       description: >-
         This should return an object and in it should be a OCDS records list and
@@ -542,7 +546,9 @@ paths:
           type: string
           description: Filter results for only records in particular package
   /contracts/release.json:
+    x-swagger-router-controller: ocds
     get:
+      operationId: singleRelease
       summary: Returns an OCDS release
       description: >-
         This should return an OCDS release object. There is potential for
@@ -575,7 +581,9 @@ paths:
           type: string
           description: Specify the ocid of the release
   /contracts/record.json:
+    x-swagger-router-controller: ocds
     get:
+      operationId: singleRecord
       summary: Returns an OCDS record
       description: This should return an OCDS record object.
       responses:
