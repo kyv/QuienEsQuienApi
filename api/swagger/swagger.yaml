@@ -754,11 +754,11 @@ definitions:
     properties:
       ocid:
         type: string
-      releaseID:
+      id:
         type: string
-      releaseDate:
+      date:
         type: string
-      releaseTag:
+      tag:
         type: array
         items:
           type: string
@@ -767,9 +767,9 @@ definitions:
       parties:
         type: array
         items:
-          $ref: '#/definitions/Organization'
+          $ref: '#/definitions/Party'
       buyer:
-        $ref: '#/definitions/Organization'
+        $ref: '#/definitions/OrganizationReference'
       planning:
         $ref: '#/definitions/Planning'
       tender:
@@ -781,7 +781,7 @@ definitions:
       contracts:
         type: array
         items:
-          $ref: '#/definitions/Contract'
+          $ref: '#/definitions/ocdsContract'
       language:
         type: string
   Planning:
@@ -793,15 +793,11 @@ definitions:
         format: float
   Tender:
     properties:
-      tenderID:
+      id:
         type: number
         format: float
-      start_date:
-        type: string
-        format: date-time
-      end_date:
-        type: string
-        format: date-time
+      tenderPeriod:
+        $ref: '#/definitions/ocdsPeriod'
       procurementMethod:
         type: string
         enum:
@@ -829,13 +825,18 @@ definitions:
     properties:
       title:
         type: string
-      amount:
-        type: number
-        format: float
-      suppliers_org:
+      value:
+        type: object
+        properties:
+          amount:
+            type: number
+            format: float
+          currency:
+            type: string
+      suppliers:
         type: array
         items:
-          type: string
+          $ref: '#/definitions/OrganizationReference'
       date:
         type: number
         format: date-time
@@ -1039,6 +1040,80 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Contract'
+  Party:
+    title: Party
+    description: A party (organization)
+    type: object
+    additionalProperties: true
+    properties:
+      name:
+        title: Common name
+        description: >-
+          A common name for this organization or other participant in the
+          contracting process. The identifier object provides an space for the
+          formal legal name, and so this may either repeat that value, or could
+          provide the common name by which this organization or entity is known.
+          This field may also include details of the department or sub-unit
+          involved in this contracting process.
+        type: string
+      id:
+        type: string
+        description: >-
+          The ID used for cross-referencing to this party from other sections of
+          the release. This field may be built with the following structure
+          {identifier.scheme}-{identifier.id}(-{department-identifier}).
+        title: Entity ID
+      identifier:
+        description: >-
+          The primary identifier for this organization or participant.
+          Identifiers that uniquely pick out a legal entity should be preferred.
+          Consult the [organization identifier
+          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/)
+          for the preferred scheme and identifier to use.
+      additionalIdentifiers:
+        title: Additional identifiers
+        description: >-
+          A list of additional / supplemental identifiers for the organization
+          or participant, using the [organization identifier
+          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/).
+          This could be used to provide an internally used identifier for this
+          organization in addition to the primary legal entity identifier.
+        type: string
+      address:
+        $ref: '#/definitions/ocdsAddress'
+      contactPoint:
+        $ref: '#/definitions/ocdsContactPoint'
+      roles:
+        title: Party roles
+        description: >-
+          The party's role(s) in the contracting process. Role(s) should be
+          taken from the [partyRole
+          codelist](http://standard.open-contracting.org/1.1/en/schema/codelists/#party-role).
+          Values from the provided codelist should be used wherever possible,
+          though extended values can be provided if the codelist does not have a
+          relevant code.
+        type: array
+        items:
+          type: string
+        enum:
+          - buyer
+          - procuringEntity
+          - supplier
+          - tenderer
+          - funder
+          - enquirer
+          - payer
+          - payee
+          - reviewBody
+      details:
+        type: object
+        description: >-
+          Additional classification information about parties can be provided
+          using partyDetail extensions that define particular properties and
+          classification schemes.
+        title: Details
+      items:
+        $ref: '#/definitions/Identifier'
   Organization:
     properties:
       _id:
@@ -1154,9 +1229,14 @@ definitions:
         format: integer
       source:
         type: string
-      amount:
-        type: number
-        format: float
+      value:
+        type: object
+        properties:
+          amount:
+            type: number
+            format: float
+          currency:
+            type: string
       project:
         type: string
       projectID:
@@ -1226,6 +1306,220 @@ definitions:
         minLength: 1
       dependency:
         type: string
+  ocdsPeriod:
+    title: OCDS_Period
+    type: object
+    properties:
+      startDate:
+        title: Start date
+        description: >-
+          The start date for the period. When known, a precise start date must
+          always be provided.
+        type: string
+        format: date-time
+      endDate:
+        title: End date
+        description: >-
+          The end date for the period. When known, a precise end date must
+          always be provided.
+        type: string
+        format: date-time
+      maxExtentDate:
+        description: >-
+          The period cannot be extended beyond this date. This field is
+          optional, and can be used to express the maximum available data for
+          extension or renewal of this period.
+        format: date-time
+        title: Maximum extent
+        type: string
+      durationInDays:
+        description: >-
+          The maximum duration of this period in days. A user interface may wish
+          to collect or display this data in months or years as appropriate, but
+          should convert it into days when completing this field. This field can
+          be used when exact dates are not known.  Where a startDate and endDate
+          are given, this field is optional, and should reflect the difference
+          between those two days. Where a startDate and maxExtentDate are given,
+          this field is optional, and should reflect the diffence between
+          startDate and maxExtentDate.
+        title: Duration (days)
+        type: integer
+  ocdsContract:
+    type: object
+    title: OCDS_Contract
+    description: >-
+      Information regarding the signed contract between the buyer and
+      supplier(s).
+    required:
+      - id
+      - awardID
+    properties:
+      id:
+        title: Contract ID
+        description: >-
+          The identifier for this contract. It must be unique and cannot change
+          within its Open Contracting Process (defined by a single ocid). See
+          the [identifier
+          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/)
+          for further details.
+        type: string
+        minLength: 1
+      awardID:
+        title: Award ID
+        description: The award.id against which this contract is being issued.
+        type: string
+        minLength: 1
+      title:
+        title: Contract title
+        description: Contract title
+        type: string
+      description:
+        title: Contract description
+        description: Contract description
+        type: string
+      status:
+        title: Contract status
+        description: >-
+          The current status of the contract. Drawn from the [contractStatus
+          codelist](http://standard.open-contracting.org/1.1/en/schema/codelists/#contract-status)
+        type: string
+        enum:
+          - pending
+          - active
+          - cancelled
+          - terminated
+      period:
+        title: Period
+        description: The start and end date for the contract.
+        items:
+          $ref: '#/definitions/ocdsPeriod'
+      value:
+        title: Value
+        description: >-
+          The total value of this contract. A negative value indicates that the
+          contract will involve payments from the supplier to the buyer
+          (commonly used in concession contracts).
+        items:
+          $ref: '#/definitions/ocdsValue'
+      dateSigned:
+        title: Date signed
+        description: >-
+          The date the contract was signed. In the case of multiple signatures,
+          the date of the last signature.
+        type: string
+        format: date-time
+      implementation:
+        title: Implementation
+        description: >-
+          Information related to the implementation of the contract in
+          accordance with the obligations laid out therein.
+  ocdsValue:
+    title: OCDS_Value
+    type: object
+    properties:
+      amount:
+        title: Amount
+        description: Amount as a number.
+        type: number
+      currency:
+        title: Currency
+        description: >-
+          The currency for each amount should always be specified using the
+          uppercase 3-letter currency code from ISO4217.
+        type: string
+  ocdsAddress:
+    title: OCDS_Address
+    description: >-
+      An address. This may be the legally registered address of the
+      organization, or may be a correspondence address for this particular
+      contracting process.
+    type: object
+    properties:
+      streetAddress:
+        title: Street address
+        type: string
+        description: 'The street address. For example, 1600 Amphitheatre Pkwy.'
+      locality:
+        title: Locality
+        type: string
+        description: 'The locality. For example, Mountain View.'
+      region:
+        title: Region
+        type: string
+        description: 'The region. For example, CA.'
+      postalCode:
+        title: Postalcode
+        type: string
+        description: 'The postal code. For example, 94043.'
+      countryName:
+        title: Country name
+        type: string
+        description: 'The country name. For example, United States.'
+  ocdsContactPoint:
+    title: OCDS_ContactPoint
+    type: object
+    description: >-
+      An person, contact point or department to contact in relation to this
+      contracting process.
+    properties:
+      name:
+        title: Name
+        type: string
+        description: >-
+          The name of the contact person, department, or contact point, for
+          correspondence relating to this contracting process.
+      email:
+        title: Email
+        type: string
+        description: The e-mail address of the contact point/person.
+      telephone:
+        title: Telephone
+        type: string
+        description: >-
+          The telephone number of the contact point/person. This should include
+          the international dialling code.
+      faxNumber:
+        title: Fax number
+        type: string
+        description: >-
+          The fax number of the contact point/person. This should include the
+          international dialling code.
+      url:
+        title: URL
+        type: string
+        description: A web address for the contact point/person.
+        format: uri
+  Identifier:
+    title: OCDS_Identifier
+    type: object
+    properties:
+      scheme:
+        title: Scheme
+        description: >-
+          Organization identifiers be drawn from an existing identification
+          scheme. This field is used to indicate the scheme or codelist in which
+          the identifier will be found. This value should be drawn from the
+          [Organization Identifier
+          Scheme](http://standard.open-contracting.org/1.1/en/schema/codelists/#organization-identifier-scheme).
+        type: string
+      id:
+        title: ID
+        description: The identifier of the organization in the selected scheme.
+        type: string
+      legalName:
+        title: Legal Name
+        description: The legally registered name of the organization.
+        type: string
+      uri:
+        title: URI
+        description: >-
+          A URI to identify the organization, such as those provided by [Open
+          Corporates](http://www.opencorporates.com) or some other relevant URI
+          provider. This is not for listing the website of the organization:
+          that can be done through the url field of the Organization contact
+          point.
+        type: string
+        format: uri
 parameters:
   name:
     name: name
