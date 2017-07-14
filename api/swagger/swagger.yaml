@@ -560,7 +560,7 @@ paths:
         '200':
           description: Success
           schema:
-            $ref: '#/definitions/Release'
+            $ref: '#/definitions/ReleasePackage'
         default:
           description: Error
           schema:
