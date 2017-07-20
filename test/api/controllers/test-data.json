@@ -1,147 +1,129 @@
 {
   "contracts": [{
-  		"_id": "223QtvPopH9CeAGKo",
+      "_id": "223QtvPopH9CeAGKo",
       "source": "Foo",
-  		"account_admin": "PoC",
-  		"dependency": "Impresora Y Encuadernadora Progreso, S.A. de C.V.",
-  		"ocid": "OCDS-0UD2Q6-SA-011MAX001-N260-2015",
-  		"start_date": "2015-03-25T00:00:00.000Z",
-  		"title": "MANTELETA",
-  		"currency": "MXN",
-  		"country": "MX",
-  		"references": [{
-  			"url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=549833"
-  		}],
-  		"department": "Subgerencia De Adquisiciones Y Servicios.",
-  		"clave_uc": "011MAX001",
-  		"procedure_type": "Adjudicación Directa Federal",
-  		"type": "Adquisiciones",
-  		"status": "Expirado",
-  		"amount": 71910,
-  		"end_date": "2015-03-31T00:00:00.000Z",
-  		"suppliers_org": [
-  			"los ismaeles ideas creaciones y promocionales s de rl de cv"
-  		]
-  	},
-  	{
-  		"_id": "224iuA43szMRYugZK",
+      "account_admin": "PoC",
+      "dependency": "Impresora Y Encuadernadora Progreso, S.A. de C.V.",
+      "ocid": "OCDS-0UD2Q6-SA-011MAX001-N260-2015",
+      "start_date": "2015-03-25T00:00:00.000Z",
+      "title": "MANTELETA",
+      "currency": "MXN",
+      "country": "MX",
+      "references": [{
+        "url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=549833"
+      }],
+      "department": "Subgerencia De Adquisiciones Y Servicios.",
+      "clave_uc": "011MAX001",
+      "procedure_type": "Adjudicación Directa Federal",
+      "type": "Adquisiciones",
+      "status": "Expirado",
+      "amount": 71910,
+      "end_date": "2015-03-31T00:00:00.000Z",
+      "suppliers_org": [
+        "los ismaeles ideas creaciones y promocionales s de rl de cv"
+      ]
+    },
+    {
+      "_id": "224iuA43szMRYugZK",
       "source": "Bar",
-  		"department": "Cfe Zona Tulancingo",
-  		"clave_uc": "018TOQ807",
-  		"references": [{
-  			"url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=450063"
-  		}],
-  		"dependency": "Comisión Federal De Electricidad",
-  		"start_date": "2014-09-24T00:00:00.000Z",
-  		"end_date": "2014-10-08T00:00:00.000Z",
-  		"title": "AA-018TOQ807-N40-2014 ARTICULOS DE SEGURIDAD PARA PERSONAL DE CAMPO",
-  		"country": "MX",
-  		"account_admin": "PoC",
-  		"type": "Adquisiciones",
-  		"ocid": "OCDS-0UD2Q6-AA-018TOQ807-N40-2014",
-  		"amount": 55162.75,
-  		"procedure_type": "Adjudicación Directa Federal",
-  		"status": "Terminado",
-  		"currency": "MXN",
-  		"character": "Nacional",
-  		"suppliers_org": [
-  			"distribuidora de repuestos industriales sa de cv"
-  		]
-  	},
-  	{
-  		"_id": "225jF4DGHpuBQoWkH",
+      "department": "Cfe Zona Tulancingo",
+      "clave_uc": "018TOQ807",
+      "references": [{
+        "url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=450063"
+      }],
+      "dependency": "Comisión Federal De Electricidad",
+      "start_date": "2014-09-24T00:00:00.000Z",
+      "end_date": "2014-10-08T00:00:00.000Z",
+      "title": "AA-018TOQ807-N40-2014 ARTICULOS DE SEGURIDAD PARA PERSONAL DE CAMPO",
+      "country": "MX",
+      "account_admin": "PoC",
+      "type": "Adquisiciones",
+      "ocid": "OCDS-0UD2Q6-AA-018TOQ807-N40-2014",
+      "amount": 55162.75,
+      "procedure_type": "Adjudicación Directa Federal",
+      "status": "Terminado",
+      "currency": "MXN",
+      "character": "Nacional",
+      "suppliers_org": [
+        "distribuidora de repuestos industriales sa de cv"
+      ]
+    },
+    {
+      "_id": "225jF4DGHpuBQoWkH",
       "source": "Baz",
-  		"type": "Servicios",
-  		"title": "SERVICIO DE MANTENIMIENTO PREVENTIVO Y CORRECTIVO DE VEHICULOS TERRESTRES Y RENOVADO DE LLANTAS PARA DICONSA S.A. DE C.V. UNIDAD OPERATIVA MIXTECA",
-  		"currency": "MXN",
-  		"country": "MX",
-  		"dependency": "Diconsa, S.A. de C.V.",
-  		"account_admin": "UC",
-  		"celebration": "2015-05-27T00:00:00.000Z",
-  		"clave_uc": "020VSS013",
-  		"procedure_type": "Adjudicación Directa Federal",
-  		"ocid": "OCDS-0UD2Q6-AA-020VSS013-N13-2015",
-  		"references": [{
-  			"url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=545341"
-  		}],
-  		"character": "Nacional",
-  		"department": "Gerencia De La Sucursal",
-  		"status": "Expirado",
-  		"start_date": "2015-05-26T00:00:00.000Z",
-  		"end_date": "2016-02-13T00:00:00.000Z",
-  		"amount": 2388000,
-  		"suppliers_person": [
-  			"blanca rosa rojas ramirez"
-  		]
-  	},
-  	{
-  		"_id": "225keWhkWZqnZXTTx",
-  		"department": "Delegación Federal De La Sedesol En El Estado De Michoacán 0",
-  		"procedure_type": "Licitación Pública",
-  		"currency": "MXN",
-  		"country": "MX",
-  		"references": [{
-  			"url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=548434"
-  		}],
-  		"dependency": "Secretaría De Desarrollo Social",
-  		"type": "Obra Pública",
-  		"ocid": "OCDS-0UD2Q6-LO-020000018-N3-2015",
-  		"end_date": "2015-12-11T00:00:00.000Z",
-  		"account_admin": "UC",
-  		"celebration": "2015-06-01T00:00:00.000Z",
-  		"clave_uc": "20000018",
-  		"status": "Expirado",
-  		"start_date": "2015-06-01T00:00:00.000Z",
-  		"title": "CONSTRUCCIÓN DE 15136.00 M2 DE TECHOS PARA VIVIENDAS",
-  		"amount": 5067194.24,
-  		"character": "Nacional",
-  		"suppliers_org": [
-  			"inmobiliaria y constructora gutierrez sa de cv"
-  		]
-  	},
-  	{
-  		"_id": "227EhKo952RYnYa9s",
-  		"references": [{
-  			"url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=378509"
-  		}],
-  		"title": "mantenimiento y conservacion de vehiculos",
-  		"clave_uc": "8000969",
-  		"procedure_type": "Licitación Pública",
-  		"start_date": "2014-04-16T00:00:00.000Z",
-  		"amount": 850000,
-  		"character": "Nacional",
-  		"dependency": "Secretaría De Agricultura Ganadería Desarrollo Rural Pesca Y Alimentación",
-  		"department": "Edmundo Estefan Garfias 00",
-  		"status": "Expirado",
-  		"end_date": "2014-12-31T00:00:00.000Z",
-  		"country": "MX",
-  		"type": "Servicios",
-  		"ocid": "OCDS-0UD2Q6-LA-008000969-N1-2014",
-  		"account_admin": "PoC",
-  		"suppliers_person": [
-  			"jose elias dogre mir"
-  		]
-  	}
+      "type": "Servicios",
+      "title": "SERVICIO DE MANTENIMIENTO PREVENTIVO Y CORRECTIVO DE VEHICULOS TERRESTRES Y RENOVADO DE LLANTAS PARA DICONSA S.A. DE C.V. UNIDAD OPERATIVA MIXTECA",
+      "currency": "MXN",
+      "country": "MX",
+      "dependency": "Diconsa, S.A. de C.V.",
+      "account_admin": "UC",
+      "celebration": "2015-05-27T00:00:00.000Z",
+      "clave_uc": "020VSS013",
+      "procedure_type": "Adjudicación Directa Federal",
+      "ocid": "OCDS-0UD2Q6-AA-020VSS013-N13-2015",
+      "references": [{
+        "url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=545341"
+      }],
+      "character": "Nacional",
+      "department": "Gerencia De La Sucursal",
+      "status": "Expirado",
+      "start_date": "2015-05-26T00:00:00.000Z",
+      "end_date": "2016-02-13T00:00:00.000Z",
+      "amount": 2388000,
+      "suppliers_person": [
+        "blanca rosa rojas ramirez"
+      ]
+    },
+    {
+      "_id": "225keWhkWZqnZXTTx",
+      "department": "Delegación Federal De La Sedesol En El Estado De Michoacán 0",
+      "procedure_type": "Licitación Pública",
+      "currency": "MXN",
+      "country": "MX",
+      "references": [{
+        "url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=548434"
+      }],
+      "dependency": "Secretaría De Desarrollo Social",
+      "type": "Obra Pública",
+      "ocid": "OCDS-0UD2Q6-LO-020000018-N3-2015",
+      "end_date": "2015-12-11T00:00:00.000Z",
+      "account_admin": "UC",
+      "celebration": "2015-06-01T00:00:00.000Z",
+      "clave_uc": "20000018",
+      "status": "Expirado",
+      "start_date": "2015-06-01T00:00:00.000Z",
+      "title": "CONSTRUCCIÓN DE 15136.00 M2 DE TECHOS PARA VIVIENDAS",
+      "amount": 5067194.24,
+      "character": "Nacional",
+      "suppliers_org": [
+        "inmobiliaria y constructora gutierrez sa de cv"
+      ]
+    },
+    {
+      "_id": "227EhKo952RYnYa9s",
+      "references": [{
+        "url": "compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=378509"
+      }],
+      "title": "mantenimiento y conservacion de vehiculos",
+      "clave_uc": "8000969",
+      "procedure_type": "Licitación Pública",
+      "start_date": "2014-04-16T00:00:00.000Z",
+      "amount": 850000,
+      "character": "Nacional",
+      "dependency": "Secretaría De Agricultura Ganadería Desarrollo Rural Pesca Y Alimentación",
+      "department": "Edmundo Estefan Garfias 00",
+      "status": "Expirado",
+      "end_date": "2014-12-31T00:00:00.000Z",
+      "country": "MX",
+      "type": "Servicios",
+      "ocid": "OCDS-0UD2Q6-LA-008000969-N1-2014",
+      "account_admin": "PoC",
+      "suppliers_person": [
+        "jose elias dogre mir"
+      ]
+    }
   ],
   "memberships": [
-      {
-        "_id": "0f1b0ba0d776c9df4",
-        "source": "Foo",
-        "department": "board",
-        "person": "Gonzalo Hinojosa Fernández de Angulo",
-        "person_id": "gonzalo hinojosa fernandez de angulo",
-        "role": "Independent Director, Member of Audit Committee and Member of Nomination, Remuneration & Corporate Governance Committee",
-        "org_id": "telefonica del peru saa"
-      },
-      {
-        "_id": "0f1b0ba0d776c9df6",
-        "source": "Bar",
-        "department": "board",
-        "person": "Alfonso Ferrari Herrero",
-        "person_id": "alfonso ferrari herrero",
-        "role": "Independent Director, Chairman of Audit Committee and Chairman of Nomination, Remuneration & Corporate Governance Committee",
-        "org_id": "telefonica del peru saa"
-      },
       {
         "_id": "0f1b0ba0d776c9dfb",
         "source": "Baz",
@@ -167,132 +149,182 @@
         "role": "Responsible of Compranet",
         "org_id": "secretaria de agricultura ganaderia desarrollo rural pesca y alimentacion",
         "shares": 32
+      },
+      {
+        "_id" : "6uMwhH38ktQvGDws3",
+        "person" : "Patricia Susana Fadel",
+        "person_id" : "patricia susana fadel",
+        "post_class" : "Electivo",
+        "post_type" : "Legislativo",
+        "references" : [
+          {
+            "url" : "andytow.com",
+            "quality" : "oficial",
+            "chequeado" : false,
+            "field" : "end_date"
+          },
+          {
+            "url" : "andytow.com",
+            "quality" : "oficial",
+            "chequeado" : false,
+            "field" : "start_date"
+          }
+        ],
+        "role" : "Diputado Nacional",
+        "sob_org" : "camara de diputados de la nacion",
+        "start_date" : "2003-10-12",
+        "territory" : "Mendoza"
+      },
+      {
+        "_id" : "FAWs9EpxHtMQgR6NW",
+        "person" : "Ricardo Argentino Bussi",
+        "person_id" : "ricardo argentino bussi",
+        "post_class" : "Electivo",
+        "post_type" : "Legislativo",
+        "references" : [
+          {
+            "url" : "andytow.com",
+            "quality" : "oficial",
+            "chequeado" : false,
+            "field" : "end_date"
+          },
+          {
+            "url" : "andytow.com",
+            "quality" : "oficial",
+            "chequeado" : false,
+            "field" : "start_date"
+          }
+        ],
+        "role" : "Senador Nacional",
+        "sob_org" : "senado de la nacion",
+        "start_date" : "2001-10-12",
+        "territory" : "Tucumán"
       }
   ],
   "persons": [{
     "_id": "2299rd2rCZ63pRyHQ",
     "source": "Baz",
-  	"simple": "ivan jacobo martinez gutierrez",
-  	"name": "Ivan Jacobo Martinez Gutierrez",
-  	"names": ["Ivan Jacobo Martinez Gutierrez"],
-  	"contract_count": 1
+    "simple": "ivan jacobo martinez gutierrez",
+    "name": "Ivan Jacobo Martinez Gutierrez",
+    "names": ["Ivan Jacobo Martinez Gutierrez"],
+    "contract_count": 1
   }, {
     "_id": "22bgu5BgEcs2G4h95",
-  	"simple": "martha puente castillo",
-  	"name": "Martha Puente Castillo",
-  	"names": ["Martha Puente Castillo"],
-  	"contract_count": 2
+    "simple": "martha puente castillo",
+    "name": "Martha Puente Castillo",
+    "names": ["Martha Puente Castillo"],
+    "contract_count": 2
   }, {
     "_id": "22sdwdo2urjYNmC8j",
-  	"simple": "charles t hagel",
-  	"name": "Charles T. Hagel",
-  	"source": "Manual",
-  	"names": ["Charles T. Hagel"]
+    "simple": "charles t hagel",
+    "name": "Charles T. Hagel",
+    "source": "Manual",
+    "names": ["Charles T. Hagel"]
   }, {
     "_id": "23Ciqqdx9WwKzfpRC",
-  	"simple": "mario vasquez villalobos",
-  	"name": "Mario Vasquez Villalobos",
-  	"names": ["Mario Vasquez Villalobos"],
-  	"contract_count": 1
+    "simple": "mario vasquez villalobos",
+    "name": "Mario Vasquez Villalobos",
+    "names": ["Mario Vasquez Villalobos"],
+    "contract_count": 1
   }, {
     "_id": "23PFJpphKLdDPiCJe",
-  	"simple": "roberto lopez montenegro",
-  	"name": "Roberto Lopez Montenegro",
-  	"names": ["Roberto Lopez Montenegro"],
-  	"contract_count": 1
+    "simple": "roberto lopez montenegro",
+    "name": "Roberto Lopez Montenegro",
+    "names": ["Roberto Lopez Montenegro"],
+    "contract_count": 1
   }],
   "organizations": [{
-  		"_id": "22CAybAKzzqTxRXeW",
+      "_id": "22CAybAKzzqTxRXeW",
       "source": "Foo",
-  		"simple": "quality lab systems sa de cv",
-  		"address": {
-  			"country": "MX"
-  		},
-  		"company": {},
-  		"names": [
-  			"Quality Lab Systems, S.A. de C.V."
-  		],
-  		"contract_count": 1,
-  		"name": "Quality Lab Systems, S.A. de C.V."
-  	},
-  	{
-  		"_id": "22M3Cd2vTrRiEkYH5",
-  		"simple": "obras y disenos de mexico sa de cv",
-  		"address": {
-  			"country": "MX"
-  		},
-  		"company": {},
-  		"names": [
-  			"Obras Y Diseños De Mexico, S.A. de C.V."
-  		],
-  		"contract_count": 1,
-  		"name": "Obras Y Diseños De Mexico, S.A. de C.V."
-  	},
-  	{
-  		"_id": "22NrDfDQroiiiAgYP",
+      "simple": "quality lab systems sa de cv",
+      "address": {
+        "country": "MX"
+      },
+      "company": {},
+      "names": [
+        "Quality Lab Systems, S.A. de C.V."
+      ],
+      "contract_count": 1,
+      "name": "Quality Lab Systems, S.A. de C.V."
+    },
+    {
+      "_id": "22M3Cd2vTrRiEkYH5",
+      "simple": "obras y disenos de mexico sa de cv",
+      "address": {
+        "country": "MX"
+      },
+      "company": {},
+      "names": [
+        "Obras Y Diseños De Mexico, S.A. de C.V."
+      ],
+      "contract_count": 1,
+      "name": "Obras Y Diseños De Mexico, S.A. de C.V."
+    },
+    {
+      "_id": "22NrDfDQroiiiAgYP",
       "source": "Bar",
-  		"simple": "las aguilas construye sa de cv",
-  		"address": {
-  			"country": "MX"
-  		},
-  		"company": {},
-  		"names": [
-  			"Las Aguilas Construye, S.A. de C.V."
-  		],
-  		"contract_count": 3,
-  		"name": "Las Aguilas Construye, S.A. de C.V."
-  	},
-  	{
-  		"_id": "22RmQJ4XSWpRza4D3",
-  		"simple": "constructora y comercializadora mactumaza sa de cv",
-  		"address": {
-  			"country": "MX"
-  		},
-  		"company": {},
-  		"names": [
-  			"Constructora Y Comercializadora Mactumaza, S.A. de C.V."
-  		],
-  		"contract_count": 1,
-  		"name": "Constructora Y Comercializadora Mactumaza, S.A. de C.V."
-  	},
-  	{
-  		"_id": "22WJKYx2F7A2ec3AD",
-  		"foundation_date": 2001,
-  		"description": "Corporación Funeraria S.A. provides funeral and burial services.",
-  		"address": {
-  			"street": "Avenida Veintiocho de Julio N° 873",
-  			"city": "Lima",
-  			"country": "PE",
-  			"phones": [
-  				"51 2137373"
-  			]
-  		},
-  		"lastModified": "2016-08-15T22:37:46.052Z",
-  		"type": "Private Company",
-  		"names": [
-  			"Corporación Funeraria S.A."
-  		],
-  		"simple": "corporacion funeraria sa",
-  		"source": "Manual",
-  		"company": {
-  			"current_assets": 2.33,
-  			"current_liabilities": 0.96,
-  			"liabilities": 0.96,
-  			"current_ratio": 5.38,
-  			"quick_ratio": 3.35,
-  			"classification": "Diversified Consumer Services",
-  			"tickers": "#VALUE!",
-  			"assets": 2.71,
-  			"revenue": 1.24,
-  			"c_o_g_s": 0.74,
-  			"sector": "Consumer Discretionary",
-  			"gross_profit": 0.5
-  		},
-  		"name": "Corporación Funeraria S.A.",
-  		"user_id": null,
-  		"parent": [
-  			"Corporación Funeraria S.A."
-  		]
-  	}
+      "simple": "las aguilas construye sa de cv",
+      "address": {
+        "country": "MX"
+      },
+      "company": {},
+      "names": [
+        "Las Aguilas Construye, S.A. de C.V."
+      ],
+      "contract_count": 3,
+      "name": "Las Aguilas Construye, S.A. de C.V."
+    },
+    {
+      "_id": "22RmQJ4XSWpRza4D3",
+      "simple": "constructora y comercializadora mactumaza sa de cv",
+      "address": {
+        "country": "MX"
+      },
+      "company": {},
+      "names": [
+        "Constructora Y Comercializadora Mactumaza, S.A. de C.V."
+      ],
+      "contract_count": 1,
+      "name": "Constructora Y Comercializadora Mactumaza, S.A. de C.V."
+    },
+    {
+      "_id": "22WJKYx2F7A2ec3AD",
+      "foundation_date": 2001,
+      "description": "Corporación Funeraria S.A. provides funeral and burial services.",
+      "address": {
+        "street": "Avenida Veintiocho de Julio N° 873",
+        "city": "Lima",
+        "country": "PE",
+        "phones": [
+          "51 2137373"
+        ]
+      },
+      "lastModified": "2016-08-15T22:37:46.052Z",
+      "type": "Private Company",
+      "names": [
+        "Corporación Funeraria S.A."
+      ],
+      "simple": "corporacion funeraria sa",
+      "source": "Manual",
+      "company": {
+        "current_assets": 2.33,
+        "current_liabilities": 0.96,
+        "liabilities": 0.96,
+        "current_ratio": 5.38,
+        "quick_ratio": 3.35,
+        "classification": "Diversified Consumer Services",
+        "tickers": "#VALUE!",
+        "assets": 2.71,
+        "revenue": 1.24,
+        "c_o_g_s": 0.74,
+        "sector": "Consumer Discretionary",
+        "gross_profit": 0.5
+      },
+      "name": "Corporación Funeraria S.A.",
+      "user_id": null,
+      "parent": [
+        "Corporación Funeraria S.A."
+      ]
+    }
   ]
 }
