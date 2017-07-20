@@ -71,7 +71,7 @@ function allContractsPost(req, res) {
   const resultsP = collection.find(query);
   const countP = collection.count(query);
 
-  res.charSet('utf-8');
+  res.set('Content-Type', 'application/json; charset=utf-8');
   return Promise.all([countP, resultsP])
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
 }

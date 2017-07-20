@@ -59,7 +59,7 @@ function getQuery(req) {
 function getDistinct(req, res, collection) {
   const field = req.swagger.params.field.value;
 
-  res.charSet('utf-8');
+  res.set('Content-Type', 'application/json; charset=utf-8');
   return collection.distinct(field)
     .then(data => {
       const size = data.length;
@@ -134,7 +134,7 @@ function dataReturn(res, array, offset, embed, objectFormat) {
     data = array[1].map(o => (objectFormat(o)));
   }
 
-  res.charSet('utf-8');
+  res.set('Content-Type', 'application/json; charset=utf-8');
   res.json({
     status: 'success',
     data,

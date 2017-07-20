@@ -39,7 +39,7 @@ function allMemberships(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
-  res.charSet('utf-8');
+  res.set('Content-Type', 'application/json; charset=utf-8');
   allDocuments(query, collection, JOINS)
   .then(array => (dataReturn(res, array, offset, query.embed, mapData)));
 }
@@ -62,8 +62,7 @@ function distinctMembership(req, res) {
 function singleMembership(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
-
-  res.charSet('utf-8');
+  res.set('Content-Type', 'application/json; charset=utf-8');
   collection.aggregate(pipeline)
   .then(docs => (dataReturn(res, [1, docs], 0, true, mapData)));
 }

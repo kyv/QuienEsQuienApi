@@ -1,6 +1,8 @@
-const SwaggerRestify = require('swagger-restify-mw');
-const restify = require('restify');
-const app = restify.createServer();
+const SwaggerExpress = require('swagger-express-mw');
+const app = require('express')();
+const YAML = require('yamljs');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = YAML.load('api/swagger/swagger.yaml');
 
 if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
   throw 'please configure MONGODB_URI\nwith "localhost:27017/foo" or similar';
@@ -12,20 +14,17 @@ const config = {
   appRoot: __dirname, // required config
 };
 
-app.use(restify.acceptParser(app.acceptable));
+const customCss = '#header, .topbar { display: none }';
+app.use('/v1/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, false, {}, customCss));
 
-app.get(/\/v1\/docs\/?.*/, restify.serveStatic({
-  directory: __dirname,
-  default: 'index.html',
-  // charSet: 'utf-8',
-}));
-
-SwaggerRestify.create(config, (err, swaggerRestify) => {
+SwaggerExpress.create(config, (err, swaggerExpress) => {
   if (err) {
     throw err;
   }
 
-  swaggerRestify.register(app);
+  swaggerExpress.register(app);
 
   const port = process.env.PORT || 10010;
 
