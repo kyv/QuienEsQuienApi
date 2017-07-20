@@ -73,10 +73,10 @@ function getDistinct(req, res, collection) {
 }
 
 function queryToPipeline(query, JOINS) {
-  const pipeline = [{ $match: query.criteria }];
-
-  JOINS.forEach(o => pipeline.push(o));
-  return pipeline;
+  JOINS.unshift({
+    $match: query.criteria,
+  });
+  return JOINS;
 }
 
 function arrayResultsOptions(query, pipeline) {
