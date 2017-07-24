@@ -3,6 +3,10 @@ const app = require('express')();
 const YAML = require('yamljs');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = YAML.load('api/swagger/swagger.yaml');
+const customCss = '#header, .topbar { display: none }';
+const config = {
+  appRoot: __dirname, // required config
+};
 
 if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
   throw 'please configure MONGODB_URI\nwith "localhost:27017/foo" or similar';
@@ -10,11 +14,6 @@ if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
 
 module.exports = app; // for testing
 
-const config = {
-  appRoot: __dirname, // required config
-};
-
-const customCss = '#header, .topbar { display: none }';
 app.use('/v1/docs',
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, false, {}, customCss));
