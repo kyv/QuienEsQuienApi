@@ -12,14 +12,14 @@ test:
   services:
     - mongo
   tags:
-   - docker
+    - docker
   variables:
     MONGODB_URI: 'mongodb://mongo/runner'
-    NODE_ENV: 'test'
+    NODE_ENV: 'development'
   script:
-   - npm install --silent
-   - npm run lint
-   - npm run test
+    - npm install --silent
+    - npm run lint
+    - npm run test
 
 deploy staging:
   image: tmaier/dpl
