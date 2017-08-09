@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const should = require('should');
 const request = require('supertest');
 const server = require('../../../app');
@@ -8,28 +9,28 @@ const PATH = `/v1/${cName}`;
 const testDataJson = require('./test-data.json');
 const testData = testDataJson[cName];
 
-describe('controllers', function() {
+describe('controllers', () => {
 
-  describe(cName, function() {
+  describe(cName, () => {
 
-    describe(`GET ${PATH}`, function() {
+    describe(`GET ${PATH}`, () => {
 
-      before(function(done) {
-        collection.insert(testData).then((docs) => done());
+      before(done => {
+        collection.insert(testData).then(() => done());
       });
 
-      after(function(done) {
-        collection.drop(() => (done()))
+      after(done => {
+        collection.drop(() => (done()));
       });
 
-      it('should accept a query parameter', function(done) {
+      it('should accept a query parameter', done => {
         request(server)
           .get(PATH)
-          .query({ ocid: 'OCDS-0UD2Q6-LO-020000018-N3-2015'})
+          .query({ ocid: 'OCDS-0UD2Q6-LO-020000018-N3-2015' })
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data[0].ocid.should.eql('OCDS-0UD2Q6-LO-020000018-N3-2015');
@@ -38,14 +39,14 @@ describe('controllers', function() {
           });
       });
 
-      it('should accept a regex query parameter', function(done) {
+      it('should accept a regex query parameter', done => {
         request(server)
           .get(PATH)
           .query({ title: '/LLANTAS PARA DICONSA/i' })
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data[0].ocid.should.eql('OCDS-0UD2Q6-AA-020VSS013-N13-2015');
@@ -54,13 +55,13 @@ describe('controllers', function() {
           });
       });
 
-      it('should accept query for $exists', function(done) {
+      it('should accept query for $exists', done => {
         request(server)
           .get(`${PATH}?currency`)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
-          .end(function(err, res) {
+          .end((err, res) => {
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data.length.should.eql(4);

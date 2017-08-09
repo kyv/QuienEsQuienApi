@@ -24,6 +24,7 @@ describe('controllers', () => {
           }
           return o;
         });
+
         collection.insert(mapped).then(() => done());
       });
 
