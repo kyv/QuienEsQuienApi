@@ -13,6 +13,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "./node_modules/.bin/mocha test/api/controllers/*.js",
+    "lint": "./node_modules/.bin/eslint '**/*.js'",
     "build": "cd v1/docs && minify --output style.css swagger-ui.css fonts.css quienesquien.css"
   },
   "dependencies": {
