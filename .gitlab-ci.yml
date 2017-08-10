@@ -5,7 +5,6 @@ stages:
   - deploy
 
 before_script:
-  - docker info
   - docker build -t poder/quienesquienapi:testing .
 
 cache:
@@ -24,26 +23,25 @@ test:
   services:
     - mongo
   tags:
-   - docker
-   - mongo
+    - docker
   variables:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - docker run poder/quienesquienapi:testing npm run test
+    - docker run -e MONGODB_URI=$MONGODB_URI poder/quienesquienapi:testing npm run test
 
-# deploy staging:
-#   image: tmaier/dpl
-#   type: deploy
-#   tags:
-#     - heroku
-#   only:
-#     - dev
-#   environment:
-#     name: stageing
-#     url: https://quienesquienapi.herokuapp.com
-#   script:
-#     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+deploy staging:
+  image: tmaier/dpl
+  type: deploy
+  tags:
+    - heroku
+  only:
+    - dev
+  environment:
+    name: stageing
+    url: https://quienesquienapi.herokuapp.com
+  script:
+    - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
 
 deploy docker:
   stage: deploy
