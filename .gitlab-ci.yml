@@ -4,6 +4,9 @@ stages:
   - test
   - deploy
 
+before_script:
+  - docker info
+
 cache:
   paths:
   - node_modules/
@@ -22,6 +25,7 @@ test:
     - mongo
   tags:
    - docker
+   - mongo
   variables:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
@@ -41,3 +45,15 @@ deploy staging:
     url: https://quienesquienapi.herokuapp.com
   script:
     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+
+deploy docker:
+  image: docker:latest
+  stage: deploy
+  tags:
+   - docker
+  only:
+   - dev
+  script:
+    - docker build -t poder/quienesquienapi:testing .
+    - docker login -u $CI_RESGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker push $CI_REGISTRY/$CI_REGISTRY_USER/quienesquienapi:testing .
