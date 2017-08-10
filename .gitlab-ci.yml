@@ -1,4 +1,6 @@
+image: node:alpine
 stages:
+  - lint
   - test
   - deploy
 
@@ -6,19 +8,26 @@ cache:
   paths:
   - node_modules/
 
+lint:
+  stage: lint
+  tags:
+   - docker
+  script:
+   - npm install --silent
+   - npm run lint
+
 test:
-  image: node:alpine
   stage: test
   services:
     - mongo
   tags:
-    - docker
+   - docker
   variables:
     MONGODB_URI: 'mongodb://mongo/runner'
-    NODE_ENV: 'development'
+    NODE_ENV: 'test'
   script:
-    - npm install --silent
-    - npm run test
+   - npm install --silent
+   - npm run test
 
 deploy staging:
   image: tmaier/dpl
