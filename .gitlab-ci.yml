@@ -6,22 +6,20 @@ stages:
 
 before_script:
   - docker info
+  - docker build -t poder/quienesquienapi:testing .
 
 cache:
   paths:
   - node_modules/
 
 lint:
-  image: node-alpine
   stage: lint
   tags:
-   - docker
+    - docker
   script:
-   - npm install --silent
-   - npm run lint
+    - docker run poder/quienesquienapi:testing npm run lint
 
 test:
-  image: node-alpine
   stage: test
   services:
     - mongo
@@ -32,30 +30,27 @@ test:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-   - npm install --silent
-   - npm run test
+    - docker run poder/quienesquienapi:testing npm run test
 
-deploy staging:
-  image: tmaier/dpl
-  type: deploy
-  tags:
-    - heroku
-  only:
-    - dev
-  environment:
-    name: stageing
-    url: https://quienesquienapi.herokuapp.com
-  script:
-    - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+# deploy staging:
+#   image: tmaier/dpl
+#   type: deploy
+#   tags:
+#     - heroku
+#   only:
+#     - dev
+#   environment:
+#     name: stageing
+#     url: https://quienesquienapi.herokuapp.com
+#   script:
+#     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
 
 deploy docker:
-  image: docker:latest
   stage: deploy
   tags:
    - docker
   only:
    - dev
   script:
-    - docker build -t poder/quienesquienapi:testing .
     - docker login -u $CI_RESGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker push $CI_REGISTRY/$CI_REGISTRY_USER/quienesquienapi:testing .
