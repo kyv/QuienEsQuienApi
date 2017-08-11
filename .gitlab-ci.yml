@@ -5,7 +5,7 @@ variables:
 
 stages:
 #  - lint
-  - test
+ # - test
   - deploy
 
 cache:
@@ -21,33 +21,33 @@ cache:
 #     - npm install --silent
 #     - npm run lint
 
-test:
-  image: node:alpine
-  stage: test
-  services:
-    - name: mvertes/alpine-mongo
-      alias: mongo
-  tags:
-    - docker
-  variables:
-    MONGODB_URI: 'mongodb://mongo/runner'
-    NODE_ENV: 'test'
-  script:
-    - npm install --silent
-    - npm run test
-
-deploy staging:
-  image: tmaier/dpl
-  type: deploy
-  tags:
-    - heroku
-  only:
-    - dev
-  environment:
-    name: stageing
-    url: https://quienesquienapi.herokuapp.com
-  script:
-    - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+# test:
+#   image: node:alpine
+#   stage: test
+#   services:
+#     - name: mvertes/alpine-mongo
+#       alias: mongo
+#   tags:
+#     - docker
+#   variables:
+#     MONGODB_URI: 'mongodb://mongo/runner'
+#     NODE_ENV: 'test'
+#   script:
+#     - npm install --silent
+#     - npm run test
+#
+# deploy staging:
+#   image: tmaier/dpl
+#   type: deploy
+#   tags:
+#     - heroku
+#   only:
+#     - dev
+#   environment:
+#     name: stageing
+#     url: https://quienesquienapi.herokuapp.com
+#   script:
+#     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
 
 deploy docker:
   stage: deploy
