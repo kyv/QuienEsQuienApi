@@ -16,3 +16,13 @@ Please see
 [field
 selection](https://www.npmjs.com/package/query-to-mongo#field-selection)
 references with *GET* method.
+
+# docker
+
+docker images are pushed automatically here:
+
+https://hub.docker.com/r/poder/quienesquienapi/tags/
+
+# staging
+
+https://quienesquienapi.herokuapp.com/v1/docs
