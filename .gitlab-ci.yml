@@ -4,50 +4,50 @@ variables:
   DOCKER_DRIVER: overlay
 
 stages:
-#  - lint
- # - test
+  - lint
+  - test
   - deploy
 
 cache:
   paths:
   - node_modules/
 
-# lint:
-#   image: node:alpine
-#   stage: lint
-#   tags:
-#     - docker
-#   script:
-#     - npm install --silent
-#     - npm run lint
+lint:
+  image: node:alpine
+  stage: lint
+  tags:
+    - docker
+  script:
+    - npm install --silent
+    - npm run lint
 
-# test:
-#   image: node:alpine
-#   stage: test
-#   services:
-#     - name: mvertes/alpine-mongo
-#       alias: mongo
-#   tags:
-#     - docker
-#   variables:
-#     MONGODB_URI: 'mongodb://mongo/runner'
-#     NODE_ENV: 'test'
-#   script:
-#     - npm install --silent
-#     - npm run test
-#
-# deploy staging:
-#   image: tmaier/dpl
-#   type: deploy
-#   tags:
-#     - heroku
-#   only:
-#     - dev
-#   environment:
-#     name: stageing
-#     url: https://quienesquienapi.herokuapp.com
-#   script:
-#     - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
+test:
+  image: node:alpine
+  stage: test
+  services:
+    - name: mvertes/alpine-mongo
+      alias: mongo
+  tags:
+    - docker
+  variables:
+    MONGODB_URI: 'mongodb://mongo/runner'
+    NODE_ENV: 'test'
+  script:
+    - npm install --silent
+    - npm run test
+
+deploy staging:
+  image: tmaier/dpl
+  type: deploy
+  tags:
+    - heroku
+  only:
+    - dev
+  environment:
+    name: stageing
+    url: https://quienesquienapi.herokuapp.com
+  script:
+    - dpl --provider=heroku --app=quienesquienapi --api-key=$HEROKU_API_KEY
 
 deploy docker:
   stage: deploy
@@ -58,7 +58,7 @@ deploy docker:
   only:
    - dev
   script:
-    - apk --no-cache add jq 
+    - apk --no-cache add jq
     - export VERSION=$(cat package.json | jq -r .version)
     - docker login --username=$DOCKER_ID_USER --password=$DOCKER_ID_PASSWORD
     - docker build -t poder/quienesquienapi:$VERSION .
