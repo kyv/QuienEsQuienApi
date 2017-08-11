@@ -58,7 +58,7 @@ deploy docker:
   only:
    - dev
   script:
-    - export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+#    - export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
     - docker login --username=$DOCKER_ID_USER --password=$DOCKER_ID_PASSWORD
     - docker build -t poder/quienesquienapi:$PACKAGE_VERSION .
     - docker push poder/quienesquienapi:$PACKAGE_VERSION
