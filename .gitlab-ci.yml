@@ -22,7 +22,7 @@ lint:
   tags:
     - docker
   script:
-    - docker run --rm poder/quienesquienapi:testing npm run lint
+    - docker run poder/quienesquienapi:testing npm run lint
 
 test:
   stage: test
@@ -35,7 +35,7 @@ test:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - docker run --rm poder/quienesquienapi:testing npm run test
+    - docker run -e MONGODB_URI=mongodb://mongo/runner poder/quienesquienapi:testing npm run test
 
 deploy staging:
   image: tmaier/dpl
