@@ -4,7 +4,7 @@ variables:
   DOCKER_DRIVER: overlay
 
 stages:
-  - lint
+#  - lint
   - test
   - deploy
 
@@ -12,14 +12,14 @@ cache:
   paths:
   - node_modules/
 
-lint:
-  image: node:alpine
-  stage: lint
-  tags:
-    - docker
-  script:
-    - npm install --silent
-    - npm run lint
+# lint:
+#   image: node:alpine
+#   stage: lint
+#   tags:
+#     - docker
+#   script:
+#     - npm install --silent
+#     - npm run lint
 
 test:
   image: node:alpine
