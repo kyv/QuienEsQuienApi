@@ -25,7 +25,8 @@ test:
   image: node:alpine
   stage: test
   services:
-    - mongo
+    - name: mvertes/alpine-mongo
+      alias: mongo
   tags:
     - docker
   variables:
