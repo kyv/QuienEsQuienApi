@@ -58,7 +58,7 @@ deploy docker:
   only:
    - dev
   script:
-    - apt get update && apt-get install -yqq jq
+    - apk --no-cache add jq 
     - export VERSION=$(cat package.json | jq -r .version)
     - docker login --username=$DOCKER_ID_USER --password=$DOCKER_ID_PASSWORD
     - docker build -t poder/quienesquienapi:$VERSION .
