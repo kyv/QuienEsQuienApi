@@ -27,7 +27,7 @@ test:
     NODE_ENV: 'test'
   script:
     - docker run --rm -d --name mongo -p 27017:27017 mvertes/alpine-mongo
-    - docker run --rm --link=mongo poder/quienesquienapi:testing npm run test
+    - docker run --rm -e MONGODB_URI=mongodb://mongo/runner --link=mongo poder/quienesquienapi:testing npm run test
 
 deploy staging:
   image: tmaier/dpl
