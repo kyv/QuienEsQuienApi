@@ -4,7 +4,7 @@ variables:
   DOCKER_DRIVER: overlay
 
 stages:
-  # - lint
+  - lint
   - test
   - deploy
 
