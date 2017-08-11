@@ -8,9 +8,6 @@ stages:
   - test
   - deploy
 
-before_script:
-  - docker build -t poder/quienesquienapi:testing .
-
 cache:
   paths:
   - node_modules/
@@ -60,5 +57,6 @@ deploy docker:
   only:
    - dev
   script:
+    - docker build -t poder/quienesquienapi:testing .
     - docker login -u $CI_RESGISTRY_USER -p $CI_REGISTRY_PASSWORD
     - docker push $CI_REGISTRY/$CI_REGISTRY_USER/quienesquienapi:testing .
