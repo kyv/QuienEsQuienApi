@@ -3,9 +3,6 @@ image: docker:latest
 variables:
   DOCKER_DRIVER: overlay
 
-services:
-- docker:dind
-
 stages:
   - lint
   - test
@@ -20,6 +17,8 @@ cache:
 
 lint:
   stage: lint
+  services:
+    - docker:dind
   tags:
     - docker
   script:
@@ -28,6 +27,7 @@ lint:
 test:
   stage: test
   services:
+    - docker:dind
     - mongo
   tags:
     - docker
@@ -52,6 +52,8 @@ deploy staging:
 
 deploy docker:
   stage: deploy
+  services:
+    - docker:dind
   tags:
    - docker
   only:
