@@ -28,7 +28,7 @@ test:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - docker run -e MONGODB_URI=$MONGODB_URI poder/quienesquienapi:testing npm run test
+    - docker run --link=mongo poder/quienesquienapi:testing npm run test
 
 deploy staging:
   image: tmaier/dpl
