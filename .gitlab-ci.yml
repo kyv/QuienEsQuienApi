@@ -18,7 +18,7 @@ lint:
   tags:
     - docker
   script:
-    - npm install --silent
+    - npm install
     - npm run lint
 
 test:
