@@ -58,6 +58,6 @@ deploy docker:
   only:
    - dev
   script:
+    - docker login --username=$DOCKER_ID_USER --password=$DOCKER_ID_PASSWORD
     - docker build -t poder/quienesquienapi:testing .
-    - docker login --username=$DOCKER_ID_USER --password=$CI_REGISTRY_PASSWORD
     - docker push quienesquienapi:testing .
