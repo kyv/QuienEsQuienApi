@@ -9,6 +9,10 @@
     "name": "Kevin Brown",
     "email": "kevin@rindecuentas.org"
   },
+  "engines": {
+    "node": "8.3.x",
+    "npm": "5.3.x"
+  },
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
