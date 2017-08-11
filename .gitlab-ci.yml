@@ -1,4 +1,11 @@
 image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay
+
+services:
+- docker:dind
+
 stages:
   - lint
   - test
@@ -20,14 +27,15 @@ lint:
 
 test:
   stage: test
+  services:
+    - mongo
   tags:
     - docker
   variables:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - docker run --rm -d --name mongo -p 27017:27017 mvertes/alpine-mongo
-    - docker run --rm -e MONGODB_URI=mongodb://mongo/runner --link=mongo poder/quienesquienapi:testing npm run test
+    - docker run --rm poder/quienesquienapi:testing npm run test
 
 deploy staging:
   image: tmaier/dpl
