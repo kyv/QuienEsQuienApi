@@ -4,7 +4,7 @@ variables:
   DOCKER_DRIVER: overlay
 
 stages:
-  - lint
+  # - lint
   - test
   - deploy
 
@@ -15,14 +15,14 @@ cache:
   paths:
   - node_modules/
 
-lint:
-  stage: lint
-  services:
-    - docker:dind
-  tags:
-    - docker
-  script:
-    - docker run poder/quienesquienapi:testing npm run lint
+# lint:
+#   stage: lint
+#   services:
+#     - docker:dind
+#   tags:
+#     - docker
+#   script:
+#     - docker run poder/quienesquienapi:testing npm run lint
 
 test:
   stage: test
@@ -35,7 +35,7 @@ test:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - docker run -e MONGODB_URI=mongodb://mongo/runner poder/quienesquienapi:testing npm run test
+    - docker run -e MONGODB_URI=mongodb://localhost/runner poder/quienesquienapi:testing npm run test
 
 deploy staging:
   image: tmaier/dpl
