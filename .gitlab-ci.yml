@@ -8,10 +8,6 @@ stages:
   - test
   - deploy
 
-cache:
-  paths:
-  - node_modules/
-
 lint:
   image: node:alpine
   stage: lint
