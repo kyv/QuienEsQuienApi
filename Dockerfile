@@ -1,13 +1,24 @@
-FROM mhart/alpine-node
+FROM mhart/alpine-node:8
 MAINTAINER Kevin Brown <kevin@rindecuentas.org>
+
+ENV PORT=${PORT:-80}
+
+RUN apk --no-cache add tini \
+  && addgroup -S node \
+  && adduser -S -G node node
 
 WORKDIR /src
 
 COPY package.json .
-RUN npm install --silent
 
 COPY . .
 
-EXPOSE 80
+RUN chown -R node:node /src
 
+EXPOSE $PORT
+
+USER node
+RUN npm install --silent
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["npm", "start"]
