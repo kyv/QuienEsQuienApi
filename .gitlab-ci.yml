@@ -52,7 +52,9 @@ deploy docker:
   tags:
    - docker
   only:
-   - dev
+   - master
+  except:
+   - tags
   script:
     - apk --no-cache add jq
     - export VERSION=$(cat package.json | jq -r .version)
