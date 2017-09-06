@@ -1,5 +1,5 @@
 swagger: '2.0'
-host: "quienesquienapi.herokuapp.com"
+host: "api.quienesquien.wiki"
 schemes:
 - https
 info:
