@@ -1,379 +1,1035 @@
-swagger: "2.0"
-host: "www.quienesquien.wiki"
+swagger: '2.0'
+host: "api.quienesquien.wiki"
 schemes:
-- http
 - https
 info:
-  description: "API Program description"
-  title: "quienesquien.wiki"
-  version: "0.0.2"
-  termsOfService: "http://example.com/about/terms"
+  description: >-
+    QuienEsQuien.Wiki API. Please see
+    the [README](https://github.com/ProjectPODER/QuienEsQuienApi)
+  title: api.quienesquien.wiki
+  version: '1'
+  termsOfService: 'http://example.com/about/terms'
   contact:
-    name: "API Docs"
-    url: "https://quienesquien.wiki/contact"
-    email: "apidocs@quienesquien.wiki"
+    name: Equipo QQW
+    url: 'https://www.quienesquien.wiki/contact'
+    email: info@quienesquien.wiki
   license:
-    name: "Apache 2.0"
-    url: "http://example.com"
-basePath: "/api/v1"
+    name: Apache 2.0
+    url: 'https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE'
+basePath: /v1
+consumes:
+  - application/json
+produces:
+  - application/json
 paths:
+  /spec.json:
+    x-swagger-pipe: swagger_raw
   /persons:
-    get:
-      description: Get a list of persons
-      summary: Json array of persons
-      externalDocs:
-        description: Find out more
-        url: http://docs.example.com/management/apis/get/entities
-      operationId: persons
+    x-swagger-router-controller: persons
+    post:
+      summary: Retrieve array of Person Documents
+      description: Retrieve array of Person Documents
+      operationId: allPersonsPost
       tags:
-      - persons
-      produces:
-      - application/json; charset=utf-8
+        - Persons
+      parameters:
+        - in: body
+          name: body
+          description: Mongo query
+          required: true
+          schema:
+            $ref: '#/definitions/QueryObject'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Person'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      description: Retrieve array of Person Documents
+      summary: Retrieve array of Person Documents
+      operationId: allPersons
+      tags:
+        - Persons
+      parameters:
+        - $ref: '#/parameters/_id'
+        - $ref: '#/parameters/simple'
+        - $ref: '#/parameters/name'
+        - $ref: '#/parameters/description'
+        - $ref: '#/parameters/contract_count'
+        - name: first_name
+          in: query
+          description: first name
+          type: string
+          allowEmptyValue: true
+        - name: family_name
+          in: query
+          description: family name
+          type: string
+          allowEmptyValue: true
+        - name: prefix
+          in: query
+          description: prefix
+          type: string
+          allowEmptyValue: true
+        - name: suffix
+          in: query
+          description: suffix
+          type: string
+          allowEmptyValue: true
+        - name: gender
+          in: query
+          description: gender
+          type: string
+          allowEmptyValue: true
+          enum:
+            - Male
+            - Female
+            - Other
+        - name: date_birth
+          in: query
+          description: birthday
+          type: string
+          format: date
+          allowEmptyValue: true
+        - name: date_death
+          in: query
+          description: day of departure
+          type: string
+          format: date
+          allowEmptyValue: true
+        - $ref: '#/parameters/address'
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/omit'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/embed'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Person'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/persons/{_id}':
+    x-swagger-router-controller: persons
+    get:
+      description: Retrieve Person Document by _id
+      summary: Retrieve Person Document by _id
+      operationId: singlePerson
+      tags:
+        - Persons
+      parameters:
+        - name: _id
+          in: path
+          description: Internal ID of person
+          required: true
+          type: string
+          pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Person'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/persons/distinct/{field}':
+    x-swagger-router-controller: persons
+    get:
+      summary: Retrieve unique values for field
+      description: Retrieve uniq values for field
+      operationId: distinctPerson
+      tags:
+        - Persons
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Distinct'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /organizations:
+    x-swagger-router-controller: organizations
+    post:
+      summary: Retrieve array of Organization Documents
+      description: Retrieve array of Organization Documents
+      operationId: allOrganizationsPost
+      tags:
+        - Organizations
+      parameters:
+        - in: body
+          name: body
+          description: Mongo query
+          required: true
+          schema:
+            $ref: '#/definitions/Organization'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Organization'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - Organizations
+      summary: Retrieve array of Organization Documents
+      description: Retrieve array of Organization Documents
+      operationId: allOrganizations
+      parameters:
+        - $ref: '#/parameters/_id'
+        - $ref: '#/parameters/simple'
+        - $ref: '#/parameters/name'
+        - $ref: '#/parameters/description'
+        - $ref: '#/parameters/initials'
+        - $ref: '#/parameters/contract_count'
+        - name: type
+          in: query
+          description: type of organization
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: category
+          in: query
+          description: category of organization
+          required: false
+          type: string
+          allowEmptyValue: true
+          enum:
+            - public
+            - company
+            - non-profit
+            - party
+        - name: parent
+          in: query
+          description: ultimate parent
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: immediate_parent
+          in: query
+          description: immediate parent
+          required: false
+          type: string
+          allowEmptyValue: true
+        - name: suborgs
+          in: query
+          description: subsidiaries
+          required: false
+          type: string
+          allowEmptyValue: true
+        - $ref: '#/parameters/address'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/omit'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/embed'
+        - $ref: '#/parameters/offset'
+      responses:
+        '200':
+          description: An array of organizations
+          schema:
+            $ref: '#/definitions/Organization'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/organizations/{_id}':
+    x-swagger-router-controller: organizations
+    get:
+     tags:
+       - Organizations
+     summary: Retrieve Organization Document by _id
+     description: Retrieve Organization Document by _id
+     operationId: singleOrganization
+     parameters:
+       - name: _id
+         in: path
+         description: Internal ID of organization
+         required: true
+         type: string
+         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+     responses:
+       '200':
+         description: An array of organizations
+         schema:
+           $ref: '#/definitions/Organization'
+       default:
+         description: Error
+         schema:
+           $ref: '#/definitions/ErrorResponse'
+  '/organizations/distinct/{field}':
+    x-swagger-router-controller: organizations
+    get:
+      summary: Retrieve unique values for field
+      description: Retrieve uniq values for field
+      operationId: distinctOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Distinct'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /contracts:
+    x-swagger-router-controller: contracts
+    post:
+      summary: Retrieve array of Contract Documents
+      description: Retrieve array of Contract Documents
+      operationId: allContractsPost
+      tags:
+        - Contracts
+      parameters:
+      - in: body
+        name: body
+        description: Mongo query
+        required: true
+        schema:
+          $ref: '#/definitions/Contract'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Contract'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      operationId: allContracts
+      summary: Retrieve array of Contract Documents
+      description: Retrieve array of Contract Documents
+      tags:
+        - Contracts
+      parameters:
+        - in: query
+          name: title
+          description: Title of contract.
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: type
+          description: Contract type
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: status
+          description: Contract Status
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: ocid
+          description: Open Contracting Identifier
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: procedure_type
+          description: Type of contractural proceedure
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: amount
+          description: Monetary amount paid to supplier
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: currency
+          description: Currency of given amount
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: suppliers_person
+          description: Provider of given service
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: suppliers_org
+          description: Provider of given service
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: department
+          description: responsible public department
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: dependency
+          description: responsible public dependency
+          type: string
+          required: false
+          allowEmptyValue: true
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/omit'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/embed'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
       responses:
         '200':
           description: OK
           schema:
-            $ref: "#/definitions/Persons"
-      security: []
-      parameters:
-        - $ref: "#/parameters/_id"
-        - $ref: "#/parameters/simple"
-        - $ref: "#/parameters/name"
-        - $ref: "#/parameters/text"
-        - $ref: "#/parameters/fields"
-        - $ref: "#/parameters/sort"
-        - $ref: "#/parameters/limit"
-  /contracts:
-    get:
-      description: "API Method Description"
-      summary: "Short Summary of API Method"
-      externalDocs:
-        description: "Find out more"
-        url: "http://docs.example.com/management/apis/get/entities"
-      operationId: "uniqueId"
-      tags:
-        - "contracts"
-      produces:
-        - "application/json; charset=utf-8"
-      responses:
-        200:
-          description: "OK"
+            type: array
+            items:
+              $ref: '#/definitions/Contract'
+        default:
+          description: Error
           schema:
-            $ref: "#/definitions/Contracts"
-      security: []
+            $ref: '#/definitions/ErrorResponse'
+  '/contracts/{_id}':
+    x-swagger-router-controller: contracts
+    get:
+     tags:
+       - Contracts
+     description: Retrieve Contract Document by _id
+     summary: Retrieve Contract Document by _id
+     operationId: singleContract
+     parameters:
+       - name: _id
+         in: path
+         description: Internal ID of contract
+         required: true
+         type: string
+         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+     responses:
+       '200':
+         description: An array of contracts
+         schema:
+           $ref: '#/definitions/Contract'
+       default:
+         description: Error
+         schema:
+           $ref: '#/definitions/ErrorResponse'
+  '/contracts/distinct/{field}':
+    x-swagger-router-controller: contracts
+    get:
+      summary: Retrieve unique values for field
+      description: Retrieve unique values for field
+      operationId: distinctContract
+      tags:
+        - Contracts
       parameters:
-        -
-          in: "query"
-          name: "title"
-          description: "Title of contract."
-          type: "string"
-          required: false
-          enum:
-            - "Red%20Local"
-        -
-          in: "query"
-          name: "type"
-          description: "Contract type"
-          type: "string"
-          required: false
-        -
-          in: "query"
-          name: "status"
-          description: "Contract Status"
-          type: "string"
-          required: false
-        -
-          in: "query"
-          name: "ocid"
-          description: "Open Contracting Identifier"
-          type: "string"
+        - name: field
+          in: path
+          description: Field to describe
           required: true
-        -
-          in: "query"
-          name: "procedure_type"
-          description: "Type of contractural proceedure"
-          type: "string"
-          required: false
-        -
-          in: "query"
-          name: "amount"
-          description: "Monetary amount paid to supplier"
-          type: "number"
-          required: false
-        -
-          in: "query"
-          name: "currency"
-          description: "Currency of given amount"
-          type: "string"
-          required: false
-        -
-          in: "query"
-          name: "provider"
-          description: "Provider of given service"
-          type: "string"
-          required: true
-        -
-          in: "query"
-          name: "department"
-          description: "responsible public department"
-          type: "string"
-          required: true
-        -
-          in: "query"
-          name: "dependency"
-          description: "responsible public dependency"
           type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Distinct'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /memberships:
+    x-swagger-router-controller: memberships
+    post:
+      description: Retrieve array of Membership Documents
+      summary: Retrieve array of Membership Documents
+      operationId: allMembershipsPost
+      tags:
+        - Memberships
+      parameters:
+        - in: body
+          name: body
+          description: Mongo query
           required: true
-        - $ref: "#/parameters/gt"
-        - $ref: "#/parameters/lt"
-        - $ref: "#/parameters/start_date"
-        - $ref: "#/parameters/end_date"
-        - $ref: "#/parameters/text"
-        - $ref: "#/parameters/fields"
-        - $ref: "#/parameters/sort"
-        - $ref: "#/parameters/limit"
+          schema:
+            $ref: '#/definitions/Membership'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Membership'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      operationId: allMemberships
+      description: Retrieve array of Membership Documents
+      summary: Retrieve array of Membership Documents
+      tags:
+        - Memberships
+      parameters:
+        - in: query
+          name: department
+          description: department
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: role
+          description: role
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person
+          description: person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person_id
+          description: id of person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: org_id
+          description: id of org
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: label
+          description: membership label
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: shares
+          description: number of sheares
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: salary
+          description: amount paid out
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/embed'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Membership'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/memberships/{_id}':
+    x-swagger-router-controller: memberships
+    get:
+      tags:
+        - Memberships
+      summary: Retreive Membership Document by _id
+      description: Retreive Membership Document by _id
+      operationId: singleMembership
+      parameters:
+        - name: _id
+          in: path
+          description: Internal ID of membership
+          required: true
+          type: string
+      responses:
+        '200':
+          description: An array of Memberships
+          schema:
+            $ref: '#/definitions/Membership'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/memberships/distinct/{field}':
+    x-swagger-router-controller: memberships
+    get:
+      summary: Retieve unique values for field
+      description: Retieve unique values for field
+      operationId: distinctMembership
+      tags:
+        - Memberships
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Distinct'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
-  Persons:
+  ErrorResponse:
     required:
-    - status
-    - data
+      - message
     properties:
-      status:
+      message:
+        type: string
+  Distinct:
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: string
+  Address:
+    properties:
+      street:
+        type: string
+        maxLength: 100
+      zone:
+        type: string
+        maxLength: 50
+      city:
+        type: string
+        maxLength: 50
+      state:
+        type: string
+        maxLength: 50
+      postal_code:
+        type: string
+        maxLength: 50
+      country:
+        type: string
+        format: CCA2
+      phones:
+        type: array
+        items:
+          type: string
+          maxLength: 50
+      emails:
+        type: array
+        items:
+          type: string
+          format: email
+          pattern: >-
+            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+      website:
+        type: string
+        format: url
+        maxLength: 50
+      ocd_id:
+        type: string
+        format: OCDID
+        maxLength: 110
+  Company:
+    properties:
+      sector:
+        type: string
+      classification:
+        type: string
+      tickers:
+        type: string
+      employees:
+        type: number
+        format: float
+      assets:
+        type: number
+        format: float
+      current_assets:
+        type: number
+        format: float
+      liabilities:
+        type: number
+        format: float
+      current_ratio:
+        type: number
+        format: float
+      quick_ratio:
+        type: number
+        format: float
+      revenue:
+        type: number
+        format: float
+      c_o_g_s:
+        type: number
+        format: float
+      gross_profit:
+        type: number
+        format: float
+      grossprofit_margin:
+        type: number
+        format: float
+      market_cap:
+        type: number
+        format: float
+      total_dept:
+        type: number
+        format: float
+  QueryObject:
+    properties:
+      query:
+        type: object
+        description: >-
+          mongo style query
+          https://docs.mongodb.com/manual/tutorial/query-documents
+      project:
+        type: object
+        description: >-
+          mongo style projection
+          https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
+  Reference:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      author:
+        type: string
+      publication_date:
+        type: string
+        format: date-time
+      publication_place:
+        type: string
+  Membership:
+    properties:
+      _id:
         type: string
         minLength: 1
-      data:
+        # pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
+      person:
+        type: string
+      person_id:
+        type: string
+      org:
+        type: string
+      org_id:
+        type: string
+      role:
+        type: string
+      department:
+        type: string
+      salary:
+        type: number
+        format: float
+      shares:
+        type: number
+        format: float
+  Person:
+    properties:
+      _id:
+        type: string
+        minLength: 1
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+      simple:
+        type: string
+        minLength: 1
+      name:
+        type: string
+        minLength: 1
+      names:
+        type: array
+        items:
+          type: string
+      first_name:
+        type: string
+        minLength: 1
+      family_name:
+        type: string
+        minLength: 1
+      prefix:
+        type: string
+        minLength: 1
+      suffix:
+        type: string
+        minLength: 1
+      created_at:
+        type: string
+        format: date
+        minLength: 1
+      source:
+        type: string
+        minLength: 1
+        enum:
+          - BMV
+          - NAICM
+          - compranet
+      contract_count:
+        type: integer
+      address:
+        $ref: '#/definitions/Address'
+      references:
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
+      board:
+        type: array
+        items:
+          $ref: '#/definitions/Membership'
+      shares:
+        type: array
+        items:
+          $ref: '#/definitions/Membership'
+      suppliesContract:
+        type: array
+        items:
+          $ref: '#/definitions/Contract'
+  Organization:
+    properties:
+      _id:
+        type: string
+        minLength: 1
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+      simple:
+        type: string
+        minLength: 1
+      name:
+        type: string
+        minLength: 1
+      category:
+        type: string
+        enum:
+          - public
+          - private
+          - party
+      address:
+        $ref: '#/definitions/Address'
+      company:
+        $ref: '#/definitions/Company'
+      initials:
+        type: string
+      description:
+        type: string
+      created_at:
+        type: string
+        format: date
+        minLength: 1
+      source:
+        type: string
+        minLength: 1
+        enum:
+          - BMV
+          - NAICM
+          - compranet
+      contract_count:
+        type: integer
+      memberships:
         type: array
         uniqueItems: true
         minItems: 1
         items:
-          required:
-          - _id
-          - simple
-          - name
-          - created_at
-          properties:
-            _id:
-              type: string
-              minLength: 1
-            simple:
-              type: string
-              minLength: 1
-            name:
-              type: string
-              minLength: 1
-            created_at:
-              type: string
-              minLength: 1
-            source:
-              type: string
-              minLength: 1
-            names:
-              type: array
-              items:
-                properties: {}
-            memberships:
-              type: array
-              uniqueItems: true
-              minItems: 1
-              items:
-                required:
-                - name
-                - role
-                - department
-                properties:
-                  name:
-                    type: string
-                    minLength: 1
-                  role:
-                    type: string
-                    minLength: 1
-                  department:
-                    type: string
-                    minLength: 1
-            owns:
-              type: "array"
-              uniqueItems: true
-              minItems: 1
-              items:
-                required:
-                - "name"
-                properties:
-                  name:
-                    type: "string"
-                    minLength: 1
-                  shares:
-                    type: "number"
-
-  Contracts:
-    description: "Contracts"
-    type: "object"
-    required:
-    - "status"
-    - "data"
-    properties:
-      status:
-        type: "string"
-        minLength: 1
-      data:
-        type: "array"
+          $ref: '#/definitions/Membership'
+      board:
+        type: array
         uniqueItems: true
         minItems: 1
         items:
-          required:
-          - "_id"
-          - "type"
-          - "status"
-          - "title"
-          - "ocid"
-          - "procedure_type"
-          - "provider"
-          - "department"
-          - "start_date"
-          - "end_date"
-          - "dependency"
-          properties:
-            _id:
-              type: "string"
-              minLength: 1
-            celebration:
-              type: "string"
-              minLength: 1
-            type:
-              type: "string"
-              minLength: 1
-            status:
-              type: "string"
-              minLength: 1
-            title:
-              type: "string"
-              minLength: 1
-            account_admin:
-              type: "string"
-              minLength: 1
-            ocid:
-              type: "string"
-              minLength: 1
-            procedure_type:
-              type: "string"
-              minLength: 1
-            amount:
-              type: "number"
-            currency:
-              type: "string"
-              minLength: 1
-            provider:
-              type: "string"
-              minLength: 1
-            references:
-              type: "array"
-              items:
-                properties: {}
-            department:
-              type: "string"
-              minLength: 1
-            clave_uc:
-              type: "string"
-              minLength: 1
-            start_date:
-              type: "string"
-              format: date-time
-              minLength: 1
-            end_date:
-              type: "string"
-              minLength: 1
-            character:
-              type: "string"
-              minLength: 1
-            dependency:
-              type: "string"
-              minLength: 1
-
+          $ref: '#/definitions/Membership'
+      shares:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          $ref: '#/definitions/Membership'
+      shareholders:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          $ref: '#/definitions/Membership'
+      contracts:
+        type: array
+        uniqueItems: true
+        minItems: 1
+        items:
+          $ref: '#/definitions/Contract'
+  Contract:
+    description: A Contract
+    type: object
+    properties:
+      _id:
+        type: string
+        minLength: 1
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+      type:
+        type: string
+        minLength: 1
+      status:
+        type: string
+        minLength: 1
+      title:
+        type: string
+        minLength: 1
+      account_admin:
+        type: string
+        minLength: 1
+      ocid:
+        type: string
+        minLength: 1
+      procedure_type:
+        type: string
+        minLength: 1
+      amount:
+        type: number
+        format: float
+      currency:
+        type: string
+        minLength: 1
+      suppliers_org:
+        type: array
+        items:
+          type: string
+      suppliers_person:
+        type: array
+        items:
+          type: string
+      references:
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
+      department:
+        type: string
+        minLength: 1
+      clave_uc:
+        type: string
+        minLength: 1
+      character:
+        type: string
+        minLength: 1
+      dependency:
+        type: string
 parameters:
   name:
     name: name
     in: query
     description: The entity's name
     type: string
-    enum:
-    - Carlos A. Motta
+    allowEmptyValue: true
   _id:
     in: query
     name: _id
     description: Internal ID of entity
     type: string
-    enum:
-    - "Knk2AoEw4hXe7Fx2F"
+    allowEmptyValue: true
   simple:
     in: query
     name: simple
     description: Simpified name of person
     type: string
-    enum:
-    - fabrizio pagani
+    allowEmptyValue: true
+  description:
+    in: query
+    name: description
+    description: Description of entity
+    type: string
+    allowEmptyValue: true
+  contract_count:
+    in: query
+    name: contract_count
+    description: Number of contracts
+    type: string
+    allowEmptyValue: true
+  address:
+    in: query
+    name: address
+    description: address
+    required: false
+    type: string
+    format: dot notation
+    allowEmptyValue: true
   fields:
     in: query
     name: fields
     description: fields to return in results
     type: string
-    enum:
-      - title
-      - dependency
-  text:
+  omit:
     in: query
-    name: text
-    description: Perform a text search
-    type: boolean
-    enum:
-      - true
-      - false
+    name: omit
+    description: fields to omit from results
+    type: string
   sort:
     in: query
     name: sort
     description: Sort by given field.
     type: string
-    enum:
-      - end_date
-      - amount
+  embed:
+    in: query
+    name: embed
+    description: Embed related documents
+    type: string
+    allowEmptyValue: true
   limit:
     name: limit
     in: query
     description: Number of returned documents
     type: integer
-    default: 100
-    enum:
-      - 1
-      - 5
-      - 10
-      - 100
+    default: 25
+  offset:
+    name: offset
+    in: query
+    description: Number of returned documents
+    type: integer
+    default: 0
+    minimum: 0
   start_date:
     in: query
     name: start_date
     description: Beginning Date
     type: string
     format: date-time
-    enum:
-      - 2014-04-20
+    allowEmptyValue: true
   end_date:
     in: query
     name: end_date
     description: End Date
     type: string
     format: date-time
-    enum:
-      - 2014-04-20
-  gt:
-    in: "query"
-    name: "gt"
-    description: Greater than
-    type: "string"
-    enum:
-      - "2014-04-20"
-      - "100000"
-  lt:
-    in: "query"
-    name: "lt"
-    description: Less than
-    type: "string"
-    enum:
-      - "2014-04-20"
-      - "100000"
+    allowEmptyValue: true
+  initials:
+    in: query
+    name: initials
+    description: initials
+    required: false
+    type: string
+    allowEmptyValue: true
