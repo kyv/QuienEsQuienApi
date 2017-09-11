@@ -1,24 +1,40 @@
-'use strict';
+const SwaggerExpress = require('swagger-express-mw');
+const app = require('express')();
+const YAML = require('yamljs');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = YAML.load('api/swagger/swagger.yaml');
+const customCss = '#header, .topbar { display: none }';
+const config = {
+  appRoot: __dirname, // required config
+};
 
-var SwaggerRestify = require('swagger-restify-mw');
-var restify = require('restify');
-var app = restify.createServer();
+if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
+  throw 'please configure MONGODB_URI\nwith "localhost:27017/foo" or similar';
+}
 
 module.exports = app; // for testing
 
-var config = {
-  appRoot: __dirname // required config
-};
+app.use('/v1/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, false, {}, customCss));
 
-SwaggerRestify.create(config, function(err, swaggerRestify) {
-  if (err) { throw err; }
+SwaggerExpress.create(config, (err, swaggerExpress) => {
+  if (err) {
+    throw err;
+  }
 
-  swaggerRestify.register(app);
+  swaggerExpress.register(app);
 
-  var port = process.env.PORT || 10010;
+  const port = process.env.PORT || 10010;
+
   app.listen(port);
 
-  if (swaggerRestify.runner.swagger.paths['/hello']) {
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
-  }
+});
+
+app.use((request, response, next) => {
+  response.header('Access-Control-Allow-Origin', '*');
+  response.header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
+  response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
+  return next();
 });
