@@ -1,6 +1,7 @@
 swagger: '2.0'
-host: "api.quienesquien.wiki"
+host: "localhost:10010"
 schemes:
+- http
 - https
 info:
   description: >-
@@ -599,6 +600,60 @@ paths:
           description: Field to describe
           required: true
           type: string
+        - in: query
+          name: department
+          description: department
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: role
+          description: role
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person
+          description: person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person_id
+          description: id of person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: org_id
+          description: id of org
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: label
+          description: membership label
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: shares
+          description: number of sheares
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: salary
+          description: amount paid out
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - $ref: '#/parameters/post_type'
+        - $ref: '#/parameters/post_class'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
       responses:
         '200':
           description: Success
@@ -1030,6 +1085,20 @@ parameters:
     in: query
     name: initials
     description: initials
+    required: false
+    type: string
+    allowEmptyValue: true
+  post_type:
+    in: query
+    name: post_type
+    description: Type of Post
+    required: false
+    type: string
+    allowEmptyValue: true
+  post_class:
+    in: query
+    name: post_class
+    description: Class of Post
     required: false
     type: string
     allowEmptyValue: true

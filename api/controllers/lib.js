@@ -58,9 +58,12 @@ function getQuery(req) {
 
 function getDistinct(req, res, collection) {
   const field = req.swagger.params.field.value;
+  const sane = sanitize(req.query);
+  const string = qs.stringify(sane);
+  const query = q2m(string, { ignore: 'embed' });
 
   res.set('Content-Type', 'application/json; charset=utf-8');
-  return collection.distinct(field)
+  return collection.distinct(field, query.criteria)
     .then(data => {
       const size = data.length;
 
