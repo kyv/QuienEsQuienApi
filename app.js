@@ -27,7 +27,9 @@ SwaggerExpress.create(config, (err, swaggerExpress) => {
 
   const port = process.env.PORT || 10010;
 
-  app.listen(port);
+  const l = app.listen(port, () => {
+    process.stdout.write(`listing on port ${l.address().port}`);
+  });
 
 });
 
