@@ -5,18 +5,16 @@ schemes:
 - https
 info:
   description: >-
-    QuienEsQuien.Wiki API. Please see
-    the [README](https://github.com/ProjectPODER/QuienEsQuienApi)
+    QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
   title: api.quienesquien.wiki
   version: '1'
-  termsOfService: 'http://example.com/about/terms'
   contact:
     name: Equipo QQW
     url: 'https://www.quienesquien.wiki/contact'
     email: info@quienesquien.wiki
   license:
-    name: Apache 2.0
-    url: 'https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE'
+    name: GPL-3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.en.html'
 basePath: /v1
 consumes:
   - application/json
