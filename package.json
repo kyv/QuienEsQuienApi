@@ -2,7 +2,7 @@
   "name": "api.quienesquien.wiki",
   "version": "0.1.1",
   "private": true,
-  "description": "New Swagger API Project",
+  "description": "quienesquien.wiki REST API ",
   "keywords": [],
   "license": "GPL-3.0",
   "engines": {
@@ -12,6 +12,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "watch": "./node_modules/.bin/nodemon app.js",
     "test": "./node_modules/.bin/mocha test/api/controllers/*.js",
     "lint": "./node_modules/.bin/eslint '**/*.js'"
   },
@@ -38,6 +39,7 @@
     "eslint": "^4.6.1",
     "eslint-config-eslint": "^4.0.0",
     "mocha": "^2.2.5",
+    "nodemon": "^1.12.0",
     "request": "^2.58.0",
     "should": "^7.1.0",
     "supertest": "^1.0.0",
