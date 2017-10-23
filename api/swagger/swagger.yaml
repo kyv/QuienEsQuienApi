@@ -1,7 +1,6 @@
 swagger: '2.0'
-host: "localhost:10010"
+host: "api.quienesquien.wiki"
 schemes:
-- http
 - https
 info:
   description: >-
