@@ -12,9 +12,9 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:8.3
+        enviornment:
+          MONGODB_URI: localhost:27017/runner
       - image: circleci/mongo:3.4.4
-    enviornment:
-      - MONGODB_URI: localhost:27017/runner
 
     working_directory: ~/repo
 
