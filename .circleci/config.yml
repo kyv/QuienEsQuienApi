@@ -13,8 +13,6 @@ jobs:
       # specify the version you desire here
       - image: circleci/node:8.3
       - image: circleci/mongo:3.4.4
-    enviornment:
-      - MONGODB_URI: localhost:27017/runner
 
     working_directory: ~/repo
 
@@ -34,9 +32,10 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-        
+
       # run tests!
-      - run: yarn test
-
-
-
+      - run:
+          command: yarn test
+          name: test
+          enviornment:
+            MONGODB_URI: localhost:27017/runner
