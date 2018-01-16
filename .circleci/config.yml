@@ -14,7 +14,7 @@ jobs:
       - image: circleci/node:8.3
       - image: circleci/mongo:3.4.4
     enviornment:
-      - MONGODB_URI=localhost:27017/runner
+      - MONGODB_URI: localhost:27017/runner
 
     working_directory: ~/repo
 
