@@ -35,7 +35,5 @@ jobs:
 
       # run tests!
       - run:
-          command: yarn test
+          command: MONGODB_URI=localhost:27017/runner yarn test
           name: test
-          enviornment:
-            MONGODB_URI: localhost:27017/runner
