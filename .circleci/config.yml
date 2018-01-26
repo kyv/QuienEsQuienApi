@@ -52,7 +52,7 @@ jobs:
 
       - run: apk --no-cache add jq
       - run: |
-          export VERSION=$(cat src/package.json | jq -r .version)
+          export VERSION=$(cat package.json | jq -r .version)
           docker build -t poder/quienesquienapi:$VERSION .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push poder/quienesquienapi:$VERSION
