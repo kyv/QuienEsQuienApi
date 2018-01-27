@@ -461,6 +461,28 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /releases.json:
+    get:
+      x-swagger-router-controller: ocds
+      operationId: allReleases
+      summary: Returns OCDS releases
+      tags:
+        - OCDS
+      description: >-
+        This should return an object and in it should be a OCDS releases list
+        and links object. We diverge from OCDS recomendations by supporting
+        queries on any object field. 
+      responses:
+        '200':
+          description: List of releases
+      parameters:
+        - in: query
+          name: ocid
+          type: string
+          description: Filter results for only releases with this ocid
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+
   /memberships:
     x-swagger-router-controller: memberships
     post:
