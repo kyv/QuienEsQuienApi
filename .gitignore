@@ -32,6 +32,3 @@ node_modules
 
 # Runtime configuration for swagger app
 config/runtime.yaml
-
-# local
-v1/docsv2

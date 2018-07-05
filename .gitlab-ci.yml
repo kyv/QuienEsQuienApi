@@ -39,6 +39,8 @@ deploy staging:
     - heroku
   only:
     - dev
+  except:
+   - tags
   environment:
     name: stageing
     url: https://quienesquienapi.herokuapp.com
@@ -53,6 +55,8 @@ deploy docker:
    - docker
   only:
    - dev
+  except:
+   - tags
   script:
     - apk --no-cache add jq
     - export VERSION=$(cat package.json | jq -r .version)

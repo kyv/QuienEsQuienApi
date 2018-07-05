@@ -8,6 +8,10 @@ const config = {
   appRoot: __dirname, // required config
 };
 
+const swaggerUIOptions = {
+  url: `${swaggerDocument.host}/${swaggerDocument.basePath}/spec.json`,
+};
+
 if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
   throw 'please configure MONGODB_URI\nwith "localhost:27017/foo" or similar';
 }
@@ -16,7 +20,7 @@ module.exports = app; // for testing
 
 app.use('/v1/docs',
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, false, {}, customCss));
+  swaggerUi.setup(swaggerDocument, false, swaggerUIOptions, customCss));
 
 SwaggerExpress.create(config, (err, swaggerExpress) => {
   if (err) {
@@ -27,12 +31,11 @@ SwaggerExpress.create(config, (err, swaggerExpress) => {
 
   const port = process.env.PORT || 10010;
 
-  app.listen(port);
+  const l = app.listen(port, () => {
+    process.stdout.write(`listing on port ${l.address().port}`);
+  });
 
 });
-
-// FIXME gzip breaks swagger-ui
-// app.use(restify.gzipResponse());
 
 app.use((request, response, next) => {
   response.header('Access-Control-Allow-Origin', '*');

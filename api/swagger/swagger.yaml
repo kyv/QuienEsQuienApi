@@ -1,25 +1,19 @@
 swagger: '2.0'
-host: "quienesquienapi.herokuapp.com"
+host: "api.quienesquien.wiki"
 schemes:
 - https
 info:
   description: >-
-    QuienEsQuien.Wiki API. Please see
-    [query-to-mongo](https://www.npmjs.com/package/query-to-mongo) for
-    [filtering](https://www.npmjs.com/package/query-to-mongo#filtering) and
-    [field
-    selection](https://www.npmjs.com/package/query-to-mongo#field-selection)
-    references with *GET* method.
+    QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
   title: api.quienesquien.wiki
   version: '1'
-  termsOfService: 'http://example.com/about/terms'
   contact:
     name: Equipo QQW
     url: 'https://www.quienesquien.wiki/contact'
     email: info@quienesquien.wiki
   license:
-    name: Apache 2.0
-    url: 'https://github.com/ProjectPODER/QuienEsQuien/blob/master/LICENSE'
+    name: GPL-3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.en.html'
 basePath: /v1
 consumes:
   - application/json
@@ -467,136 +461,28 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /contracts/releases.json:
-    x-swagger-router-controller: ocds
+  /releases.json:
     get:
+      x-swagger-router-controller: ocds
       operationId: allReleases
       summary: Returns OCDS releases
+      tags:
+        - OCDS
       description: >-
         This should return an object and in it should be a OCDS releases list
-        and links object.  The links object should have a 'next' property with
-        the url of the next url that is to visited when paging through the
-        results.  Normally a full OCDS release should be in the 'releases'
-        list.  The results should be listed in modified date descending.
+        and links object. We diverge from OCDS recomendations by supporting
+        queries on any object field.
       responses:
         '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Release'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      tags:
-        - Contracts
+          description: List of releases
       parameters:
-        - in: query
-          name: idsOnly
-          type: string
-          description: >-
-            A list of objects is returned but contiains only the 'ocid' and 'id'
-            properties. Useful for large datasets where you just want to see
-            what new releases ther are.
-        - in: query
-          name: page
-          type: string
-          description: Ask for a specific page or results if server has paging
-        - in: query
-          name: packageURL
-          type: string
-          description: Filter results for only releases in particular package
-        - in: query
-          name: releaseID
-          type: string
-          description: Filter results for only releases with this release ID
         - in: query
           name: ocid
           type: string
           description: Filter results for only releases with this ocid
-  /contracts/records.json:
-    x-swagger-router-controller: ocds
-    get:
-      operationId: allRecords
-      summary: Returns OCDS records
-      description: >-
-        This should return an object and in it should be a OCDS records list and
-        links object.  The links object should have a 'next' property with the
-        url of the next url that is to visited when paging through the results.
-        Normally a full OCDS record should be in the 'records' list.  The
-        results should be listed in modified date descending.
-      responses:
-        '200':
-          description: List of records
-      tags:
-        - Contracts
-      parameters:
-        - in: query
-          name: idsOnly
-          type: string
-          description: >-
-            A list of objects is returned but contiains only the 'ocid' and 'id'
-            properties. Useful for large datasets where you just want to see
-            what new records ther are.
-        - in: query
-          name: page
-          type: string
-          description: Ask for a specific page or results if server has paging
-        - in: query
-          name: packageURL
-          type: string
-          description: Filter results for only records in particular package
-  /contracts/release.json:
-    x-swagger-router-controller: ocds
-    get:
-      operationId: singleRelease
-      summary: Returns an OCDS release
-      description: >-
-        This should return an OCDS release object. There is potential for
-        releaseIds to be duplicated for a particular API.  If this is the case
-        then the user should provide either a packageURL or an ocid in order to
-        get an individual release.
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/ReleasePackage'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      tags:
-        - Contracts
-      parameters:
-        - in: query
-          name: releaseID
-          required: true
-          type: string
-          description: The release id of the release
-        - in: query
-          name: packageURL
-          type: string
-          description: Specify the package of the release
-        - in: query
-          name: ocid
-          type: string
-          description: Specify the ocid of the release
-  /contracts/record.json:
-    x-swagger-router-controller: ocds
-    get:
-      operationId: singleRecord
-      summary: Returns an OCDS record
-      description: This should return an OCDS record object.
-      responses:
-        '200':
-          description: Single Record
-      tags:
-        - Contracts
-      parameters:
-        - in: query
-          name: ocid
-          required: true
-          type: string
-          description: The ocid of the record
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+
   /memberships:
     x-swagger-router-controller: memberships
     post:
@@ -733,6 +619,60 @@ paths:
           description: Field to describe
           required: true
           type: string
+        - in: query
+          name: department
+          description: department
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: role
+          description: role
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person
+          description: person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: person_id
+          description: id of person
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: org_id
+          description: id of org
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: label
+          description: membership label
+          type: string
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: shares
+          description: number of sheares
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - in: query
+          name: salary
+          description: amount paid out
+          type: number
+          format: float
+          required: false
+          allowEmptyValue: true
+        - $ref: '#/parameters/post_type'
+        - $ref: '#/parameters/post_class'
+        - $ref: '#/parameters/start_date'
+        - $ref: '#/parameters/end_date'
       responses:
         '200':
           description: Success
@@ -749,96 +689,6 @@ definitions:
     properties:
       message:
         type: string
-  Release:
-    properties:
-      ocid:
-        type: string
-      id:
-        type: string
-      date:
-        type: string
-      tag:
-        type: array
-        items:
-          type: string
-      initiationType:
-        type: string
-      parties:
-        type: array
-        items:
-          $ref: '#/definitions/Party'
-      buyer:
-        $ref: '#/definitions/OrganizationReference'
-      planning:
-        $ref: '#/definitions/Planning'
-      tender:
-        $ref: '#/definitions/Tender'
-      awards:
-        type: array
-        items:
-          $ref: '#/definitions/Award'
-      contracts:
-        type: array
-        items:
-          $ref: '#/definitions/ocdsContract'
-      language:
-        type: string
-  Planning:
-    properties:
-      budget:
-        $ref: '#/definitions/Budget'
-      federal_funding:
-        type: number
-        format: float
-  Tender:
-    properties:
-      id:
-        type: number
-        format: float
-      tenderPeriod:
-        $ref: '#/definitions/ocdsPeriod'
-      procurementMethod:
-        type: string
-        enum:
-          - open
-          - selective
-          - limited
-          - direct
-      procurementMethodRationale:
-        type: string
-        enum:
-          - Nacional
-          - Internacional
-          - Internacional bajo TLC
-      procurementMethodDetails:
-        type: string
-      procedure_type:
-        type: string
-      submissionMethod:
-        type: string
-        enum:
-          - Electronica
-          - Mixta
-          - Presencial
-  Award:
-    properties:
-      title:
-        type: string
-      value:
-        type: object
-        properties:
-          amount:
-            type: number
-            format: float
-          currency:
-            type: string
-      suppliers:
-        type: array
-        items:
-          $ref: '#/definitions/OrganizationReference'
-      date:
-        type: number
-        format: date-time
   Distinct:
     required:
       - data
@@ -1039,80 +889,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Contract'
-  Party:
-    title: Party
-    description: A party (organization)
-    type: object
-    additionalProperties: true
-    properties:
-      name:
-        title: Common name
-        description: >-
-          A common name for this organization or other participant in the
-          contracting process. The identifier object provides an space for the
-          formal legal name, and so this may either repeat that value, or could
-          provide the common name by which this organization or entity is known.
-          This field may also include details of the department or sub-unit
-          involved in this contracting process.
-        type: string
-      id:
-        type: string
-        description: >-
-          The ID used for cross-referencing to this party from other sections of
-          the release. This field may be built with the following structure
-          {identifier.scheme}-{identifier.id}(-{department-identifier}).
-        title: Entity ID
-      identifier:
-        description: >-
-          The primary identifier for this organization or participant.
-          Identifiers that uniquely pick out a legal entity should be preferred.
-          Consult the [organization identifier
-          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/)
-          for the preferred scheme and identifier to use.
-      additionalIdentifiers:
-        title: Additional identifiers
-        description: >-
-          A list of additional / supplemental identifiers for the organization
-          or participant, using the [organization identifier
-          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/).
-          This could be used to provide an internally used identifier for this
-          organization in addition to the primary legal entity identifier.
-        type: string
-      address:
-        $ref: '#/definitions/ocdsAddress'
-      contactPoint:
-        $ref: '#/definitions/ocdsContactPoint'
-      roles:
-        title: Party roles
-        description: >-
-          The party's role(s) in the contracting process. Role(s) should be
-          taken from the [partyRole
-          codelist](http://standard.open-contracting.org/1.1/en/schema/codelists/#party-role).
-          Values from the provided codelist should be used wherever possible,
-          though extended values can be provided if the codelist does not have a
-          relevant code.
-        type: array
-        items:
-          type: string
-        enum:
-          - buyer
-          - procuringEntity
-          - supplier
-          - tenderer
-          - funder
-          - enquirer
-          - payer
-          - payee
-          - reviewBody
-      details:
-        type: object
-        description: >-
-          Additional classification information about parties can be provided
-          using partyDetail extensions that define particular properties and
-          classification schemes.
-        title: Details
-      items:
-        $ref: '#/definitions/Identifier'
   Organization:
     properties:
       _id:
@@ -1182,76 +958,6 @@ definitions:
         minItems: 1
         items:
           $ref: '#/definitions/Contract'
-  OrganizationReference:
-    properties:
-      _id:
-        type: string
-      legalName:
-        type: string
-      uri:
-        type: string
-  ReleasePackage:
-    properties:
-      uri:
-        type: string
-      version:
-        type: string
-      extensions:
-        type: array
-        items:
-          type: string
-      release:
-        $ref: '#/definitions/Release'
-      publisher:
-        $ref: '#/definitions/Publisher'
-  Publisher:
-    properties:
-      name:
-        type: string
-      scheme:
-        type: string
-      uid:
-        type: string
-      uri:
-        type: string
-      license:
-        type: string
-      publicationPolicy:
-        type: string
-      publishedDate:
-        type: string
-        format: date-time
-  Budget:
-    properties:
-      id:
-        type: string
-      branch:
-        type: number
-        format: integer
-      source:
-        type: string
-      value:
-        type: object
-        properties:
-          amount:
-            type: number
-            format: float
-          currency:
-            type: string
-      project:
-        type: string
-      projectID:
-        type: string
-      foreign_credit:
-        type: boolean
-      int_fin_org:
-        type: string
-        enum:
-          - BID
-          - BIRF
-          - BID;BIRF
-          - BDAN
-          - BIRF;OITB
   Contract:
     description: A Contract
     type: object
@@ -1307,220 +1013,6 @@ definitions:
         minLength: 1
       dependency:
         type: string
-  ocdsPeriod:
-    title: OCDS_Period
-    type: object
-    properties:
-      startDate:
-        title: Start date
-        description: >-
-          The start date for the period. When known, a precise start date must
-          always be provided.
-        type: string
-        format: date-time
-      endDate:
-        title: End date
-        description: >-
-          The end date for the period. When known, a precise end date must
-          always be provided.
-        type: string
-        format: date-time
-      maxExtentDate:
-        description: >-
-          The period cannot be extended beyond this date. This field is
-          optional, and can be used to express the maximum available data for
-          extension or renewal of this period.
-        format: date-time
-        title: Maximum extent
-        type: string
-      durationInDays:
-        description: >-
-          The maximum duration of this period in days. A user interface may wish
-          to collect or display this data in months or years as appropriate, but
-          should convert it into days when completing this field. This field can
-          be used when exact dates are not known.  Where a startDate and endDate
-          are given, this field is optional, and should reflect the difference
-          between those two days. Where a startDate and maxExtentDate are given,
-          this field is optional, and should reflect the diffence between
-          startDate and maxExtentDate.
-        title: Duration (days)
-        type: integer
-  ocdsContract:
-    type: object
-    title: OCDS_Contract
-    description: >-
-      Information regarding the signed contract between the buyer and
-      supplier(s).
-    required:
-      - id
-      - awardID
-    properties:
-      id:
-        title: Contract ID
-        description: >-
-          The identifier for this contract. It must be unique and cannot change
-          within its Open Contracting Process (defined by a single ocid). See
-          the [identifier
-          guidance](http://standard.open-contracting.org/1.1/en/schema/identifiers/)
-          for further details.
-        type: string
-        minLength: 1
-      awardID:
-        title: Award ID
-        description: The award.id against which this contract is being issued.
-        type: string
-        minLength: 1
-      title:
-        title: Contract title
-        description: Contract title
-        type: string
-      description:
-        title: Contract description
-        description: Contract description
-        type: string
-      status:
-        title: Contract status
-        description: >-
-          The current status of the contract. Drawn from the [contractStatus
-          codelist](http://standard.open-contracting.org/1.1/en/schema/codelists/#contract-status)
-        type: string
-        enum:
-          - pending
-          - active
-          - cancelled
-          - terminated
-      period:
-        title: Period
-        description: The start and end date for the contract.
-        items:
-          $ref: '#/definitions/ocdsPeriod'
-      value:
-        title: Value
-        description: >-
-          The total value of this contract. A negative value indicates that the
-          contract will involve payments from the supplier to the buyer
-          (commonly used in concession contracts).
-        items:
-          $ref: '#/definitions/ocdsValue'
-      dateSigned:
-        title: Date signed
-        description: >-
-          The date the contract was signed. In the case of multiple signatures,
-          the date of the last signature.
-        type: string
-        format: date-time
-      implementation:
-        title: Implementation
-        description: >-
-          Information related to the implementation of the contract in
-          accordance with the obligations laid out therein.
-  ocdsValue:
-    title: OCDS_Value
-    type: object
-    properties:
-      amount:
-        title: Amount
-        description: Amount as a number.
-        type: number
-      currency:
-        title: Currency
-        description: >-
-          The currency for each amount should always be specified using the
-          uppercase 3-letter currency code from ISO4217.
-        type: string
-  ocdsAddress:
-    title: OCDS_Address
-    description: >-
-      An address. This may be the legally registered address of the
-      organization, or may be a correspondence address for this particular
-      contracting process.
-    type: object
-    properties:
-      streetAddress:
-        title: Street address
-        type: string
-        description: 'The street address. For example, 1600 Amphitheatre Pkwy.'
-      locality:
-        title: Locality
-        type: string
-        description: 'The locality. For example, Mountain View.'
-      region:
-        title: Region
-        type: string
-        description: 'The region. For example, CA.'
-      postalCode:
-        title: Postalcode
-        type: string
-        description: 'The postal code. For example, 94043.'
-      countryName:
-        title: Country name
-        type: string
-        description: 'The country name. For example, United States.'
-  ocdsContactPoint:
-    title: OCDS_ContactPoint
-    type: object
-    description: >-
-      An person, contact point or department to contact in relation to this
-      contracting process.
-    properties:
-      name:
-        title: Name
-        type: string
-        description: >-
-          The name of the contact person, department, or contact point, for
-          correspondence relating to this contracting process.
-      email:
-        title: Email
-        type: string
-        description: The e-mail address of the contact point/person.
-      telephone:
-        title: Telephone
-        type: string
-        description: >-
-          The telephone number of the contact point/person. This should include
-          the international dialling code.
-      faxNumber:
-        title: Fax number
-        type: string
-        description: >-
-          The fax number of the contact point/person. This should include the
-          international dialling code.
-      url:
-        title: URL
-        type: string
-        description: A web address for the contact point/person.
-        format: uri
-  Identifier:
-    title: OCDS_Identifier
-    type: object
-    properties:
-      scheme:
-        title: Scheme
-        description: >-
-          Organization identifiers be drawn from an existing identification
-          scheme. This field is used to indicate the scheme or codelist in which
-          the identifier will be found. This value should be drawn from the
-          [Organization Identifier
-          Scheme](http://standard.open-contracting.org/1.1/en/schema/codelists/#organization-identifier-scheme).
-        type: string
-      id:
-        title: ID
-        description: The identifier of the organization in the selected scheme.
-        type: string
-      legalName:
-        title: Legal Name
-        description: The legally registered name of the organization.
-        type: string
-      uri:
-        title: URI
-        description: >-
-          A URI to identify the organization, such as those provided by [Open
-          Corporates](http://www.opencorporates.com) or some other relevant URI
-          provider. This is not for listing the website of the organization:
-          that can be done through the url field of the Organization contact
-          point.
-        type: string
-        format: uri
 parameters:
   name:
     name: name
@@ -1612,6 +1104,20 @@ parameters:
     in: query
     name: initials
     description: initials
+    required: false
+    type: string
+    allowEmptyValue: true
+  post_type:
+    in: query
+    name: post_type
+    description: Type of Post
+    required: false
+    type: string
+    allowEmptyValue: true
+  post_class:
+    in: query
+    name: post_class
+    description: Class of Post
     required: false
     type: string
     allowEmptyValue: true

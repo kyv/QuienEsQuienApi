@@ -123,83 +123,290 @@
       ]
     }
   ],
-  "memberships": [
-      {
-        "_id": "0f1b0ba0d776c9dfb",
-        "source": "Baz",
-        "department": "board",
-        "person": "Manuel Echanove Pasquin",
-        "person_id": "manuel echanove pasquin",
-        "role": "Alternate Director",
-        "org_id": "telefonica del peru saa"
+  "releases": [{
+    "_id": "5a3174625af1cf00054fc78a",
+    "ocid": "OCDS-0UD2Q6-AA-002000997-E10-2016",
+    "id": "AA-002000997-E10-2016",
+    "date": "2017-12-13T18:41:38.647Z",
+    "initiationType": "tender",
+    "source": ["https://compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=993601"],
+    "tag": ["tender"],
+    "parties": [{
+      "name": "Presidencia de la República",
+      "id": "presidencia-de-la-republica",
+      "roles": ["buyer"],
+      "contactPoint": {
+        "name": "Rodrigo Mendoza Peralta"
       },
-      {
-        "_id": "0f1b0ba0d776c9e06",
-        "department": "Unidad De Admon. De Rec. Mat. Y Servs. Grales. 00",
-        "person": "Juan Jose Salazar Navarro",
-        "person_id": "juan jose salazar navarro",
-        "role": "Responsible of Compranet",
-        "org_id": "secretaria de agricultura ganaderia desarrollo rural pesca y alimentacion"
-      },
-      {
-        "_id": "0f1b0ba0d776c9e08",
-        "department": "Dirección General De Recursos Materiales Inmuebles Y Servicios 00",
-        "person": "Enrique Quiroz Acosta",
-        "person_id": "enrique quiroz acosta",
-        "role": "Responsible of Compranet",
-        "org_id": "secretaria de agricultura ganaderia desarrollo rural pesca y alimentacion",
-        "shares": 32
-      },
-      {
-        "_id" : "6uMwhH38ktQvGDws3",
-        "person" : "Patricia Susana Fadel",
-        "person_id" : "patricia susana fadel",
-        "post_class" : "Electivo",
-        "post_type" : "Legislativo",
-        "references" : [
-          {
-            "url" : "andytow.com",
-            "quality" : "oficial",
-            "chequeado" : false,
-            "field" : "end_date"
-          },
-          {
-            "url" : "andytow.com",
-            "quality" : "oficial",
-            "chequeado" : false,
-            "field" : "start_date"
-          }
-        ],
-        "role" : "Diputado Nacional",
-        "sob_org" : "camara de diputados de la nacion",
-        "start_date" : "2003-10-12",
-        "territory" : "Mendoza"
-      },
-      {
-        "_id" : "FAWs9EpxHtMQgR6NW",
-        "person" : "Ricardo Argentino Bussi",
-        "person_id" : "ricardo argentino bussi",
-        "post_class" : "Electivo",
-        "post_type" : "Legislativo",
-        "references" : [
-          {
-            "url" : "andytow.com",
-            "quality" : "oficial",
-            "chequeado" : false,
-            "field" : "end_date"
-          },
-          {
-            "url" : "andytow.com",
-            "quality" : "oficial",
-            "chequeado" : false,
-            "field" : "start_date"
-          }
-        ],
-        "role" : "Senador Nacional",
-        "sob_org" : "senado de la nacion",
-        "start_date" : "2001-10-12",
-        "territory" : "Tucumán"
+      "department": {
+        "name": "Coordinación General de Transportes Aéreos Presidenciales",
+        "id": "002000997"
       }
+    }, {
+      "name": "PRODUCTOS DENTALES TOVAR, S.A.",
+      "id": "productos-dentales-tovar-sa",
+      "roles": ["supplier"],
+      "details": {
+        "compranetStatus": "HABILITADO"
+      }
+    }],
+    "planning": {
+      "budget": {
+        "branch": null,
+        "source": null
+      }
+    },
+    "tender": {
+      "id": 1,
+      "procurementMethod": "direct",
+      "procurementMethodRationale": "Nacional",
+      "procurementMethodDetails": "Adquisiciones",
+      "submissionMethod": ["Presencial"]
+    },
+    "awards": [{
+      "title": "ADQUISICIÓN DE EQUIPO DENTAL PARA EL SERVICIO MÉDICO",
+      "suppliers": [{
+        "name": "PRODUCTOS DENTALES TOVAR, S.A.",
+        "id": "productos-dentales-tovar-sa"
+      }],
+      "date": null,
+      "id": 1,
+      "value": {
+        "amount": 43086.21,
+        "currency": "MXN"
+      }
+    }],
+    "contracts": [{
+      "status": null,
+      "title": "ADQUISICIÓN DE EQUIPO DENTAL PARA EL SERVICIO MÉDICO",
+      "ocid": "OCDS-0UD2Q6-AA-002000997-E10-2016",
+      "suppliers": "PRODUCTOS DENTALES TOVAR, S.A.",
+      "id": 1232372,
+      "awardID": 1,
+      "period": {
+        "startDate": "2016-10-21T00:00:00.000Z",
+        "endDate": "2016-11-21T00:00:00.000Z"
+      },
+      "value": {
+        "amount": 43086.21,
+        "currency": "MXN"
+      },
+      "date_signed": null
+    }]
+  }, {
+    "_id": "5a3174625af1cf00054fc78c",
+    "ocid": "OCDS-0UD2Q6-AA-002000997-E12-2016",
+    "id": "AA-002000997-E12-2016",
+    "date": "2017-12-13T18:41:38.653Z",
+    "initiationType": "tender",
+    "source": ["https://compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=993604"],
+    "tag": ["tender"],
+    "parties": [{
+      "name": "Presidencia de la República",
+      "id": "presidencia-de-la-republica",
+      "roles": ["buyer"],
+      "contactPoint": {
+        "name": "Rodrigo Mendoza Peralta"
+      },
+      "department": {
+        "name": "Coordinación General de Transportes Aéreos Presidenciales",
+        "id": "002000997"
+      }
+    }, {
+      "name": "RUMA GROUP INC.ORPORATED",
+      "id": "ruma-group-incorporated",
+      "roles": ["supplier"],
+      "details": {
+        "compranetStatus": "HABILITADO"
+      }
+    }],
+    "planning": {
+      "budget": {
+        "branch": null,
+        "source": null
+      }
+    },
+    "tender": {
+      "id": 1,
+      "procurementMethod": "direct",
+      "procurementMethodRationale": "Nacional",
+      "procurementMethodDetails": "Adquisiciones",
+      "submissionMethod": ["Presencial"]
+    },
+    "awards": [{
+      "title": "ADQUISICIÓN DE EXTINTORES",
+      "suppliers": [{
+        "name": "RUMA GROUP INC.ORPORATED",
+        "id": "ruma-group-incorporated"
+      }],
+      "date": null,
+      "id": 1,
+      "value": {
+        "amount": 450211,
+        "currency": "MXN"
+      }
+    }],
+    "contracts": [{
+      "status": null,
+      "title": "ADQUISICIÓN DE EXTINTORES",
+      "ocid": "OCDS-0UD2Q6-AA-002000997-E12-2016",
+      "suppliers": "RUMA GROUP INC.ORPORATED",
+      "id": 1232377,
+      "awardID": 1,
+      "period": {
+        "startDate": "2016-10-12T00:00:00.000Z",
+        "endDate": "2016-10-21T00:00:00.000Z"
+      },
+      "value": {
+        "amount": 450211,
+        "currency": "MXN"
+      },
+      "date_signed": null
+    }]
+  }, {
+    "_id": "5a3174625af1cf00054fc78e",
+    "ocid": "OCDS-0UD2Q6-AA-002000997-E9-2016",
+    "id": "AA-002000997-E9-2016",
+    "date": "2017-12-13T18:41:38.654Z",
+    "initiationType": "tender",
+    "source": ["https://compranet.funcionpublica.gob.mx/esop/guest/go/opportunity/detail?opportunityId=993598"],
+    "tag": ["tender"],
+    "parties": [{
+      "name": "Presidencia de la República",
+      "id": "presidencia-de-la-republica",
+      "roles": ["buyer"],
+      "contactPoint": {
+        "name": "Rodrigo Mendoza Peralta"
+      },
+      "department": {
+        "name": "Coordinación General de Transportes Aéreos Presidenciales",
+        "id": "002000997"
+      }
+    }, {
+      "name": "UNIVERSAL EXTINTORES, S.A. de C.V.",
+      "id": "universal-extintores-sa-de-cv",
+      "roles": ["supplier"],
+      "details": {
+        "compranetStatus": "HABILITADO"
+      }
+    }],
+    "planning": {
+      "budget": {
+        "branch": null,
+        "source": null
+      }
+    },
+    "tender": {
+      "id": 1,
+      "procurementMethod": "direct",
+      "procurementMethodRationale": "Nacional",
+      "procurementMethodDetails": "Adquisiciones",
+      "submissionMethod": ["Presencial"]
+    },
+    "awards": [{
+      "title": "ADQUISICIÓN DE EXTINTORES",
+      "suppliers": [{
+        "name": "UNIVERSAL EXTINTORES, S.A. de C.V.",
+        "id": "universal-extintores-sa-de-cv"
+      }],
+      "date": null,
+      "id": 1,
+      "value": {
+        "currency": "MXN"
+      }
+    }],
+    "contracts": [{
+      "status": null,
+      "title": "ADQUISICIÓN DE EXTINTORES",
+      "ocid": "OCDS-0UD2Q6-AA-002000997-E9-2016",
+      "suppliers": "UNIVERSAL EXTINTORES, S.A. de C.V.",
+      "id": 1232370,
+      "awardID": 1,
+      "period": {
+        "startDate": "2016-09-29T00:00:00.000Z",
+        "endDate": "2016-09-30T00:00:00.000Z"
+      },
+      "value": {
+        "amount": 7085,
+        "currency": "MXN"
+      },
+      "date_signed": null
+    }]
+  }],
+  "memberships": [{
+      "_id": "0f1b0ba0d776c9dfb",
+      "source": "Baz",
+      "department": "board",
+      "person": "Manuel Echanove Pasquin",
+      "person_id": "manuel echanove pasquin",
+      "role": "Alternate Director",
+      "org_id": "telefonica del peru saa"
+    },
+    {
+      "_id": "0f1b0ba0d776c9e06",
+      "department": "Unidad De Admon. De Rec. Mat. Y Servs. Grales. 00",
+      "person": "Juan Jose Salazar Navarro",
+      "person_id": "juan jose salazar navarro",
+      "role": "Responsible of Compranet",
+      "org_id": "secretaria de agricultura ganaderia desarrollo rural pesca y alimentacion"
+    },
+    {
+      "_id": "0f1b0ba0d776c9e08",
+      "department": "Dirección General De Recursos Materiales Inmuebles Y Servicios 00",
+      "person": "Enrique Quiroz Acosta",
+      "person_id": "enrique quiroz acosta",
+      "role": "Responsible of Compranet",
+      "org_id": "secretaria de agricultura ganaderia desarrollo rural pesca y alimentacion",
+      "shares": 32
+    },
+    {
+      "_id": "6uMwhH38ktQvGDws3",
+      "person": "Patricia Susana Fadel",
+      "person_id": "patricia susana fadel",
+      "post_class": "Electivo",
+      "post_type": "Legislativo",
+      "references": [{
+          "url": "andytow.com",
+          "quality": "oficial",
+          "chequeado": false,
+          "field": "end_date"
+        },
+        {
+          "url": "andytow.com",
+          "quality": "oficial",
+          "chequeado": false,
+          "field": "start_date"
+        }
+      ],
+      "role": "Diputado Nacional",
+      "sob_org": "camara de diputados de la nacion",
+      "start_date": "2003-10-12",
+      "territory": "Mendoza"
+    },
+    {
+      "_id": "FAWs9EpxHtMQgR6NW",
+      "person": "Ricardo Argentino Bussi",
+      "person_id": "ricardo argentino bussi",
+      "post_class": "Electivo",
+      "post_type": "Legislativo",
+      "references": [{
+          "url": "andytow.com",
+          "quality": "oficial",
+          "chequeado": false,
+          "field": "end_date"
+        },
+        {
+          "url": "andytow.com",
+          "quality": "oficial",
+          "chequeado": false,
+          "field": "start_date"
+        }
+      ],
+      "role": "Senador Nacional",
+      "sob_org": "senado de la nacion",
+      "start_date": "2001-10-12",
+      "territory": "Tucumán"
+    }
   ],
   "persons": [{
     "_id": "2299rd2rCZ63pRyHQ",
