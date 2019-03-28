@@ -1,12 +1,12 @@
 swagger: '2.0'
-host: "api.quienesquien.wiki"
+host: "api.staging.quienesquien.wiki"
 schemes:
 - https
 info:
   description: >-
     QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
-  title: api.quienesquien.wiki
-  version: '1'
+  title: api.staging.quienesquien.wiki
+  version: '1.1'
   contact:
     name: Equipo QQW
     url: 'https://www.quienesquien.wiki/contact'
