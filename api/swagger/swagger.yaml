@@ -56,6 +56,7 @@ paths:
         - $ref: '#/parameters/_id'
         - $ref: '#/parameters/simple'
         - $ref: '#/parameters/name'
+        - $ref: '#/parameters/country'
         - $ref: '#/parameters/description'
         - $ref: '#/parameters/contract_count'
         - name: first_name
@@ -196,6 +197,7 @@ paths:
         - $ref: '#/parameters/_id'
         - $ref: '#/parameters/simple'
         - $ref: '#/parameters/name'
+        - $ref: '#/parameters/country'
         - $ref: '#/parameters/description'
         - $ref: '#/parameters/initials'
         - $ref: '#/parameters/contract_count'
@@ -1030,6 +1032,12 @@ parameters:
     in: query
     name: simple
     description: Simpified name of person
+    type: string
+    allowEmptyValue: true
+  country:
+    in: query
+    name: country
+    description: Country of entity
     type: string
     allowEmptyValue: true
   description:

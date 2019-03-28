@@ -40,11 +40,18 @@ function simpleName(string) {
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
   const sane = sanitize(req.query);
-  const mapped = mapValues(params, p => (p.value));
+  var mapped = mapValues(params, p => (p.value));
 
   if (mapped.simple) {
     mapped.simple = simpleName(mapped.simple);
   }
+  if (mapped.country) {
+    Object.assign(sane, { "address.country": mapped.country });
+    Object.assign(mapped, { "address.country": mapped.country });
+    delete sane.country;
+    delete mapped.country;
+  }
+
   extend(sane, mapped);
   const string = qs.stringify(sane);
   const query = q2m(string, { ignore: 'embed' });
