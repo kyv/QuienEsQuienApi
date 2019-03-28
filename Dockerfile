@@ -1,5 +1,5 @@
 FROM mhart/alpine-node:8
-MAINTAINER Kevin Brown <kevin@rindecuentas.org>
+MAINTAINER Martín Szyszlican <martin@rindecuentas.org>
 
 ENV PORT=${PORT:-8080}
 ENV NODE_ENV=production

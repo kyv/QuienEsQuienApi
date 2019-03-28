@@ -19,9 +19,18 @@ references with *GET* method.
 
 # docker
 
+## build
+docker build . -t poder/quienesquienapi:0.3                        
+
+## push
+docker push poder/quienesquienapi:0.3
+
 docker images are pushed automatically here:
 
 https://hub.docker.com/r/poder/quienesquienapi/tags/
+
+## run
+docker run -p 8085:8080 --env MONGODB_URI=localhost:27017/dbname  poder/quienesquienapi:0.3 &
 
 # staging
 
