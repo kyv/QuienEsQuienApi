@@ -1,0 +1,11 @@
+stages:
+- name: compile
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./Dockerfile
+      buildContext: .
+      tag: poder/quienesquienapi:0.4
+      pushRemote: true
+      registry: index.docker.io
+timeout: 60
+notification: {}
