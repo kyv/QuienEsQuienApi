@@ -30,6 +30,7 @@ const JOINS = [
 
 function personDataMap(o) {
   const object = o;
+  console.log(o);
   const memberships = o.memberships.map(m => (personMemberMap(m)));
   const board = memberships.filter(b => (b.department === 'board'));
   const shares = memberships.filter(b => (b.role === 'shareholder'));
@@ -37,7 +38,7 @@ function personDataMap(o) {
   object.board = board;
   object.shares = shares;
   return omitEmpty(omit(object, [
-    'memberships',
+    // 'memberships',
     'user_id',
     'contracts._id',
     'contracts.user_id',
@@ -51,6 +52,8 @@ function personDataMap(o) {
 function allPersons(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+
+  query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   allDocuments(query, collection, JOINS)
     .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
