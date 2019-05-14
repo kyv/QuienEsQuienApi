@@ -1,12 +1,12 @@
 swagger: '2.0'
-host: "api.staging.quienesquien.wiki"
+host: "localhost:10010"
 schemes:
-- https
+- http
 info:
   description: >-
     QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
   title: api.staging.quienesquien.wiki
-  version: '1.1'
+  version: '1.2'
   contact:
     name: Equipo QQW
     url: 'https://www.quienesquien.wiki/contact'
@@ -22,6 +22,53 @@ produces:
 paths:
   /spec.json:
     x-swagger-pipe: swagger_raw
+  /autocomplete:
+    x-swagger-router-controller: autocomplete
+
+    get:
+      description: Find persons, contracts and organizations by a part of their name
+      summary: Find persons, contracts and organizations by a part of their name
+      operationId: autocomplete
+      tags:
+        - Autocomplete
+      parameters:
+        - $ref: '#/parameters/name'
+
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Autocomplete'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/autocomplete/{name}':
+    x-swagger-router-controller: autocomplete
+
+    get:
+      description: Find persons, contracts and organizations by a part of their name
+      summary: Find persons, contracts and organizations by a part of their name
+      operationId: autocomplete
+      tags:
+        - Autocomplete
+      parameters:
+        - name: name
+          in: path
+          description: name to search
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Autocomplete'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+
   /persons:
     x-swagger-router-controller: persons
     post:
@@ -832,6 +879,14 @@ definitions:
       shares:
         type: number
         format: float
+  Autocomplete:
+    properties:
+      name:
+        type: string
+        minLength: 1
+      collection:
+        type: string
+        minLength: 1
   Person:
     properties:
       _id:
