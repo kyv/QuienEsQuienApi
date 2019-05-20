@@ -15,20 +15,20 @@ function autocomplete(req, res) {
   const query = getQuery(req);
   query.options={limit: 10};
   query.fields={name:1,simple:1};
-  console.log("autocomplete",query);
+  // console.log("autocomplete",query);
   var results = [];
   persons.find({'name':{'$regex':query.criteria.name}},query.options,query.fields)
             .then( person_docs => {
                 results = results.concat(person_docs);
-                console.log('persons', person_docs);
+                // console.log('persons', person_docs);
                 organizations.find({'name':{'$regex':query.criteria.name}},query.options,query.fields)
                         .then( org_docs => {
                             results = results.concat(org_docs);
-                            console.log('orgs', org_docs);
+                            // console.log('orgs', org_docs);
                             contracts.find({'title':{'$regex':query.criteria.name}},query.options,query.fields)
                                     .then( contract_docs => {
                                         results = results.concat(contract_docs);
-                                        console.log('contracts', contract_docs);
+                                        // console.log('contracts', contract_docs);
                                         dataReturn(res,[1,results],0,true,function(a) {return a});
                                     } );
                         } );
