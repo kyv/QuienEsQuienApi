@@ -17,16 +17,16 @@ function autocomplete(req, res) {
   query.fields={name:1,simple:1};
   // console.log("autocomplete",query);
   var results = [];
-  persons.find({'name':{'$regex':query.criteria.name}},query.options,query.fields)
+  persons.find({'name':{'$regex':query.criteria.name,"$options":"i"}},query.options,query.fields)
             .then( person_docs => {
                 person_docs.forEach(p => { p.type="person" });
                 results = results.concat(person_docs);
-                organizations.find({'name':{'$regex':query.criteria.name}},query.options,query.fields)
+                organizations.find({'name':{'$regex':query.criteria.name,"$options":"i"}},query.options,query.fields)
                         .then( org_docs => {
-                            org_docs.forEach(o => { o.type="org" });
+                            org_docs.forEach(o => { o.type="organization" });
                             results = results.concat(org_docs);
                             // console.log('orgs', org_docs);
-                            contracts.find({'title':{'$regex':query.criteria.name}},query.options,query.fields)
+                            contracts.find({'title':{'$regex':query.criteria.name,"$options":"i"}},query.options,query.fields)
                                     .then( contract_docs => {
                                         contract_docs.forEach(c => { c.type="contract" });
                                         results = results.concat(contract_docs);
