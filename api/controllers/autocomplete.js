@@ -15,6 +15,10 @@ function autocomplete(req, res) {
   const query = getQuery(req);
   query.options={limit: 10};
   query.fields={name:1,simple:1};
+
+  if (!query.criteria.name) {
+    query.criteria.name = "";
+  }
   // console.log("autocomplete",query);
   var results = [];
   persons.find({'name':{'$regex':query.criteria.name}},query.options,query.fields)
