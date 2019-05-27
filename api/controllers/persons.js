@@ -30,7 +30,7 @@ const JOINS = [
 
 function personDataMap(o) {
   const object = o;
-  console.log(o);
+  // console.log(o);
   const memberships = o.memberships.map(m => (personMemberMap(m)));
   const board = memberships.filter(b => (b.department === 'board'));
   const shares = memberships.filter(b => (b.role === 'shareholder'));

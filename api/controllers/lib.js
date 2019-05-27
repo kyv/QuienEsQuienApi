@@ -5,6 +5,7 @@ const isEmpty = require('lodash/fp/isEmpty');
 const isDate = require('lodash/fp/isDate');
 const isObject = require('lodash/fp/isObject');
 const isString = require('lodash/fp/isString');
+const clone = require('lodash/fp/clone');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
@@ -116,7 +117,7 @@ function allDocuments(query, collection, JOINS) {
   const countP = collection.count(query.criteria);
 
   if (query.embed) {
-    const p = queryToPipeline(query, JOINS);
+    const p = queryToPipeline(query, clone(JOINS));
     const pipeline = arrayResultsOptions(query, p);
     const resultsP = collection.aggregate(pipeline);
 
