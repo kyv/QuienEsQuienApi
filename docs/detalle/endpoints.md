@@ -1,6 +1,6 @@
 # Endpoints de consulta
 ## /societies
-Devuelve una organization
+Devuelve una society
 Si se especifica la expansión de referencias, también se listarán las memberships y los contracts de la organización.
 
 
@@ -8,7 +8,7 @@ Si se especifica la expansión de referencias, también se listarán las members
 #### is_parent_of
 
 ## /institutions
-Devuelve una organization.
+Devuelve una institution.
 Si se especifica la expansión de referencias, también se listarán las memberships y los contracts de la organización.
 
 ## /persons
