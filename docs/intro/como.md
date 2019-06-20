@@ -19,3 +19,6 @@ Bandera que indica si se incluyen referencias a otras colecciones dentro de cada
 Bandera que indica los campos adicionales que se desea incluir dentro de cada documento en la respuesta. Default: none. Valores posibles: all, none, listado de campos. Tipo: array. Si algún campo solicitado no existe, no incluye información adicional en la respuesta.
 
 En las bases de datos de QQW existen muchos datos adicionales a los estándares utilizados para cada tipo de dato. TODO: hacer el listado de los fields disponibles para cada tipo de dato.
+
+## updated_since
+Limitar el conjunto de resultados a aquellos cuya fecha de última actualización sea posterior al valor del filtro. Tipo: date. Default: 0000-00-00T00:00:00Z.
