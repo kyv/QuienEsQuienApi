@@ -6,7 +6,7 @@ Consultar cada endpoint (o extremo de la API) sin parámetros hará que se devue
 
 Hay algunos filtros genéricos que aplican a todos los endpoints, y otros que aplican a cada endpoint en particular. Listaremos aquí los genéricos.
 
-## size
+## limit
 La cantidad de registros que se incluyen en cada página de resultados. Default: 25 registros. Tipo: 1000 >= entero > 0.
 
 ## offset
