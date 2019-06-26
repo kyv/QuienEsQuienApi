@@ -64,18 +64,6 @@ function allContracts(req, res) {
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
 }
 
-function allContractsPost(req, res) {
-  const query = req.body.query;
-  const project = req.body.project;
-  const offset = project && project.skip || 0;
-  const resultsP = collection.find(query);
-  const countP = collection.count(query);
-
-  res.set('Content-Type', 'application/json; charset=utf-8');
-  return Promise.all([countP, resultsP])
-    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
-}
-
 function distinctContract(req, res) {
   getDistinct(req, res, collection);
 }
@@ -92,6 +80,5 @@ function singleContract(req, res) {
 module.exports = {
   allContracts,
   singleContract,
-  allContractsPost,
   distinctContract,
 };

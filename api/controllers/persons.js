@@ -59,17 +59,6 @@ function allPersons(req, res) {
     .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
-function allPersonsPost(req, res) {
-  const query = req.body.query;
-  const project = req.body.project;
-  const offset = project && project.skip || 0;
-  const resultsP = collection.find(query);
-  const countP = collection.count(query);
-
-  return Promise.all([countP, resultsP])
-    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
-}
-
 function distinctPerson(req, res) {
   getDistinct(req, res, collection);
 }
@@ -85,6 +74,5 @@ function singlePerson(req, res) {
 module.exports = {
   allPersons,
   singlePerson,
-  allPersonsPost,
   distinctPerson,
 };

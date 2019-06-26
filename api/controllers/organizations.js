@@ -65,18 +65,6 @@ function allOrganizations(req, res) {
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
-function allOrganizationsPost(req, res) {
-  const query = req.body.query;
-  const project = req.body.project;
-  const offset = project && project.skip || 0;
-  const resultsP = collection.find(query);
-  const countP = collection.count(query);
-
-  return Promise.all([countP, resultsP])
-    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
-
-}
-
 function distinctOrganization(req, res) {
   getDistinct(req, res, collection);
 }
@@ -93,6 +81,5 @@ function singleOrganization(req, res) {
 module.exports = {
   allOrganizations,
   singleOrganization,
-  allOrganizationsPost,
   distinctOrganization,
 };
