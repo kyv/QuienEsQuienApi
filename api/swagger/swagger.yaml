@@ -699,7 +699,7 @@ definitions:
         items:
           $ref: '#/definitions/Contract'
   Contract:
-    description: A Contract
+    description: A contracting process in an OCDS recordPackage
     type: object
     properties:
       id:
