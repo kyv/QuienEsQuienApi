@@ -79,10 +79,6 @@ La moneda utilizada para especificar los importes de los procesos de contrataci�
 El valor más antiguo para el cual evaluar la fecha de inicio del contrato de los procesos de contratación. Tipo de dato: date. Default: 0000-00-00T00:00:00Z (sin límite inferior en el rango).
 #### start_date_max
 El valor más reciente para el cual evaluar la fecha de inicio del contrato en los procesos de contratación. Tipo de dato: date. Default: 0000-00-00T00:00:00Z (sin límite superior en el rango).
-#### end_date_min
-El valor más antiguo para el cual evaluar la fecha de finalización del contrato de los procesos de contratación. Tipo de dato: date. Default: 0000-00-00T00:00:00Z (sin límite inferior en el rango).
-#### end_date_max
-El valor más reciente para el cual evaluar la fecha de finalización del contrato en los procesos de contratación. Tipo de dato: date. Default: 0000-00-00T00:00:00Z (sin límite superior en el rango).
 #### party_name
 El nombre de una empresa, sociedad, institución o persona que participa en uno o varios procesos de contratación. Tipo de dato: string o regular expression.
 #### party_type
@@ -96,4 +92,3 @@ Devuelve una source y todas las source_run para ella.
 ### Filtros
 #### id
 El identificador único para una fuente de datos. Tipo de dato: string.
-
