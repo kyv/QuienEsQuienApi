@@ -1,14 +1,13 @@
 swagger: '2.0'
-host: "localhost:10010"
 schemes:
 - http
 info:
   description: >-
     QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
-  title: api.staging.quienesquien.wiki
+  title: API de QuienEsQuien
   version: '2.0'
   contact:
-    name: Equipo QQW
+    name: Tecnologías para la Transparencia (PODER)
     url: 'https://www.quienesquien.wiki/contact'
     email: info@quienesquien.wiki
   license:
@@ -67,32 +66,8 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-
   /persons:
     x-swagger-router-controller: persons
-    post:
-      summary: Retrieve array of Person Documents
-      description: Retrieve array of Person Documents
-      operationId: allPersonsPost
-      tags:
-        - Persons
-      parameters:
-        - in: body
-          name: body
-          description: Mongo query
-          required: true
-          schema:
-            $ref: '#/definitions/QueryObject'
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Person'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
     get:
       description: Retrieve array of Person Documents
       summary: Retrieve array of Person Documents
@@ -100,54 +75,25 @@ paths:
       tags:
         - Persons
       parameters:
-        - $ref: '#/parameters/_id'
-        - $ref: '#/parameters/simple'
+        - $ref: '#/parameters/id'
         - $ref: '#/parameters/name'
         - $ref: '#/parameters/country'
-        - $ref: '#/parameters/description'
-        - $ref: '#/parameters/contract_count'
-        - name: first_name
-          in: query
-          description: first name
-          type: string
-          allowEmptyValue: true
-        - name: family_name
-          in: query
-          description: family name
-          type: string
-          allowEmptyValue: true
-        - name: prefix
-          in: query
-          description: prefix
-          type: string
-          allowEmptyValue: true
-        - name: suffix
-          in: query
-          description: suffix
-          type: string
-          allowEmptyValue: true
+        - $ref: '#/parameters/contract_count_min'
+        - $ref: '#/parameters/contract_count_max'
+        - $ref: '#/parameters/contracted_amount_max'
+        - $ref: '#/parameters/contracted_amount_min'
+        - $ref: '#/parameters/source'
         - name: gender
           in: query
           description: gender
           type: string
+          default: all
           allowEmptyValue: true
           enum:
-            - Male
-            - Female
-            - Other
-        - name: date_birth
-          in: query
-          description: birthday
-          type: string
-          format: date
-          allowEmptyValue: true
-        - name: date_death
-          in: query
-          description: day of departure
-          type: string
-          format: date
-          allowEmptyValue: true
-        - $ref: '#/parameters/address'
+            - male
+            - female
+            - other
+            - all
         - $ref: '#/parameters/fields'
         - $ref: '#/parameters/omit'
         - $ref: '#/parameters/sort'
@@ -163,16 +109,16 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/persons/{_id}':
+  '/persons/{id}':
     x-swagger-router-controller: persons
     get:
-      description: Retrieve Person Document by _id
-      summary: Retrieve Person Document by _id
+      description: Retrieve Person Document by id
+      summary: Retrieve Person Document by id
       operationId: singlePerson
       tags:
         - Persons
       parameters:
-        - name: _id
+        - name: id
           in: path
           description: Internal ID of person
           required: true
@@ -210,30 +156,8 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /organizations:
+  /societies:
     x-swagger-router-controller: organizations
-    post:
-      summary: Retrieve array of Organization Documents
-      description: Retrieve array of Organization Documents
-      operationId: allOrganizationsPost
-      tags:
-        - Organizations
-      parameters:
-        - in: body
-          name: body
-          description: Mongo query
-          required: true
-          schema:
-            $ref: '#/definitions/Organization'
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Organization'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
     get:
       tags:
         - Organizations
@@ -241,49 +165,12 @@ paths:
       description: Retrieve array of Organization Documents
       operationId: allOrganizations
       parameters:
-        - $ref: '#/parameters/_id'
-        - $ref: '#/parameters/simple'
+        - $ref: '#/parameters/id'
         - $ref: '#/parameters/name'
+        - $ref: '#/parameters/source'
         - $ref: '#/parameters/country'
-        - $ref: '#/parameters/description'
-        - $ref: '#/parameters/initials'
-        - $ref: '#/parameters/contract_count'
-        - name: type
-          in: query
-          description: type of organization
-          required: false
-          type: string
-          allowEmptyValue: true
-        - name: category
-          in: query
-          description: category of organization
-          required: false
-          type: string
-          allowEmptyValue: true
-          enum:
-            - public
-            - company
-            - non-profit
-            - party
-        - name: parent
-          in: query
-          description: ultimate parent
-          required: false
-          type: string
-          allowEmptyValue: true
-        - name: immediate_parent
-          in: query
-          description: immediate parent
-          required: false
-          type: string
-          allowEmptyValue: true
-        - name: suborgs
-          in: query
-          description: subsidiaries
-          required: false
-          type: string
-          allowEmptyValue: true
-        - $ref: '#/parameters/address'
+        - $ref: '#/parameters/contract_count_min'
+        - $ref: '#/parameters/contract_count_max'
         - $ref: '#/parameters/limit'
         - $ref: '#/parameters/fields'
         - $ref: '#/parameters/omit'
@@ -299,16 +186,16 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/organizations/{_id}':
+  '/societies/{id}':
     x-swagger-router-controller: organizations
     get:
      tags:
        - Organizations
-     summary: Retrieve Organization Document by _id
-     description: Retrieve Organization Document by _id
+     summary: Retrieve Organization Document by id
+     description: Retrieve Organization Document by id
      operationId: singleOrganization
      parameters:
-       - name: _id
+       - name: id
          in: path
          description: Internal ID of organization
          required: true
@@ -323,7 +210,84 @@ paths:
          description: Error
          schema:
            $ref: '#/definitions/ErrorResponse'
-  '/organizations/distinct/{field}':
+  '/societies/distinct/{field}':
+    x-swagger-router-controller: organizations
+    get:
+      summary: Retrieve unique values for field
+      description: Retrieve uniq values for field
+      operationId: distinctOrganization
+      tags:
+        - Organizations
+      parameters:
+        - name: field
+          in: path
+          description: Field to describe
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Distinct'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /institutions:
+    x-swagger-router-controller: organizations
+    get:
+      tags:
+        - Organizations
+      summary: Retrieve array of Organization Documents
+      description: Retrieve array of Organization Documents
+      operationId: allOrganizations
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/name'
+        - $ref: '#/parameters/source'
+        - $ref: '#/parameters/country'
+        - $ref: '#/parameters/contract_count_min'
+        - $ref: '#/parameters/contract_count_max'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/fields'
+        - $ref: '#/parameters/omit'
+        - $ref: '#/parameters/sort'
+        - $ref: '#/parameters/embed'
+        - $ref: '#/parameters/offset'
+      responses:
+        '200':
+          description: An array of organizations
+          schema:
+            $ref: '#/definitions/Organization'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/institutions/{id}':
+    x-swagger-router-controller: organizations
+    get:
+     tags:
+       - Organizations
+     summary: Retrieve Organization Document by id
+     description: Retrieve Organization Document by id
+     operationId: singleOrganization
+     parameters:
+       - name: id
+         in: path
+         description: Internal ID of organization
+         required: true
+         type: string
+         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+     responses:
+       '200':
+         description: An array of organizations
+         schema:
+           $ref: '#/definitions/Organization'
+       default:
+         description: Error
+         schema:
+           $ref: '#/definitions/ErrorResponse'
+  '/institutions/distinct/{field}':
     x-swagger-router-controller: organizations
     get:
       summary: Retrieve unique values for field
@@ -348,28 +312,6 @@ paths:
             $ref: '#/definitions/ErrorResponse'
   /contracts:
     x-swagger-router-controller: contracts
-    post:
-      summary: Retrieve array of Contract Documents
-      description: Retrieve array of Contract Documents
-      operationId: allContractsPost
-      tags:
-        - Contracts
-      parameters:
-      - in: body
-        name: body
-        description: Mongo query
-        required: true
-        schema:
-          $ref: '#/definitions/Contract'
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Contract'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
     get:
       operationId: allContracts
       summary: Retrieve array of Contract Documents
@@ -378,74 +320,21 @@ paths:
         - Contracts
       parameters:
         - in: query
-          name: title
-          description: Title of contract.
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: type
-          description: Contract type
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: status
-          description: Contract Status
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
           name: ocid
           description: Open Contracting Identifier
           type: string
           required: false
           allowEmptyValue: true
-        - in: query
-          name: procedure_type
-          description: Type of contractural proceedure
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: amount
-          description: Monetary amount paid to supplier
-          type: number
-          format: float
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: currency
-          description: Currency of given amount
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: suppliers_person
-          description: Provider of given service
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: suppliers_org
-          description: Provider of given service
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: department
-          description: responsible public department
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: dependency
-          description: responsible public dependency
-          type: string
-          required: false
-          allowEmptyValue: true
-        - $ref: '#/parameters/start_date'
-        - $ref: '#/parameters/end_date'
+        - $ref: '#/parameters/title'
+        - $ref: '#/parameters/source'
+        - $ref: '#/parameters/party_type'
+        - $ref: '#/parameters/party_name'
+        - $ref: '#/parameters/currency'
+        - $ref: '#/parameters/amount_max'
+        - $ref: '#/parameters/amount_min'
+        - $ref: '#/parameters/procurement_method'
+        - $ref: '#/parameters/start_date_min'
+        - $ref: '#/parameters/start_date_max'
         - $ref: '#/parameters/fields'
         - $ref: '#/parameters/omit'
         - $ref: '#/parameters/sort'
@@ -463,16 +352,16 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/contracts/{_id}':
+  '/contracts/{id}':
     x-swagger-router-controller: contracts
     get:
      tags:
        - Contracts
-     description: Retrieve Contract Document by _id
-     summary: Retrieve Contract Document by _id
+     description: Retrieve Contract Document by id
+     summary: Retrieve Contract Document by id
      operationId: singleContract
      parameters:
-       - name: _id
+       - name: id
          in: path
          description: Internal ID of contract
          required: true
@@ -510,227 +399,33 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /releases.json:
+  /sources:
+    x-swagger-router-controller: sources
     get:
-      x-swagger-router-controller: ocds
-      operationId: allReleases
-      summary: Returns OCDS releases
+      operationId: allSources
+      summary: Retrieve array of Source Documents
+      description: Retrieve array of Source Documents
       tags:
-        - OCDS
-      description: >-
-        This should return an object and in it should be a OCDS releases list
-        and links object. We diverge from OCDS recomendations by supporting
-        queries on any object field.
-      responses:
-        '200':
-          description: List of releases
+        - Sources
       parameters:
         - in: query
-          name: ocid
-          type: string
-          description: Filter results for only releases with this ocid
-        - $ref: '#/parameters/limit'
-        - $ref: '#/parameters/offset'
-
-  /memberships:
-    x-swagger-router-controller: memberships
-    post:
-      description: Retrieve array of Membership Documents
-      summary: Retrieve array of Membership Documents
-      operationId: allMembershipsPost
-      tags:
-        - Memberships
-      parameters:
-        - in: body
-          name: body
-          description: Mongo query
-          required: true
-          schema:
-            $ref: '#/definitions/Membership'
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Membership'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-    get:
-      operationId: allMemberships
-      description: Retrieve array of Membership Documents
-      summary: Retrieve array of Membership Documents
-      tags:
-        - Memberships
-      parameters:
-        - in: query
-          name: department
-          description: department
+          name: title
+          description: Title of contract.
           type: string
           required: false
           allowEmptyValue: true
-        - in: query
-          name: role
-          description: role
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: person
-          description: person
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: person_id
-          description: id of person
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: org_id
-          description: id of org
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: label
-          description: membership label
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: shares
-          description: number of sheares
-          type: number
-          format: float
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: salary
-          description: amount paid out
-          type: number
-          format: float
-          required: false
-          allowEmptyValue: true
-        - $ref: '#/parameters/start_date'
-        - $ref: '#/parameters/end_date'
-        - $ref: '#/parameters/fields'
-        - $ref: '#/parameters/sort'
-        - $ref: '#/parameters/embed'
-        - $ref: '#/parameters/limit'
-        - $ref: '#/parameters/offset'
       responses:
         '200':
           description: OK
           schema:
             type: array
             items:
-              $ref: '#/definitions/Membership'
+              $ref: '#/definitions/Source'
         default:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/memberships/{_id}':
-    x-swagger-router-controller: memberships
-    get:
-      tags:
-        - Memberships
-      summary: Retreive Membership Document by _id
-      description: Retreive Membership Document by _id
-      operationId: singleMembership
-      parameters:
-        - name: _id
-          in: path
-          description: Internal ID of membership
-          required: true
-          type: string
-      responses:
-        '200':
-          description: An array of Memberships
-          schema:
-            $ref: '#/definitions/Membership'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-  '/memberships/distinct/{field}':
-    x-swagger-router-controller: memberships
-    get:
-      summary: Retieve unique values for field
-      description: Retieve unique values for field
-      operationId: distinctMembership
-      tags:
-        - Memberships
-      parameters:
-        - name: field
-          in: path
-          description: Field to describe
-          required: true
-          type: string
-        - in: query
-          name: department
-          description: department
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: role
-          description: role
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: person
-          description: person
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: person_id
-          description: id of person
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: org_id
-          description: id of org
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: label
-          description: membership label
-          type: string
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: shares
-          description: number of sheares
-          type: number
-          format: float
-          required: false
-          allowEmptyValue: true
-        - in: query
-          name: salary
-          description: amount paid out
-          type: number
-          format: float
-          required: false
-          allowEmptyValue: true
-        - $ref: '#/parameters/post_type'
-        - $ref: '#/parameters/post_class'
-        - $ref: '#/parameters/start_date'
-        - $ref: '#/parameters/end_date'
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Distinct'
-        default:
-          description: Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+
 definitions:
   ErrorResponse:
     required:
@@ -782,7 +477,7 @@ definitions:
         type: string
         format: url
         maxLength: 50
-      ocd_id:
+      ocdid:
         type: string
         format: OCDID
         maxLength: 110
@@ -830,18 +525,6 @@ definitions:
       total_dept:
         type: number
         format: float
-  QueryObject:
-    properties:
-      query:
-        type: object
-        description: >-
-          mongo style query
-          https://docs.mongodb.com/manual/tutorial/query-documents
-      project:
-        type: object
-        description: >-
-          mongo style projection
-          https://docs.mongodb.com/v3.2/tutorial/project-fields-from-query-results/
   Reference:
     properties:
       name:
@@ -857,17 +540,17 @@ definitions:
         type: string
   Membership:
     properties:
-      _id:
+      id:
         type: string
         minLength: 1
         # pattern: ^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$
       person:
         type: string
-      person_id:
+      personid:
         type: string
       org:
         type: string
-      org_id:
+      orgid:
         type: string
       role:
         type: string
@@ -889,7 +572,7 @@ definitions:
         minLength: 1
   Person:
     properties:
-      _id:
+      id:
         type: string
         minLength: 1
         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
@@ -948,7 +631,7 @@ definitions:
           $ref: '#/definitions/Contract'
   Organization:
     properties:
-      _id:
+      id:
         type: string
         minLength: 1
         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
@@ -1019,7 +702,7 @@ definitions:
     description: A Contract
     type: object
     properties:
-      _id:
+      id:
         type: string
         minLength: 1
         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
@@ -1070,51 +753,16 @@ definitions:
         minLength: 1
       dependency:
         type: string
+  Source:
+    description: A Source
+    type: object
+    properties:
+      id:
+        type: string
+        minLength: 1
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+
 parameters:
-  name:
-    name: name
-    in: query
-    description: The entity's name
-    type: string
-    allowEmptyValue: true
-  _id:
-    in: query
-    name: _id
-    description: Internal ID of entity
-    type: string
-    allowEmptyValue: true
-  simple:
-    in: query
-    name: simple
-    description: Simpified name of person
-    type: string
-    allowEmptyValue: true
-  country:
-    in: query
-    name: country
-    description: Country of entity
-    type: string
-    allowEmptyValue: true
-  description:
-    in: query
-    name: description
-    description: Description of entity
-    type: string
-    allowEmptyValue: true
-  contract_count:
-    in: query
-    name: contract_count
-    description: Number of contracts
-    type: string
-    allowEmptyValue: true
-  address:
-    in: query
-    name: address
-    description: address
-    required: false
-    type: string
-    format: dot notation
-    allowEmptyValue: true
   fields:
     in: query
     name: fields
@@ -1149,38 +797,115 @@ parameters:
     type: integer
     default: 0
     minimum: 0
-  start_date:
+  name:
+    name: name
     in: query
-    name: start_date
-    description: Beginning Date
+    description: Partial or complete name of the entity.
     type: string
-    format: date-time
     allowEmptyValue: true
-  end_date:
+  id:
     in: query
-    name: end_date
-    description: End Date
+    name: id
+    description: Unique identifier for entity.
     type: string
-    format: date-time
     allowEmptyValue: true
-  initials:
+  country:
     in: query
-    name: initials
-    description: initials
+    name: country
+    description: Country name or ISO 3166-1 alpha-2 code of the entity.
+    type: string
+    allowEmptyValue: true
+  source:
+    in: query
+    name: source
+    description: The name of the source from which the entity was imported.
+    type: string
+    allowEmptyValue: true
+  contract_count_min:
+    in: query
+    name: contract_count_min
+    description: Minimum number of contracts in which the entity is involved (as either buyer, seller or founder).
+    default: 0
+    type: integer
+    allowEmptyValue: true
+  contract_count_max:
+    in: query
+    name: contract_count_max
+    description: Maximum number of contracts in which the entity is involved (as either buyer, seller or founder).
+    default: 0
+    type: integer
+    allowEmptyValue: true
+  contracted_amount_min:
+    in: query
+    name: contracted_amount_min
+    description: Minimum amount sum of contracts in which the entity is involved (as either buyer, seller or founder).
+    default: 0
+    type: number
+    format: float
+    allowEmptyValue: true
+  contracted_amount_max:
+    in: query
+    name: contracted_amount_max
+    description: Maximum amount sum of contracts in which the entity is involved (as either buyer, seller or founder).
+    default: 0
+    type: number
+    format: float
+    allowEmptyValue: true
+  title:
+    in: query
+    name: title
+    description: Contract title
     required: false
     type: string
     allowEmptyValue: true
-  post_type:
+  amount_min:
     in: query
-    name: post_type
-    description: Type of Post
-    required: false
-    type: string
+    name: amount_min
+    description: Minimum nominal amount of the contract.
+    type: number
+    format: float
     allowEmptyValue: true
-  post_class:
+    default: 0
+  amount_max:
     in: query
-    name: post_class
-    description: Class of Post
-    required: false
-    type: string
+    name: amount_max
+    description: Maximum nominal amount of the contract.
+    default: 0
+    type: number
+    format: float
     allowEmptyValue: true
+  currency:
+    name: currency
+    in: query
+    type: string
+    description: Currency specified in contract
+  start_date_min:
+    in: query
+    name: start_date_min
+    description: Mimimum beginning date of contract execution
+    type: string
+    format: date
+    allowEmptyValue: true
+  start_date_max:
+    in: query
+    name: start_date_max
+    description: Maximum beginning date of contract execution
+    type: string
+    format: date
+    allowEmptyValue: true
+  party_name:
+    in: query
+    name: party_name
+    description: Name of a society, institution or person participating in a contracting process.
+    type: string
+  party_type:
+    in: query
+    type: string
+    name: party_type
+    description: Together with party_name, specifies it's role in the contracting process. Possible values buyer, supplier, funder, all.
+  procurement_method:
+    in: query
+    type: string
+    name: procurement_method
+    description: Together with party_name, specifies it's role in the contracting process. Possible values direct, open, selective, all.
+    default: all
