@@ -87,7 +87,6 @@ paths:
           in: query
           description: gender
           type: string
-          default: all
           allowEmptyValue: true
           enum:
             - male
@@ -366,7 +365,7 @@ paths:
          description: Internal ID of contract
          required: true
          type: string
-         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+         # pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
      responses:
        '200':
          description: An array of contracts
@@ -908,4 +907,3 @@ parameters:
     type: string
     name: procurement_method
     description: Together with party_name, specifies it's role in the contracting process. Possible values direct, open, selective, all.
-    default: all

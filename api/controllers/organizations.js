@@ -61,6 +61,8 @@ function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
+  console.log(query);
+
   allDocuments(query, collection, JOINS)
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
