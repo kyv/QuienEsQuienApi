@@ -29,7 +29,7 @@ test:
     MONGODB_URI: 'mongodb://mongo/runner'
     NODE_ENV: 'test'
   script:
-    - npm install --silent
+    - npm install
     - npm run test
 
 deploy staging:
