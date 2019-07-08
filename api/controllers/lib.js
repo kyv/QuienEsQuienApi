@@ -56,8 +56,6 @@ function getQuery(req) {
 
   extend(sane, mapped);
 
-  // TODO: Parse _min and _max
-
   function mapParams() { // paramName
     return 'records.compiledRelease.contracts.startDate';
   }
@@ -66,17 +64,20 @@ function getQuery(req) {
   for (const paramName in sane) {
     if (sane.hasOwnProperty(paramName)) {
       // console.log('min', paramName, sane[paramName]);
+      // TODO: Parse _min and _max
       if (paramName.indexOf('_min') > -1) {
         sane[mapParams(paramName)] = { $gt: sane[paramName] };
       } else if (paramName.indexOf('_max') > -1) {
-        // a
+        sane[mapParams(paramName)] = { $lt: sane[paramName] };
       } else {
         const dotParamName = paramName.replace(/_/g, '.');
 
         sane[dotParamName] = sane[paramName];
         // sane[dotParamName].parameterObject.name=dotParamName;
+        if (dotParamName != paramName) {
+          delete sane[paramName];
+        }
       }
-      delete sane[paramName];
     }
   }
 

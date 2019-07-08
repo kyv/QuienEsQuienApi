@@ -2,7 +2,9 @@
   "persons": [
     {
       "_id": "2299rd2rCZ63pRyHQ",
-      "source": "Baz",
+      "publisher":{
+        "name": "Baz"
+      },
       "simple": "ivan jacobo martinez gutierrez",
       "name": "Ivan Jacobo Martinez Gutierrez",
       "names": [
@@ -23,7 +25,9 @@
       "_id": "22sdwdo2urjYNmC8j",
       "simple": "charles t hagel",
       "name": "Charles T. Hagel",
-      "source": "Manual",
+      "publisher":{
+        "name": "Manual"
+      },
       "names": [
         "Charles T. Hagel"
       ]

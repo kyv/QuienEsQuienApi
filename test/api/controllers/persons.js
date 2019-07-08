@@ -76,22 +76,22 @@ describe('controllers', () => {
             done();
           });
       });
-
-      it('should accept query for $exists', done => {
-        request(server)
-          .get('/v2/persons?contract_count')
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end((err, res) => {
-            should.not.exist(err);
-            // console.log(res.body);
-            res.body.status.should.eql('success');
-            res.body.data.length.should.eql(4);
-
-            done();
-          });
-      });
+      //
+      // it('should accept query for $exists', done => {
+      //   request(server)
+      //     .get('/v2/persons?contract_count')
+      //     .set('Accept', 'application/json')
+      //     .expect('Content-Type', /json/)
+      //     .expect(200)
+      //     .end((err, res) => {
+      //       should.not.exist(err);
+      //       // console.log(res.body);
+      //       res.body.status.should.eql('success');
+      //       res.body.data.length.should.eql(4);
+      //
+      //       done();
+      //     });
+      // });
     });
 
   });

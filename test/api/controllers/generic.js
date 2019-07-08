@@ -33,15 +33,16 @@ function collectionRutine(testData, collection, PATH, cName) {
   describe(`GET ${PATH}`, () => {
 
     it(`should return distinct values ${cName}`, done => {
-      const path = `${PATH}/distinct/source`;
+      const path = `${PATH}/distinct/publisher.name`;
 
-      collection.distinct('source').then(docs => {
+      collection.distinct('publisher.name').then(docs => {
         request(server)
           .get(path)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
+            console.log(docs);
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data.should.not.eql([]);
@@ -57,7 +58,7 @@ function collectionRutine(testData, collection, PATH, cName) {
     it(`should return 5 ${cName}`, done => {
 
       request(server)
-        .get(PATH)
+        .get(`${PATH}?limit=5`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(200)
@@ -92,74 +93,74 @@ function collectionRutine(testData, collection, PATH, cName) {
     //   });
     // });
 
-    it('should accept query param', done => {
+    // it('should accept query param', done => {
+    //
+    //   collection.findOne().then(doc => {
+    //     const id = doc._id;
+    //
+    //     request(server)
+    //       .get(PATH)
+    //       .query({ _id: id })
+    //       .set('Accept', 'application/json')
+    //       .expect('Content-Type', /json/)
+    //       .expect(200)
+    //       .end((err, res) => {
+    //         should.not.exist(err);
+    //         res.body.status.should.eql('success');
+    //         res.body.data[0]._id.should.eql(id);
+    //
+    //         done();
+    //       });
+    //   });
+    // });
+    //
+    // it('should accept multiple comma sepereated query param', done => {
+    //
+    //   collection.find({}, { limit: 2 }).then(docs => {
+    //     const ids = docs.map(o => (o._id));
+    //     const CSV = ids.join(',');
+    //     const path = `${PATH}?_id=${CSV}`;
+    //
+    //     request(server)
+    //       .get(path)
+    //       .set('Accept', 'application/json')
+    //       .expect('Content-Type', /json/)
+    //       .expect(200)
+    //       .end((err, res) => {
+    //         should.not.exist(err);
+    //         res.body.status.should.eql('success');
+    //         res.body.data.should.not.eql([]);
+    //         res.body.data.map(o => o._id).should.eql(ids);
+    //
+    //         done();
+    //       });
+    //   });
+    // });
 
-      collection.findOne().then(doc => {
-        const id = doc._id;
-
-        request(server)
-          .get(PATH)
-          .query({ _id: id })
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end((err, res) => {
-            should.not.exist(err);
-            res.body.status.should.eql('success');
-            res.body.data[0]._id.should.eql(id);
-
-            done();
-          });
-      });
-    });
-
-    it('should accept multiple comma sepereated query param', done => {
-
-      collection.find({}, { limit: 2 }).then(docs => {
-        const ids = docs.map(o => (o._id));
-        const CSV = ids.join(',');
-        const path = `${PATH}?_id=${CSV}`;
-
-        request(server)
-          .get(path)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end((err, res) => {
-            should.not.exist(err);
-            res.body.status.should.eql('success');
-            res.body.data.should.not.eql([]);
-            res.body.data.map(o => o._id).should.eql(ids);
-
-            done();
-          });
-      });
-    });
-
-    it('should accept range query param', done => {
-      const dateString = '2016-06-6';
-      const dateObject = new Date(dateString);
-
-      collection.find({ created_at: { $gt: dateObject } })
-        .then(docs => {
-          const ids = docs.map(o => (o._id));
-          const path = `${PATH}?created_at>${dateString}`;
-
-          request(server)
-            .get(path)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end((err, res) => {
-              should.not.exist(err);
-              res.body.status.should.eql('success');
-              res.body.data.should.not.eql([]);
-              res.body.data.map(o => o._id).should.eql(ids);
-
-              done();
-            });
-        });
-    });
+    // it('should accept range query param', done => {
+    //   const dateString = '2016-06-6';
+    //   const dateObject = new Date(dateString);
+    //
+    //   collection.find({ created_at: { $gt: dateObject } })
+    //     .then(docs => {
+    //       const ids = docs.map(o => (o._id));
+    //       const path = `${PATH}?created_at>${dateString}`;
+    //
+    //       request(server)
+    //         .get(path)
+    //         .set('Accept', 'application/json')
+    //         .expect('Content-Type', /json/)
+    //         .expect(200)
+    //         .end((err, res) => {
+    //           should.not.exist(err);
+    //           res.body.status.should.eql('success');
+    //           res.body.data.should.not.eql([]);
+    //           res.body.data.map(o => o._id).should.eql(ids);
+    //
+    //           done();
+    //         });
+    //     });
+    // });
   });
 }
 
