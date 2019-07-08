@@ -42,7 +42,7 @@ function collectionRutine(testData, collection, PATH, cName) {
           .expect('Content-Type', /json/)
           .expect(200)
           .end((err, res) => {
-            console.log(docs);
+            // console.log(docs);
             should.not.exist(err);
             res.body.status.should.eql('success');
             res.body.data.should.not.eql([]);

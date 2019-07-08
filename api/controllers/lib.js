@@ -74,7 +74,7 @@ function getQuery(req) {
 
         sane[dotParamName] = sane[paramName];
         // sane[dotParamName].parameterObject.name=dotParamName;
-        if (dotParamName != paramName) {
+        if (dotParamName !== paramName) {
           delete sane[paramName];
         }
       }
