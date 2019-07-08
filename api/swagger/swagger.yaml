@@ -319,12 +319,12 @@ paths:
         - Contracts
       parameters:
         - in: query
-          name: ocid
+          name: records_compiledRelease_ocid
           description: Open Contracting Identifier
           type: string
           required: false
           allowEmptyValue: true
-        - $ref: '#/parameters/title'
+        - $ref: '#/parameters/records_compiledRelease_awards_title'
         - $ref: '#/parameters/source'
         - $ref: '#/parameters/party_type'
         - $ref: '#/parameters/party_name'
@@ -351,7 +351,7 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/contracts/{id}':
+  '/contracts/{records_compiledRelease_ocid}':
     x-swagger-router-controller: contracts
     get:
      tags:
@@ -360,7 +360,7 @@ paths:
      summary: Retrieve Contract Document by id
      operationId: singleContract
      parameters:
-       - name: id
+       - name: records_compiledRelease_ocid
          in: path
          description: Internal ID of contract
          required: true
@@ -717,7 +717,7 @@ definitions:
       account_admin:
         type: string
         minLength: 1
-      ocid:
+      records_compiledRelease_ocid:
         type: string
         minLength: 1
       procedure_type:
@@ -850,9 +850,9 @@ parameters:
     type: number
     format: float
     allowEmptyValue: true
-  title:
+  records_compiledRelease_awards_title:
     in: query
-    name: title
+    name: records_compiledRelease_awards_title
     description: Contract title
     required: false
     type: string

@@ -4,8 +4,9 @@ const YAML = require('yamljs');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = YAML.load('api/swagger/swagger.yaml');
 const customCss = '#header, .topbar { display: none }';
-var dotenv = require('dotenv')
-var myEnv = dotenv.config()
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const config = {
   appRoot: __dirname, // required config
@@ -21,7 +22,7 @@ if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
 
 module.exports = app; // for testing
 
-app.use(swaggerDocument.basePath+'/docs',
+app.use(`${swaggerDocument.basePath}/docs`,
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, false, swaggerUIOptions, customCss));
 

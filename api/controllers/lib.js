@@ -41,20 +41,48 @@ function simpleName(string) {
 function getQuery(req) {
   const params = pickBy(req.swagger.params, p => (p.value));
   const sane = sanitize(req.query);
-  var mapped = mapValues(params, p => (p.value));
+
+  const mapped = mapValues(params, p => (p.value));
 
   if (mapped.simple) {
     mapped.simple = simpleName(mapped.simple);
   }
   if (mapped.country) {
-    Object.assign(sane, { "address.country": mapped.country });
-    Object.assign(mapped, { "address.country": mapped.country });
+    Object.assign(sane, { 'address.country': mapped.country });
+    Object.assign(mapped, { 'address.country': mapped.country });
     delete sane.country;
     delete mapped.country;
   }
 
   extend(sane, mapped);
+
+  // TODO: Parse _min and _max
+
+  function mapParams() { // paramName
+    return 'records.compiledRelease.contracts.startDate';
+  }
+
+  // Fix underscore to dot params
+  for (const paramName in sane) {
+    if (sane.hasOwnProperty(paramName)) {
+      // console.log('min', paramName, sane[paramName]);
+      if (paramName.indexOf('_min') > -1) {
+        sane[mapParams(paramName)] = { $gt: sane[paramName] };
+      } else if (paramName.indexOf('_max') > -1) {
+        // a
+      } else {
+        const dotParamName = paramName.replace(/_/g, '.');
+
+        sane[dotParamName] = sane[paramName];
+        // sane[dotParamName].parameterObject.name=dotParamName;
+      }
+      delete sane[paramName];
+    }
+  }
+
   const string = qs.stringify(sane);
+
+  // console.log(string);
   const query = q2m(string, { ignore: 'embed' });
   const parsed = parser.parse(query.criteria);
 

@@ -13,7 +13,7 @@ describe('controllers', () => {
 
   describe('persons', () => {
 
-    describe('GET /v2/persons', () => {
+    describe(`GET ${PATH}`, () => {
 
       before(done => {
         collection.insert(testData).then(() => done());

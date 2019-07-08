@@ -3,10 +3,8 @@ const should = require('should');
 const request = require('supertest');
 const server = require('../../../app');
 const db = require('../../../api/db');
-const memberships = db.get('memberships', { castIds: false });
 const contracts = db.get('contracts', { castIds: false });
 const persons = db.get('persons', { castIds: false });
-const organizations = db.get('organizations', { castIds: false });
 const testDataJson = require('./test-data.json');
 const extend = require('lodash/extend');
 

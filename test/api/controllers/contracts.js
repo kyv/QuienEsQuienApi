@@ -18,7 +18,7 @@ describe('controllers', () => {
       before(done => {
         collection.insert(testData).then(() => {
           // collection.find({}).then(data => { console.log("data",data); });
-          done()
+          done();
         });
 
       });

@@ -60,6 +60,8 @@ function allContracts(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
+  // console.log("allContracts",query);
+
   allDocuments(query, collection, JOINS)
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
 }
@@ -71,6 +73,8 @@ function distinctContract(req, res) {
 function singleContract(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
+
+  // console.log("singleContract",query);
 
   collection.aggregate(pipeline)
     .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));
