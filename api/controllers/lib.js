@@ -23,6 +23,9 @@ const moment = require('moment');
 // https://www.npmjs.com/package/query-to-mongo#field-selection
 
 function parseDates(string) {
+  if (typeof string === 'number') {
+    return string;
+  }
   const object = new Date(string);
   const isValidDate = moment(object).isValid();
 
@@ -44,46 +47,27 @@ function getQuery(req) {
 
   const mapped = mapValues(params, p => (p.value));
 
-  if (mapped.simple) {
-    mapped.simple = simpleName(mapped.simple);
-  }
-  if (mapped.country) {
-    Object.assign(sane, { 'address.country': mapped.country });
-    Object.assign(mapped, { 'address.country': mapped.country });
-    delete sane.country;
-    delete mapped.country;
-  }
-
   extend(sane, mapped);
 
-  function mapParams() { // paramName
-    return 'records.compiledRelease.contracts.startDate';
-  }
+  // console.log("getQuery",sane);
 
   // Fix underscore to dot params
   for (const paramName in sane) {
     if (Object.prototype.hasOwnProperty.call(sane, paramName)) {
       // console.log('min', paramName, sane[paramName]);
-      // TODO: Parse _min and _max
-      if (paramName.indexOf('_min') > -1) {
-        sane[mapParams(paramName)] = { $gt: sane[paramName] };
-      } else if (paramName.indexOf('_max') > -1) {
-        sane[mapParams(paramName)] = { $lt: sane[paramName] };
-      } else {
-        const dotParamName = paramName.replace(/_/g, '.');
+      const dotParamName = paramName.replace(/_/g, '.');
 
-        sane[dotParamName] = sane[paramName];
-        // sane[dotParamName].parameterObject.name=dotParamName;
-        if (dotParamName !== paramName) {
-          delete sane[paramName];
-        }
+      sane[dotParamName] = sane[paramName];
+      // sane[dotParamName].parameterObject.name=dotParamName;
+      if (dotParamName !== paramName) {
+        delete sane[paramName];
       }
     }
   }
 
   const string = qs.stringify(sane);
 
-  // console.log(string);
+  // console.log(sane,string);
   const query = q2m(string, { ignore: 'embed' });
   const parsed = parser.parse(query.criteria);
 
