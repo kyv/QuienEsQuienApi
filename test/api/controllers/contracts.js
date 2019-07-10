@@ -25,6 +25,7 @@ describe('controllers', () => {
 
       after(done => {
         collection.drop(() => (done()));
+        return false;
       });
 
       it('should accept a query parameter', done => {

@@ -28,7 +28,10 @@ function collectionRutine(testData, collection, PATH, cName) {
     collection.insert(mapped).then(() => done());
   });
 
-  after(done => (collection.drop(() => (done()))));
+  after(done => {
+    collection.drop().then(() => (done()));
+    return false;
+  });
 
   describe(`GET ${PATH}`, () => {
 

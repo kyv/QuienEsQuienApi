@@ -62,7 +62,7 @@ function getQuery(req) {
 
   // Fix underscore to dot params
   for (const paramName in sane) {
-    if (sane.hasOwnProperty(paramName)) {
+    if (Object.prototype.hasOwnProperty.call(sane, paramName)) {
       // console.log('min', paramName, sane[paramName]);
       // TODO: Parse _min and _max
       if (paramName.indexOf('_min') > -1) {

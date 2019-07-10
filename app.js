@@ -1,4 +1,4 @@
-const SwaggerExpress = require('swagger-express-mw');
+const SwaggerExpress = require('@chezearth/swagger-express-mw');
 const app = require('express')();
 const YAML = require('yamljs');
 const swaggerUi = require('swagger-ui-express');
