@@ -30,7 +30,7 @@ function parseDates(string) {
   const isValidDate = moment(object).isValid();
 
   if (isValidDate) {
-    return object;
+    return object.toISOString();
   }
   return string;
 }
@@ -136,7 +136,13 @@ function allDocuments(query, collection, JOINS) {
 
     return Promise.all([countP, resultsP]);
   }
-  const resultsP = collection.find(query.criteria, query.options);
+  const resultsP = collection.find(query.criteria, query.options).catch(err => {
+    // console.error("allDocuments",err);
+    if (err) {
+      return 'error: {err}';
+    }
+    return err;
+  });
 
   return Promise.all([countP, resultsP]);
 }

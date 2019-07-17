@@ -1,59 +1,61 @@
 const db = require('../db');
 const collection = db.get('contracts', { castIds: false });
-const omit = require('lodash/omit');
-const omitEmpty = require('./lib').omitEmpty;
+// const omit = require('lodash/omit');
+// const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
-
-const JOINS = [
-  { $unwind: {
-    path: '$suppliers_person',
-    preserveNullAndEmptyArrays: true,
-  },
-  },
-  { $unwind: {
-    path: '$suppliers_org',
-    preserveNullAndEmptyArrays: true,
-  },
-  },
-  {
-    $lookup: {
-      from: 'organizations',
-      localField: 'suppliers_org',
-      foreignField: 'simple',
-      as: 'suppliersOrg',
-    },
-  },
-  {
-    $lookup: {
-      from: 'persons',
-      localField: 'suppliers_person',
-      foreignField: 'simple',
-      as: 'suppliersPerson',
-    },
-  },
-];
+//
+// const JOINS = [
+//   { $unwind: {
+//     path: '$suppliers_person',
+//     preserveNullAndEmptyArrays: true,
+//   },
+//   },
+//   { $unwind: {
+//     path: '$suppliers_org',
+//     preserveNullAndEmptyArrays: true,
+//   },
+//   },
+//   {
+//     $lookup: {
+//       from: 'organizations',
+//       localField: 'suppliers_org',
+//       foreignField: 'simple',
+//       as: 'suppliersOrg',
+//     },
+//   },
+//   {
+//     $lookup: {
+//       from: 'persons',
+//       localField: 'suppliers_person',
+//       foreignField: 'simple',
+//       as: 'suppliersPerson',
+//     },
+//   },
+// ];
 
 function contractMapData(object) {
-  const data = omit(object, [
-    'user_id',
-    'suppliersOrg',
-    'suppliersPerson',
-    'dependencyOrg',
-    'suppliers_org',
-    'suppliers_person',
-  ]);
-
-  if (object.suppliersOrg[0] && object.suppliersOrg[0].simple) {
-    data.suppliers_org = object.suppliersOrg;
-  }
-  if (object.suppliersPerson[0] && object.suppliersPerson[0].simple) {
-    data.suppliers_person = object.suppliersPerson;
-  }
-  return omitEmpty(data);
+  return object;
+  //
+  // const data = omit(object, [
+  //   'user_id',
+  //   'suppliersOrg',
+  //   'suppliersPerson',
+  //   'dependencyOrg',
+  //   'suppliers_org',
+  //   'suppliers_person',
+  // ]);
+  //
+  // if (object.suppliersOrg[0] && object.suppliersOrg[0].simple) {
+  //   data.suppliers_org = object.suppliersOrg;
+  // }
+  // if (object.suppliersPerson[0] && object.suppliersPerson[0].simple) {
+  //   data.suppliers_person = object.suppliersPerson;
+  // }
+  // return omitEmpty(data);
 }
 
 function allContracts(req, res) {
@@ -62,8 +64,15 @@ function allContracts(req, res) {
 
   // console.log("allContracts",query);
 
-  allDocuments(query, collection, JOINS)
-    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)));
+  allDocuments(query, collection)
+    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
+    .catch(err => {
+      // console.error('allContracts', err);
+      if (err) {
+        return err;
+      }
+      return false;
+    });
 }
 
 function distinctContract(req, res) {
@@ -72,7 +81,7 @@ function distinctContract(req, res) {
 
 function singleContract(req, res) {
   const query = getQuery(req);
-  const pipeline = queryToPipeline(query, JOINS);
+  const pipeline = queryToPipeline(query);
 
   // console.log("singleContract",query);
 
