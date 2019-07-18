@@ -13,15 +13,15 @@ const JOINS = [
   {
     $lookup: {
       from: 'contracts',
-      localField: 'simple',
-      foreignField: 'suppliers_person',
-      as: 'suppliesContracts',
+      localField: 'id',
+      foreignField: 'records.compiledRelease.awards.suppliers.id',
+      as: 'contracts',
     },
   },
   {
     $lookup: {
       from: 'memberships',
-      localField: 'simple',
+      localField: 'id',
       foreignField: 'person_id',
       as: 'memberships',
     },
@@ -52,6 +52,9 @@ function personDataMap(o) {
 function allPersons(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+
+  // console.log("allPersons",query);
+  // return {};
 
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 

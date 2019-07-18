@@ -1,5 +1,5 @@
 const db = require('../db');
-const collection = db.get('contracts', { castIds: false });
+const collection = db.get('records', { castIds: false });
 // const omit = require('lodash/omit');
 // const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
@@ -7,8 +7,8 @@ const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
-//
-// const JOINS = [
+
+const JOINS = [
 //   { $unwind: {
 //     path: '$suppliers_person',
 //     preserveNullAndEmptyArrays: true,
@@ -35,7 +35,7 @@ const dataReturn = require('./lib').dataReturn;
 //       as: 'suppliersPerson',
 //     },
 //   },
-// ];
+];
 
 function contractMapData(object) {
   return object;
@@ -64,7 +64,7 @@ function allContracts(req, res) {
 
   // console.log("allContracts",query);
 
-  allDocuments(query, collection)
+  allDocuments(query, collection, JOINS)
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
     .catch(err => {
       // console.error('allContracts', err);
@@ -81,9 +81,9 @@ function distinctContract(req, res) {
 
 function singleContract(req, res) {
   const query = getQuery(req);
-  const pipeline = queryToPipeline(query);
+  const pipeline = queryToPipeline(query, JOINS);
 
-  // console.log("singleContract",query);
+  console.log("singleContract",query);
 
   collection.aggregate(pipeline)
     .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));
