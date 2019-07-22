@@ -61,6 +61,15 @@ function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
+  if (req.originalUrl.indexOf('companies') > -1) {
+    query.criteria.classification = 'society';
+  } else {
+    query.criteria.classification = 'institution';
+
+    // Aca estoy filtrado las UC
+    query.criteria.parent_id = { $exists: false };
+  }
+
   // console.log(query);
 
   allDocuments(query, collection, JOINS)

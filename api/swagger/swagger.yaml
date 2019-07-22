@@ -155,7 +155,7 @@ paths:
           description: Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /societies:
+  /companies:
     x-swagger-router-controller: organizations
     get:
       tags:
@@ -209,7 +209,7 @@ paths:
          description: Error
          schema:
            $ref: '#/definitions/ErrorResponse'
-  '/societies/distinct/{field}':
+  '/companies/distinct/{field}':
     x-swagger-router-controller: organizations
     get:
       summary: Retrieve unique values for field
@@ -895,7 +895,7 @@ parameters:
   party_name:
     in: query
     name: party_name
-    description: Name of a society, institution or person participating in a contracting process.
+    description: Name of a company, institution or person participating in a contracting process.
     type: string
   party_type:
     in: query
