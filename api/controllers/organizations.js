@@ -65,12 +65,9 @@ function allOrganizations(req, res) {
     query.criteria.classification = 'society';
   } else {
     query.criteria.classification = 'institution';
-
-    // Aca estoy filtrado las UC
-    query.criteria.parent_id = { $exists: false };
   }
 
-  // console.log(query);
+  // console.log("allOrganizations query",JSON.stringify(query));
 
   allDocuments(query, collection, JOINS)
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));

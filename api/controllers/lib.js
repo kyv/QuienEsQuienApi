@@ -26,6 +26,10 @@ function parseDates(string) {
   if (typeof string === 'number') {
     return string;
   }
+  if (typeof string === 'object') {
+    return string;
+  }
+  // console.log("parseDates",string);
   const object = new Date(string);
   const isValidDate = moment(object).isValid();
 
@@ -50,29 +54,52 @@ function getQuery(req) {
   extend(sane, mapped);
 
   // console.log("getQuery",sane);
-
-  // Fix underscore to dot params
-  for (const paramName in sane) {
-    if (Object.prototype.hasOwnProperty.call(sane, paramName)) {
-      // console.log('min', paramName, sane[paramName]);
-      const dotParamName = paramName.replace(/_/g, '.');
-
-      sane[dotParamName] = sane[paramName];
-      // sane[dotParamName].parameterObject.name=dotParamName;
-      if (dotParamName !== paramName) {
-        delete sane[paramName];
-      }
-    }
-  }
+  //
+  // // Fix underscore to dot params
+  // for (const paramName in sane) {
+  //   if (Object.prototype.hasOwnProperty.call(sane, paramName) ) {
+  //     // console.log('min', paramName, sane[paramName]);
+  //     const dotParamName = paramName.replace(/_/g, '.');
+  //
+  //     sane[dotParamName] = sane[paramName];
+  //     // sane[dotParamName].parameterObject.name=dotParamName;
+  //     if (dotParamName !== paramName) {
+  //       delete sane[paramName];
+  //     }
+  //   }
+  // }
 
   const string = qs.stringify(sane);
 
-  // console.log(sane,string);
+  // console.log(string);
   const query = q2m(string, { ignore: 'embed' });
+  // console.log("getQuery",query);
+
+  // Fix array criteria
+  for (const criteria in query.criteria) {
+    if (criteria.indexOf('[') > -1) {
+      const cleanCriteria = criteria.substr(0, criteria.indexOf('['));
+      const obj = {};
+
+      if (!query.criteria.$and) {
+        query.criteria.$and = [];
+      }
+      obj[cleanCriteria] = query.criteria[criteria];
+      query.criteria.$and.push(obj);
+      // console.log("a2",query.criteria.$and);
+      // Object.assign(query.criteria,and);
+      delete query.criteria[criteria];
+    }
+  }
+
+  // console.log("getQuery",JSON.stringify(query));
+
   const parsed = parser.parse(query.criteria);
 
+  // console.log("getQuery parsed",JSON.stringify(parsed,null,4));
 
   query.criteria = parsed.mapValues((field, value) => (parseDates(value)));
+  // console.log("getQuery criteria",query.criteria);
   query.embed = (isString(sane.embed));
   return query;
 }
