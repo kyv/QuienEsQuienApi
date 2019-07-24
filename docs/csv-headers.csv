@@ -1,0 +1,12 @@
+"OCID", records.ocid (Repeated for each contract in a compiledRelase)
+"Contract title", records.compiledRelease.contracts.title
+"Suppliers name", records.compiledRelease.awards.suppliers.name
+"Buyer name", records.compiledRelease.party.name
+"Buyer parent", records.compiledRelease.party.memberOf.name
+"Total amount", records.compiledRelase.total_amount (sum of all contracts in this compiledRelease)
+"Procurement method",records.compiledRelease.tender.procurementMethod
+"Start date", records.compiledRelease.contracts.period.startDate
+"End date", records.compiledRelease.contracts.period.endDate
+"Contract amount", records.compiledRelease.contracts.value.amount
+"Contract currency", records.compiledRelease.contracts.value.currency
+"Source", records.compiledRelease.source

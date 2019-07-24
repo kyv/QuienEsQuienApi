@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = YAML.load('api/swagger/swagger.yaml');
 const customCss = '#header, .topbar { display: none }';
 const dotenv = require('dotenv');
+const csvRouter = require('./routes/csv');
 
 dotenv.config();
 
@@ -21,6 +22,9 @@ if (process.env.NODE_ENV !== 'test' && !process.env.MONGODB_URI) {
 }
 
 module.exports = app; // for testing
+
+app.use(`${swaggerDocument.basePath}/csv`, csvRouter);
+
 
 app.use(`${swaggerDocument.basePath}/docs`,
   swaggerUi.serve,
