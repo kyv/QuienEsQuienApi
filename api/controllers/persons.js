@@ -14,39 +14,54 @@ const JOINS = [
     $lookup: {
       from: 'contracts',
       localField: 'id',
-      foreignField: 'records.compiledRelease.awards.suppliers.id',
-      as: 'contracts',
+      foreignField: 'records.compiledRelease.awards.supplier.id',
+      as: 'contracts.supplier',
+    },
+    $lookup: {
+      from: 'contracts',
+      localField: 'id',
+      foreignField: 'records.compiledRelease.buyer.id',
+      as: 'contracts.buyer',
     },
   },
   {
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'person_id',
-      as: 'memberships',
+      foreignField: 'organization_id',
+      as: 'memberships.child',
+    },
+  },
+  {
+    $lookup: {
+      from: 'memberships',
+      localField: 'id',
+      foreignField: 'parent_id',
+      as: 'memberships.parent',
     },
   },
 ];
 
 function personDataMap(o) {
-  const object = o;
-  // console.log(o);
-  const memberships = o.memberships.map(m => (personMemberMap(m)));
-  const board = memberships.filter(b => (b.department === 'board'));
-  const shares = memberships.filter(b => (b.role === 'shareholder'));
-
-  object.board = board;
-  object.shares = shares;
-  return omitEmpty(omit(object, [
-    // 'memberships',
-    'user_id',
-    'contracts._id',
-    'contracts.user_id',
-    'memberships._id',
-    'memberships.user_id',
-    'memberships.person',
-    'memberships.person_id',
-  ]));
+  // const object = o;
+  // // console.log(o);
+  // const memberships = o.memberships.map(m => (personMemberMap(m)));
+  // const board = memberships.filter(b => (b.department === 'board'));
+  // const shares = memberships.filter(b => (b.role === 'shareholder'));
+  //
+  // object.board = board;
+  // object.shares = shares;
+  // return omitEmpty(omit(object, [
+  //   // 'memberships',
+  //   'user_id',
+  //   'contracts._id',
+  //   'contracts.user_id',
+  //   'memberships._id',
+  //   'memberships.user_id',
+  //   'memberships.person',
+  //   'memberships.person_id',
+  // ]));
+  return o;
 }
 
 function allPersons(req, res) {

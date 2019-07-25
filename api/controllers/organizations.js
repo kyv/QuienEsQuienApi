@@ -9,57 +9,111 @@ const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
+  // {
+  //   $lookup: {
+  //       from: 'records',
+  //       localField: 'id',
+  //       foreignField: 'records.compiledRelease.parties.memberOf.id',
+  //       as: 'contracts'
+  //   }
+  //   }, {
+  //       $unwind: {
+  //           path: "$contracts",
+  //           includeArrayIndex: 'contracts1',
+  //           preserveNullAndEmptyArrays: false
+  //       }
+  //   }, {
+  //       $sort: {
+  //           "contracts.records.compiledRelease.total_amount": -1
+  //       }
+  //   }, {
+  //       $limit: 3
+  //   },
+  //
+    // $lookup: {
+    //   from: 'records',
+    //   localField: 'id',
+    //   foreignField: 'records.compiledRelease.buyer.id',
+    //   as: 'contracts.buyer',
+    // },
+    // $lookup: {
+    //   from: 'records',
+    //   let: { id: "$id" },
+    //   pipeline: [
+    //     {
+    //       $match: {
+    //         $expr: {
+    //           $eq: [ "$$id", "$records.compiledRelease.parties.memberOf.id" ]
+    //         }
+    //       }
+    //     },
+    //     { $sort: { "records.compiledRelease.total_amount": -1  } },
+    //     { $limit: 3 },
+    //
+    //   ],
+    //   as: 'contracts.buyer',
+    // },
+
   {
     $lookup: {
-      from: 'contracts',
-      localField: 'simple',
-      foreignField: 'suppliers_org',
-      as: 'suppliesContracts',
+      from: 'memberships',
+      localField: 'id',
+      foreignField: 'organization_id',
+      as: 'memberships.parent',
     },
   },
   {
     $lookup: {
       from: 'memberships',
-      localField: 'simple',
-      foreignField: 'org_id',
-      as: 'shares',
+      localField: 'id',
+      foreignField: 'parent_id',
+      as: 'memberships.child',
     },
   },
   {
     $lookup: {
-      from: 'memberships',
-      localField: 'simple',
-      foreignField: 'sob_org',
-      as: 'memberships_sob',
+      from: 'organizations',
+      localField: 'memberships.child.organization_id',
+      foreignField: 'id',
+      as: 'memberships.child_expanded',
+    },
+  },
+  { //TODO add flags
+    $lookup: {
+      from: 'party_flags',
+      localField: 'id',
+      foreignField: 'party_id',
+      as: 'flags',
     },
   },
 ];
 
 function orgDataMap(o) {
-  const object = omit(o, ['memberships_sob', 'shares']);
-  const sob = o.memberships_sob.map(b => (omit(b, ['_id', 'user_id', 'sob_org'])));
+  // const object = omit(o, ['memberships_sob', 'shares']);
+  // const sob = o.memberships_sob.map(b => (omit(b, ['_id', 'user_id', 'sob_org'])));
+  //
+  // object.shares = o.shares
+  //   .map(b => {
+  //     b.org_id = b.sob_org;
+  //     return omit(b, ['_id', 'user_id', 'sob_org', 'org', 'role']);
+  //   });
+  //
+  // object.board = sob
+  //   .filter(b => (b.department === 'board'))
+  //   .map(b => (omit(b, ['department'])));
+  //
+  // object.shareholders = sob.filter(b => (b.role === 'shareholder'))
+  //   .map(b => (omit(b, 'role')));
+  //
+  // object.memberships = sob.filter(b => (b.role !== 'shareholder' && b.department !== 'board'));
 
-  object.shares = o.shares
-    .map(b => {
-      b.org_id = b.sob_org;
-      return omit(b, ['_id', 'user_id', 'sob_org', 'org', 'role']);
-    });
-
-  object.board = sob
-    .filter(b => (b.department === 'board'))
-    .map(b => (omit(b, ['department'])));
-
-  object.shareholders = sob.filter(b => (b.role === 'shareholder'))
-    .map(b => (omit(b, 'role')));
-
-  object.memberships = sob.filter(b => (b.role !== 'shareholder' && b.department !== 'board'));
-
-  return omitEmpty(object);
+  return omitEmpty(o);
 }
 
 function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+  query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   if (req.originalUrl.indexOf('companies') > -1) {
     query.criteria.classification = 'society';
