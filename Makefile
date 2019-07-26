@@ -4,7 +4,7 @@
 # author: Jorge Armando Medina
 # desc: Script to build, test and releaes the QuienEsQuienApi docker image.
 
-#include /var/lib/jenkins/.env
+include /var/lib/jenkins/.env
 
 ORG_NAME = poder
 APP_NAME = quienesquienapi
@@ -22,6 +22,8 @@ all: help
 build:
 	@echo "Building ${IMAGE_NAME} image."
 	docker build -t ${IMAGE_NAME} .
+	@echo "Listing ${IMAGE_NAME} image."
+	docker images
 
 test:
 	@echo "Run ${IMAGE_NAME} image."
@@ -31,12 +33,10 @@ test:
 	docker logs ${APP_NAME}
 
 release:
-	@echo "Release ${IMAGE_NAME} image."
+	@echo "Release ${IMAGE_NAME} image to docker registry."
 	cat ${DOCKER_PWD} | docker login --username ${DOCKER_USER} --password-stdin
 	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
 	docker push ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
-	@echo "Listing ${IMAGE_NAME} image."
-	docker images
 
 clean:
 	@echo ""
@@ -45,6 +45,7 @@ clean:
 	docker stop ${APP_NAME} 2>/dev/null; true
 	docker rm ${APP_NAME}  2>/dev/null; true
 	@echo ""
+	@echo "Purging local images."
 	docker rmi ${IMAGE_NAME} 2>/dev/null; true
 
 help:

@@ -8,7 +8,7 @@ pipeline {
     stage ('Checkout and Clean') {
       steps {
         script {
-          URL='ssh://git@gitlab.rindecuentas.org:2203/equipo-qqw/QuienEsQuienApi.git'
+          URL='http://gitlab.rindecuentas.org/equipo-qqw/QuienEsQuienApi.git'
           BRANCH='*/master'
           CREDENTIALS='CHANGEME'
         }
@@ -44,7 +44,7 @@ pipeline {
       agent { label 'swarm' }
       steps {
         script {
-          echo "Run container"
+          echo "Test container"
           sh 'make test'
         }
       }
@@ -53,7 +53,7 @@ pipeline {
       agent { label 'swarm' }
       steps {
         script {
-          echo "Push to dockerhub registry"
+          echo "Push container image to dockerhub registry"
           sh 'make release'
         }
       }
