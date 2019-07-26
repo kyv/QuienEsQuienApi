@@ -198,6 +198,7 @@ function dataReturn(res, array, offset, embed, objectFormat) {
     size,
     offset,
     pages: Math.ceil((array[0] / size)),
+    count: array[0],
   });
 }
 
