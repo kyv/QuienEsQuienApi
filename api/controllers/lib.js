@@ -202,6 +202,56 @@ function dataReturn(res, array, offset, embed, objectFormat) {
   });
 }
 
+
+async function getContracts(type, id, db) {
+  const records = db.get('records', { castIds: false });
+  const options = { limit: -3, sort: { 'records.compiledRelease.total_amount': -1 } };
+  let filter = {};
+
+  if (type === 'buyer') {
+    filter = { $or: [
+      { 'records.compiledRelease.buyer.id': id },
+      { 'records.compiledRelease.parties.memberOf.id': id },
+    ] };
+  } else {
+    filter = {
+      'records.compiledRelease.awards.suppliers.id': id,
+    };
+  }
+  // console.log('getContracts query', `db.records.find(${JSON.stringify(filter)},${JSON.stringify(options)})`);
+
+  const contractsP = records.find(filter, options).catch(err => {
+    // console.error("getContracts error",err);
+    if (err) {
+      return 'error: {err}';
+    }
+    return err;
+  });
+
+  return contractsP;
+}
+
+async function addContracts(collection, array, db) {
+  // console.log("addContracts 1", array[1].length);
+  for (const index in array[1]) {
+    if (Object.prototype.hasOwnProperty.call(array[1], index)) {
+      const item = array[1][index];
+
+      // console.log("addContracts 2", index);
+      const contracts = {
+        buyer: await getContracts('buyer', item.id, db),
+        seller: await getContracts('seller', item.id, db),
+      };
+
+      item.contracts = contracts;
+
+      // console.log("addContracts",index,array[1][index].contracts.buyer.length,array[1][index].contracts.seller.length);
+    }
+  }
+  return array;
+}
+
+
 module.exports = {
   personMemberMap,
   omitEmpty,
@@ -210,6 +260,7 @@ module.exports = {
   arrayResultsOptions,
   getQuery,
   allDocuments,
+  addContracts,
   getDistinct,
   dataReturn,
 };

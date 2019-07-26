@@ -1,34 +1,35 @@
 const db = require('../db');
 const collection = db.get('persons', { castIds: false });
-const omit = require('lodash/omit');
-const personMemberMap = require('./lib').personMemberMap;
-const omitEmpty = require('./lib').omitEmpty;
+// const omit = require('lodash/omit');
+// const personMemberMap = require('./lib').personMemberMap;
+// const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
+const addContracts = require('./lib').addContracts;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
-  {
-    $lookup: {
-      from: 'contracts',
-      localField: 'id',
-      foreignField: 'records.compiledRelease.awards.supplier.id',
-      as: 'contracts.supplier',
-    },
-    $lookup: {
-      from: 'contracts',
-      localField: 'id',
-      foreignField: 'records.compiledRelease.buyer.id',
-      as: 'contracts.buyer',
-    },
-  },
+  // {
+  //   $lookup: {
+  //     from: 'contracts',
+  //     localField: 'id',
+  //     foreignField: 'records.compiledRelease.awards.supplier.id',
+  //     as: 'contracts.supplier',
+  //   },
+  //   $lookup: {
+  //     from: 'contracts',
+  //     localField: 'id',
+  //     foreignField: 'records.compiledRelease.buyer.id',
+  //     as: 'contracts.buyer',
+  //   },
+  // },
   {
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'organization_id',
+      foreignField: 'person_id',
       as: 'memberships.child',
     },
   },
@@ -74,6 +75,7 @@ function allPersons(req, res) {
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   allDocuments(query, collection, JOINS)
+    .then(array => (addContracts(collection, array, db)))
     .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 

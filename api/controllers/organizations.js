@@ -1,10 +1,11 @@
 const db = require('../db');
 const collection = db.get('organizations', { castIds: false });
-const omit = require('lodash/omit');
+// const omit = require('lodash/omit');
 const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
+const addContracts = require('./lib').addContracts;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
@@ -30,29 +31,29 @@ const JOINS = [
   //       $limit: 3
   //   },
   //
-    // $lookup: {
-    //   from: 'records',
-    //   localField: 'id',
-    //   foreignField: 'records.compiledRelease.buyer.id',
-    //   as: 'contracts.buyer',
-    // },
-    // $lookup: {
-    //   from: 'records',
-    //   let: { id: "$id" },
-    //   pipeline: [
-    //     {
-    //       $match: {
-    //         $expr: {
-    //           $eq: [ "$$id", "$records.compiledRelease.parties.memberOf.id" ]
-    //         }
-    //       }
-    //     },
-    //     { $sort: { "records.compiledRelease.total_amount": -1  } },
-    //     { $limit: 3 },
-    //
-    //   ],
-    //   as: 'contracts.buyer',
-    // },
+  // $lookup: {
+  //   from: 'records',
+  //   localField: 'id',
+  //   foreignField: 'records.compiledRelease.buyer.id',
+  //   as: 'contracts.buyer',
+  // },
+  // $lookup: {
+  //   from: 'records',
+  //   let: { id: "$id" },
+  //   pipeline: [
+  //     {
+  //       $match: {
+  //         $expr: {
+  //           $eq: [ "$$id", "$records.compiledRelease.parties.memberOf.id" ]
+  //         }
+  //       }
+  //     },
+  //     { $sort: { "records.compiledRelease.total_amount": -1  } },
+  //     { $limit: 3 },
+  //
+  //   ],
+  //   as: 'contracts.buyer',
+  // },
 
   {
     $lookup: {
@@ -78,7 +79,7 @@ const JOINS = [
       as: 'memberships.child_expanded',
     },
   },
-  { //TODO add flags
+  { // TODO add flags
     $lookup: {
       from: 'party_flags',
       localField: 'id',
@@ -113,10 +114,11 @@ function orgDataMap(o) {
 function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   if (req.originalUrl.indexOf('companies') > -1) {
-    query.criteria.classification = 'society';
+    query.criteria.classification = 'company';
   } else {
     query.criteria.classification = 'institution';
   }
@@ -124,6 +126,7 @@ function allOrganizations(req, res) {
   // console.log("allOrganizations query",JSON.stringify(query));
 
   allDocuments(query, collection, JOINS)
+    .then(array => (addContracts(collection, array, db)))
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
