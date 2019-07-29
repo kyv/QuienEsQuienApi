@@ -9,6 +9,7 @@ const clone = require('lodash/fp/clone');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
+const find = require('lodash/find');
 const q2m = require('query-to-mongo');
 const qs = require('qs');
 const pickBy = require('lodash/pickBy');
@@ -29,7 +30,7 @@ function parseDates(string) {
   if (typeof string === 'object') {
     return string;
   }
-  // console.log("parseDates",string);
+  // console.log('parseDates',string);
   const object = new Date(string);
   const isValidDate = moment(object).isValid();
 
@@ -53,7 +54,7 @@ function getQuery(req) {
 
   extend(sane, mapped);
 
-  // console.log("getQuery",sane);
+  // console.log('getQuery',sane);
   //
   // // Fix underscore to dot params
   // for (const paramName in sane) {
@@ -73,7 +74,7 @@ function getQuery(req) {
 
   // console.log(string);
   const query = q2m(string, { ignore: 'embed' });
-  // console.log("getQuery",query);
+  // console.log('getQuery',query);
 
   // Fix array criteria
   for (const criteria in query.criteria) {
@@ -203,9 +204,9 @@ function dataReturn(res, array, offset, embed, objectFormat) {
 }
 
 
-async function getContracts(type, id, db) {
+async function getContracts(type, id, db, limit) {
   const records = db.get('records', { castIds: false });
-  const options = { limit: -3, sort: { 'records.compiledRelease.total_amount': -1 } };
+  const options = { limit: `-${limit}`, sort: { 'records.compiledRelease.total_amount': -1 } };
   let filter = {};
 
   if (type === 'buyer') {
@@ -231,26 +232,180 @@ async function getContracts(type, id, db) {
   return contractsP;
 }
 
-async function addContracts(collection, array, db) {
-  // console.log("addContracts 1", array[1].length);
+function addLink(relationSummary, link) {
+  if (relationSummary.links.length > 1000) {
+    return false;
+  }
+
+  const source = find(relationSummary.nodes, { label: link.source });
+  const target = find(relationSummary.nodes, { label: link.target });
+
+  if (source && target) {
+
+    // console.log('addLink',link,sourceId,target.id);
+    // if (!source.fixedWeight){
+    //   source.weight = source.weight + 0.5;
+    // }
+    const existentLink = find(relationSummary.links, { source: source.id, target: target.id });
+
+    if (!existentLink) {
+      // console.log('addLink',link);
+      relationSummary.links.push({ id: relationSummary.links.length, source: source.id, target: target.id, weight: link.weight || 0 });
+    } else {
+      existentLink.weight += link.weight;
+    }
+  }
+  // else {
+  //   console.error('Faltó agregar algún nodo', link);
+  // }
+  return true;
+}
+function addNode(relationSummary, node) {
+  if (relationSummary.nodes.length > 400) {
+    return false;
+  }
+
+  if (!find(relationSummary.nodes, { label: node.label })) {
+    // console.log('addNode',node);
+    node.id = relationSummary.nodes.length;
+    relationSummary.nodes.push(node);
+  }
+  return true;
+}
+
+
+function calculateSummaries(orgID, records) {
+  // console.log('calculateSummaries',records.length);
+
+  //  Generar los objetos para cada gráfico
+  const yearSummary = {};
+  const typeSummary = {};
+  const relationSummary = { nodes: [], links: [] };
+
+  for (const r in records) {
+    if (Object.prototype.hasOwnProperty.call(records, r)) {
+      for (const r2 in records[r].records) {
+        if (Object.prototype.hasOwnProperty.call(records[r].records, r2)) {
+          const compiledRelease = records[r].records[r2].compiledRelease;
+
+          for (const c in compiledRelease.contracts) {
+            if (Object.prototype.hasOwnProperty.call(compiledRelease.contracts, c)) {
+              const contract = compiledRelease.contracts[c];
+              const award = find(compiledRelease.awards, { id: contract.awardID });
+              const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
+              const procurementMethod = compiledRelease.tender.procurementMethodMxCnet;
+              const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
+              const isBuyerContract = buyerParty.id === orgID || buyerParty.memberOf.id === orgID;
+              const year = new Date(contract.period.startDate).getFullYear();
+
+              if (!yearSummary[year]) {
+                yearSummary[year] = {
+                  buyer: { value: 0, count: 0 },
+                  supplier: { value: 0, count: 0 },
+                };
+              }
+
+              // TODO: sumar los amounts en MXN siempre
+              if (isSupplierContract) {
+                yearSummary[year].supplier.value += contract.value.amount;
+                yearSummary[year].supplier.count += 1;
+              }
+              if (isBuyerContract) {
+                yearSummary[year].buyer.value += contract.value.amount;
+                yearSummary[year].buyer.count += 1;
+              }
+
+
+              if (!typeSummary[procurementMethod]) {
+                typeSummary[procurementMethod] = {
+                  buyer: { value: 0, count: 0 },
+                  supplier: { value: 0, count: 0 },
+                };
+              }
+
+              if (isSupplierContract) {
+                typeSummary[procurementMethod].supplier.value += contract.value.amount;
+                typeSummary[procurementMethod].supplier.count += 1;
+              }
+              if (isBuyerContract) {
+                typeSummary[procurementMethod].buyer.value += contract.value.amount;
+                typeSummary[procurementMethod].buyer.count += 1;
+              }
+
+
+
+              // TODO: sumar los amounts en MXN siempre
+
+              // organización 1
+              if (buyerParty.memberOf.name) {
+                addNode(relationSummary, { label: buyerParty.memberOf.name, type: buyerParty.details.type });
+              }
+              addNode(relationSummary, { label: buyerParty.name, weight: 50, type: buyerParty.details.type });
+              addNode(relationSummary, { label: procurementMethod, type: 'procurementMethod' });
+
+              if (buyerParty.memberOf.name) {
+                addLink(relationSummary, { source: buyerParty.name, target: buyerParty.memberOf.name });
+              }
+              addLink(relationSummary, { source: buyerParty.name, target: procurementMethod });
+
+
+              for (const a in award.suppliers) {
+                if (Object.prototype.hasOwnProperty.call(award.suppliers, a)) {
+                  const supplierParty = find(compiledRelease.parties, { id: award.suppliers[a].id });
+
+                  if (supplierParty) {
+                    addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
+                    addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: contract.value.amount });
+                  }
+                  // else {
+                  //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
+                  // }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const summary = {
+    year: yearSummary,
+    type: typeSummary,
+    relation: relationSummary,
+  };
+
+  return summary;
+}
+
+async function addGraphs(collection, array, db) {
+  // This is too slow fow more than one item
+  if (array[1].length > 1) {
+    return array;
+  }
   for (const index in array[1]) {
     if (Object.prototype.hasOwnProperty.call(array[1], index)) {
       const item = array[1][index];
 
-      // console.log("addContracts 2", index);
-      const contracts = {
-        buyer: await getContracts('buyer', item.id, db),
-        seller: await getContracts('seller', item.id, db),
+      // console.log('addContracts 2', index);
+      const buyerContracts = await getContracts('buyer', item.id, db, 100);
+      const supplierContracts = await getContracts('supplier', item.id, db, 100);
+      const allContracts = [];
+
+      extend(allContracts, buyerContracts, supplierContracts);
+      // console.log('addGraphs',allContracts.length);
+
+      item.summaries = calculateSummaries(item.id, allContracts);
+      item.top3contracts = {
+        buyer: buyerContracts.slice(0, 3),
+        supplier: supplierContracts.slice(0, 3),
       };
 
-      item.contracts = contracts;
-
-      // console.log("addContracts",index,array[1][index].contracts.buyer.length,array[1][index].contracts.seller.length);
+      // console.log('addContracts',index,array[1][index].contracts.buyer.length,array[1][index].contracts.seller.length);
     }
   }
   return array;
 }
-
 
 module.exports = {
   personMemberMap,
@@ -260,7 +415,7 @@ module.exports = {
   arrayResultsOptions,
   getQuery,
   allDocuments,
-  addContracts,
+  addGraphs,
   getDistinct,
   dataReturn,
 };

@@ -6,25 +6,11 @@ const collection = db.get('persons', { castIds: false });
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
-const addContracts = require('./lib').addContracts;
+const addGraphs = require('./lib').addGraphs;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
-  // {
-  //   $lookup: {
-  //     from: 'contracts',
-  //     localField: 'id',
-  //     foreignField: 'records.compiledRelease.awards.supplier.id',
-  //     as: 'contracts.supplier',
-  //   },
-  //   $lookup: {
-  //     from: 'contracts',
-  //     localField: 'id',
-  //     foreignField: 'records.compiledRelease.buyer.id',
-  //     as: 'contracts.buyer',
-  //   },
-  // },
   {
     $lookup: {
       from: 'memberships',
@@ -75,7 +61,7 @@ function allPersons(req, res) {
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   allDocuments(query, collection, JOINS)
-    .then(array => (addContracts(collection, array, db)))
+    .then(array => (addGraphs(collection, array, db)))
     .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 

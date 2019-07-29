@@ -5,56 +5,11 @@ const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
-const addContracts = require('./lib').addContracts;
+const addGraphs = require('./lib').addGraphs;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
 const JOINS = [
-  // {
-  //   $lookup: {
-  //       from: 'records',
-  //       localField: 'id',
-  //       foreignField: 'records.compiledRelease.parties.memberOf.id',
-  //       as: 'contracts'
-  //   }
-  //   }, {
-  //       $unwind: {
-  //           path: "$contracts",
-  //           includeArrayIndex: 'contracts1',
-  //           preserveNullAndEmptyArrays: false
-  //       }
-  //   }, {
-  //       $sort: {
-  //           "contracts.records.compiledRelease.total_amount": -1
-  //       }
-  //   }, {
-  //       $limit: 3
-  //   },
-  //
-  // $lookup: {
-  //   from: 'records',
-  //   localField: 'id',
-  //   foreignField: 'records.compiledRelease.buyer.id',
-  //   as: 'contracts.buyer',
-  // },
-  // $lookup: {
-  //   from: 'records',
-  //   let: { id: "$id" },
-  //   pipeline: [
-  //     {
-  //       $match: {
-  //         $expr: {
-  //           $eq: [ "$$id", "$records.compiledRelease.parties.memberOf.id" ]
-  //         }
-  //       }
-  //     },
-  //     { $sort: { "records.compiledRelease.total_amount": -1  } },
-  //     { $limit: 3 },
-  //
-  //   ],
-  //   as: 'contracts.buyer',
-  // },
-
   {
     $lookup: {
       from: 'memberships',
@@ -71,14 +26,14 @@ const JOINS = [
       as: 'memberships.child',
     },
   },
-  {
-    $lookup: {
-      from: 'organizations',
-      localField: 'memberships.child.organization_id',
-      foreignField: 'id',
-      as: 'memberships.child_expanded',
-    },
-  },
+  // {
+  //   $lookup: {
+  //     from: 'organizations',
+  //     localField: 'memberships.child.organization_id',
+  //     foreignField: 'id',
+  //     as: 'memberships.child_expanded',
+  //   },
+  // },
   { // TODO add flags
     $lookup: {
       from: 'party_flags',
@@ -118,7 +73,7 @@ function allOrganizations(req, res) {
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   if (req.originalUrl.indexOf('companies') > -1) {
-    query.criteria.classification = 'company';
+    query.criteria.classification = 'society';
   } else {
     query.criteria.classification = 'institution';
   }
@@ -126,7 +81,7 @@ function allOrganizations(req, res) {
   // console.log("allOrganizations query",JSON.stringify(query));
 
   allDocuments(query, collection, JOINS)
-    .then(array => (addContracts(collection, array, db)))
+    .then(array => (addGraphs(collection, array, db)))
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
