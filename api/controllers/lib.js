@@ -293,9 +293,11 @@ function calculateSummaries(orgID, records) {
               const contract = compiledRelease.contracts[c];
               const award = find(compiledRelease.awards, { id: contract.awardID });
               const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
-              const procurementMethod = compiledRelease.tender.procurementMethodMxCnet;
+              const memberOfParty = find(compiledRelease.parties, 'memberOf');
+              // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
+              const procurementMethod = compiledRelease.tender.procurementMethod;
               const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-              const isBuyerContract = buyerParty.id === orgID || buyerParty.memberOf.id === orgID;
+              const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
               const year = new Date(contract.period.startDate).getFullYear();
 
               if (!yearSummary[year]) {
@@ -307,11 +309,11 @@ function calculateSummaries(orgID, records) {
 
               // TODO: sumar los amounts en MXN siempre
               if (isSupplierContract) {
-                yearSummary[year].supplier.value += contract.value.amount;
+                yearSummary[year].supplier.value += parseInt(contract.value.amount, 10);
                 yearSummary[year].supplier.count += 1;
               }
               if (isBuyerContract) {
-                yearSummary[year].buyer.value += contract.value.amount;
+                yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
                 yearSummary[year].buyer.count += 1;
               }
 
@@ -324,11 +326,11 @@ function calculateSummaries(orgID, records) {
               }
 
               if (isSupplierContract) {
-                typeSummary[procurementMethod].supplier.value += contract.value.amount;
+                typeSummary[procurementMethod].supplier.value += parseInt(contract.value.amount, 10);
                 typeSummary[procurementMethod].supplier.count += 1;
               }
               if (isBuyerContract) {
-                typeSummary[procurementMethod].buyer.value += contract.value.amount;
+                typeSummary[procurementMethod].buyer.value += parseInt(contract.value.amount, 10);
                 typeSummary[procurementMethod].buyer.count += 1;
               }
 
@@ -355,7 +357,7 @@ function calculateSummaries(orgID, records) {
 
                   if (supplierParty) {
                     addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
-                    addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: contract.value.amount });
+                    addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: parseInt(contract.value.amount, 10) });
                   }
                   // else {
                   //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
@@ -390,9 +392,10 @@ async function addGraphs(collection, array, db) {
       // console.log('addContracts 2', index);
       const buyerContracts = await getContracts('buyer', item.id, db, 100);
       const supplierContracts = await getContracts('supplier', item.id, db, 100);
-      const allContracts = [];
+      const allContracts = [...buyerContracts, ...supplierContracts];
 
-      extend(allContracts, buyerContracts, supplierContracts);
+      // extend(allContracts, supplierContracts);
+      // extend(allContracts, buyerContracts);
       // console.log('addGraphs',allContracts.length);
 
       item.summaries = calculateSummaries(item.id, allContracts);
