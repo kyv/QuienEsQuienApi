@@ -73,7 +73,7 @@ function allOrganizations(req, res) {
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
 
   if (req.originalUrl.indexOf('companies') > -1) {
-    query.criteria.classification = 'society';
+    query.criteria.classification = 'company';
   } else {
     query.criteria.classification = 'institution';
   }
