@@ -83,7 +83,7 @@ function singleContract(req, res) {
   const query = getQuery(req);
   const pipeline = queryToPipeline(query, JOINS);
 
-  // console.log("singleContract",query);
+  // console.log("singleContract",pipeline);
 
   collection.aggregate(pipeline)
     .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));

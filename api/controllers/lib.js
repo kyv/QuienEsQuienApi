@@ -206,17 +206,17 @@ function dataReturn(res, array, offset, embed, objectFormat) {
 
 async function getContracts(type, id, db, limit) {
   const records = db.get('records', { castIds: false });
-  const options = { limit: `-${limit}`, sort: { 'records.compiledRelease.total_amount': -1 } };
+  const options = { limit: `-${limit}`, sort: { 'records.0.compiledRelease.total_amount': -1 } };
   let filter = {};
 
   if (type === 'buyer') {
     filter = { $or: [
-      { 'records.compiledRelease.buyer.id': id },
-      { 'records.compiledRelease.parties.memberOf.id': id },
+      { 'records.0.compiledRelease.buyer.id': id },
+      { 'records.0.compiledRelease.parties.memberOf.id': id },
     ] };
   } else {
     filter = {
-      'records.compiledRelease.awards.suppliers.id': id,
+      'records.0.compiledRelease.awards.suppliers.id': id,
     };
   }
   // console.log('getContracts query', `db.records.find(${JSON.stringify(filter)},${JSON.stringify(options)})`);
