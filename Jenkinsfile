@@ -55,6 +55,8 @@ pipeline {
         script {
           echo "Push container image to dockerhub registry"
           sh 'make release'
+          echo "Clean container and Image"
+          sh 'make clean'
         }
       }
     }
