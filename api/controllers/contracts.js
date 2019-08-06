@@ -59,13 +59,14 @@ const JOINS = [
 ];
 
 function addRecordPackage(object) {
-  const recordPackage = clone(recordPackageBase);
+  if (object[1][0]) {
+    const recordPackage = clone(recordPackageBase);
 
-  recordPackage.records = object[1];
-  recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
-  recordPackage.publishedDate = object[1][0].compiledRelease.date;
-  object[1] = recordPackage;
-
+    recordPackage.records = object[1];
+    recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
+    recordPackage.publishedDate = object[1][0].compiledRelease.date;
+    object[1] = recordPackage;
+  }
   return object;
 }
 
@@ -95,7 +96,7 @@ function allContracts(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
-  // console.log("allContracts",query);
+  console.log("allContracts",query);
 
   allDocuments(query, collection, JOINS)
     .then(addRecordPackage)
