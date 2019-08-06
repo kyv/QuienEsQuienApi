@@ -9,7 +9,7 @@ include /var/lib/jenkins/.env
 ORG_NAME = poder
 APP_NAME = quienesquienapi
 APP_PORT = 8085:8080
-APP_VERSION = 0.4.1
+APP_VERSION = 0.4.2
 IMAGE_NAME = ${ORG_NAME}/${APP_NAME}:${APP_VERSION}
 MONGO_URL = localhost:27017
 MONGO_DB = dbname
