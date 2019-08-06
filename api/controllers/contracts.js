@@ -1,12 +1,33 @@
 const db = require('../db');
 const collection = db.get('records', { castIds: false });
 // const omit = require('lodash/omit');
+const clone = require('lodash/clone');
 // const omitEmpty = require('./lib').omitEmpty;
 const queryToPipeline = require('./lib').queryToPipeline;
 const getQuery = require('./lib').getQuery;
 const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
+const recordPackageBase = {
+  'uri': '',
+  'version': '1.1',
+  'extensions': [
+    'https://raw.githubusercontent.com/transpresupuestaria/ocds_contract_data_extension/master/extension.json',
+    'https://raw.githubusercontent.com/open-contracting-extensions/ocds_partyDetails_scale_extension/master/extension.json',
+    'https://raw.githubusercontent.com/open-contracting/ocds_budget_breakdown_extension/master/extension.json',
+    'https://raw.githubusercontent.com/open-contracting-extensions/ocds_memberOf_extension/master/extension.json',
+    'https://raw.githubusercontent.com/ProjectPODER/ocds_compranet_extension/master/extension.json'
+
+  ],
+  'publisher': {
+    'name': 'QuienEsQuien.wiki',
+    'uri': 'https://quienesquien.wiki/'
+  },
+  'license': 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
+  'publicationPolicy': 'https://quienesquien.wiki/about',
+  'publishedDate': '',
+  'records': [],
+};
 
 const JOINS = [
 //   { $unwind: {
@@ -37,8 +58,20 @@ const JOINS = [
 //   },
 ];
 
-function contractMapData(object) {
+function addRecordPackage(object) {
+  const recordPackage = clone(recordPackageBase);
+
+  recordPackage.records = object[1];
+  recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
+  recordPackage.publishedDate = object[1][0].compiledRelease.date;
+  object[1] = recordPackage;
+
   return object;
+}
+
+function contractMapData(object) {
+
+  return {};
   //
   // const data = omit(object, [
   //   'user_id',
@@ -65,9 +98,10 @@ function allContracts(req, res) {
   // console.log("allContracts",query);
 
   allDocuments(query, collection, JOINS)
+    .then(addRecordPackage)
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
     .catch(err => {
-      // console.error('allContracts', err);
+      console.error('allContracts', err);
       if (err) {
         return err;
       }

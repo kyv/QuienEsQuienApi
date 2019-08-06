@@ -206,17 +206,17 @@ function dataReturn(res, array, offset, embed, objectFormat) {
 
 async function getContracts(type, id, db, limit) {
   const records = db.get('records', { castIds: false });
-  const options = { limit: `-${limit}`, sort: { 'records.0.compiledRelease.total_amount': -1 } };
+  const options = { limit: `-${limit}`, sort: { 'compiledRelease.total_amount': -1 } };
   let filter = {};
 
   if (type === 'buyer') {
     filter = { $or: [
-      { 'records.0.compiledRelease.buyer.id': id },
-      { 'records.0.compiledRelease.parties.memberOf.id': id },
+      { 'compiledRelease.buyer.id': id },
+      { 'compiledRelease.parties.memberOf.id': id },
     ] };
   } else {
     filter = {
-      'records.0.compiledRelease.awards.suppliers.id': id,
+      'compiledRelease.awards.suppliers.id': id,
     };
   }
   // console.log('getContracts query', `db.records.find(${JSON.stringify(filter)},${JSON.stringify(options)})`);
@@ -284,86 +284,82 @@ function calculateSummaries(orgID, records) {
 
   for (const r in records) {
     if (Object.prototype.hasOwnProperty.call(records, r)) {
-      for (const r2 in records[r].records) {
-        if (Object.prototype.hasOwnProperty.call(records[r].records, r2)) {
-          const compiledRelease = records[r].records[r2].compiledRelease;
+      const compiledRelease = records[r].compiledRelease;
 
-          for (const c in compiledRelease.contracts) {
-            if (Object.prototype.hasOwnProperty.call(compiledRelease.contracts, c)) {
-              const contract = compiledRelease.contracts[c];
-              const award = find(compiledRelease.awards, { id: contract.awardID });
-              const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
-              const memberOfParty = find(compiledRelease.parties, 'memberOf');
-              // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
-              const procurementMethod = compiledRelease.tender.procurementMethod;
-              const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-              const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
-              const year = new Date(contract.period.startDate).getFullYear();
+      for (const c in compiledRelease.contracts) {
+        if (Object.prototype.hasOwnProperty.call(compiledRelease.contracts, c)) {
+          const contract = compiledRelease.contracts[c];
+          const award = find(compiledRelease.awards, { id: contract.awardID });
+          const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
+          const memberOfParty = find(compiledRelease.parties, 'memberOf');
+          // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
+          const procurementMethod = compiledRelease.tender.procurementMethod;
+          const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
+          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
+          const year = new Date(contract.period.startDate).getFullYear();
 
-              if (!yearSummary[year]) {
-                yearSummary[year] = {
-                  buyer: { value: 0, count: 0 },
-                  supplier: { value: 0, count: 0 },
-                };
+          if (!yearSummary[year]) {
+            yearSummary[year] = {
+              buyer: { value: 0, count: 0 },
+              supplier: { value: 0, count: 0 },
+            };
+          }
+
+          // TODO: sumar los amounts en MXN siempre
+          if (isSupplierContract) {
+            yearSummary[year].supplier.value += parseInt(contract.value.amount, 10);
+            yearSummary[year].supplier.count += 1;
+          }
+          if (isBuyerContract) {
+            yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
+            yearSummary[year].buyer.count += 1;
+          }
+
+
+          if (!typeSummary[procurementMethod]) {
+            typeSummary[procurementMethod] = {
+              buyer: { value: 0, count: 0 },
+              supplier: { value: 0, count: 0 },
+            };
+          }
+
+          if (isSupplierContract) {
+            typeSummary[procurementMethod].supplier.value += parseInt(contract.value.amount, 10);
+            typeSummary[procurementMethod].supplier.count += 1;
+          }
+          if (isBuyerContract) {
+            typeSummary[procurementMethod].buyer.value += parseInt(contract.value.amount, 10);
+            typeSummary[procurementMethod].buyer.count += 1;
+          }
+
+
+
+          // TODO: sumar los amounts en MXN siempre
+
+          // organización 1
+          if (buyerParty.memberOf.name) {
+            addNode(relationSummary, { label: buyerParty.memberOf.name, type: buyerParty.details.type });
+          }
+          addNode(relationSummary, { label: buyerParty.name, weight: 50, type: buyerParty.details.type });
+          addNode(relationSummary, { label: procurementMethod, type: 'procurementMethod' });
+
+          if (buyerParty.memberOf.name) {
+            addLink(relationSummary, { source: buyerParty.name, target: buyerParty.memberOf.name });
+          }
+          addLink(relationSummary, { source: buyerParty.name, target: procurementMethod });
+
+
+          for (const a in award.suppliers) {
+            if (Object.prototype.hasOwnProperty.call(award.suppliers, a)) {
+              const supplierParty = find(compiledRelease.parties, { id: award.suppliers[a].id });
+
+              if (supplierParty) {
+                addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
+                addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: parseInt(contract.value.amount, 10) });
               }
-
-              // TODO: sumar los amounts en MXN siempre
-              if (isSupplierContract) {
-                yearSummary[year].supplier.value += parseInt(contract.value.amount, 10);
-                yearSummary[year].supplier.count += 1;
-              }
-              if (isBuyerContract) {
-                yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
-                yearSummary[year].buyer.count += 1;
-              }
-
-
-              if (!typeSummary[procurementMethod]) {
-                typeSummary[procurementMethod] = {
-                  buyer: { value: 0, count: 0 },
-                  supplier: { value: 0, count: 0 },
-                };
-              }
-
-              if (isSupplierContract) {
-                typeSummary[procurementMethod].supplier.value += parseInt(contract.value.amount, 10);
-                typeSummary[procurementMethod].supplier.count += 1;
-              }
-              if (isBuyerContract) {
-                typeSummary[procurementMethod].buyer.value += parseInt(contract.value.amount, 10);
-                typeSummary[procurementMethod].buyer.count += 1;
-              }
-
-
-
-              // TODO: sumar los amounts en MXN siempre
-
-              // organización 1
-              if (buyerParty.memberOf.name) {
-                addNode(relationSummary, { label: buyerParty.memberOf.name, type: buyerParty.details.type });
-              }
-              addNode(relationSummary, { label: buyerParty.name, weight: 50, type: buyerParty.details.type });
-              addNode(relationSummary, { label: procurementMethod, type: 'procurementMethod' });
-
-              if (buyerParty.memberOf.name) {
-                addLink(relationSummary, { source: buyerParty.name, target: buyerParty.memberOf.name });
-              }
-              addLink(relationSummary, { source: buyerParty.name, target: procurementMethod });
-
-
-              for (const a in award.suppliers) {
-                if (Object.prototype.hasOwnProperty.call(award.suppliers, a)) {
-                  const supplierParty = find(compiledRelease.parties, { id: award.suppliers[a].id });
-
-                  if (supplierParty) {
-                    addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
-                    addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: parseInt(contract.value.amount, 10) });
-                  }
-                  // else {
-                  //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
-                  // }
-                }
-              }
+              // else {
+              //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
+              // }
             }
           }
         }
