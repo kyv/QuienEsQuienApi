@@ -74,6 +74,7 @@ function singlePerson(req, res) {
   const pipeline = queryToPipeline(query, JOINS);
 
   collection.aggregate(pipeline)
+    .then(array => (addGraphs(collection, array, db)))
     .then(docs => (dataReturn(res, [1, docs], 0, true, personDataMap)));
 }
 
