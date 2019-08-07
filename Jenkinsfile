@@ -85,7 +85,9 @@ pipeline {
             ]
           }
         echo "Deploy"
-        sh 'make deploy'
+        deploy:
+        cd kubernetes/quienesquienapi
+        bash scripts/deploy.sh
       }
     } // End stage deploy
   }
