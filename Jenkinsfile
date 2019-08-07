@@ -27,6 +27,8 @@ pipeline {
               ]]
             ]
           }
+        echo "Set App Vars"
+        sh 'bash setAppData.sh'
         echo "Clean container and Image"
         sh 'make clean'
       }
@@ -35,8 +37,6 @@ pipeline {
       agent { label 'swarm' }
       steps {
         script {
-          echo "Build App Vars"
-          sh 'bash setAppData.sh'
           echo "Build container"
           sh 'make build'
         }
