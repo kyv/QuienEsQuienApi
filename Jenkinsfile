@@ -84,7 +84,7 @@ pipeline {
               ]]
             ]
           }
-        echo "Deploy to cluster"
+        echo "Deploy to Cluster"
         sh 'pwd'
         sh 'cd kubernetes/quienesquienapi; bash scripts/deploy.sh'
       }
