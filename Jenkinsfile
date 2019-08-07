@@ -89,5 +89,10 @@ pipeline {
         sh 'cd kubernetes/quienesquienapi; bash scripts/deploy.sh'
       }
     } // End stage deploy
+    stage ('TestWeb') {
+      steps {
+        build 'testweb-quienesquienapi'
+      }
+    }
   }
 }
