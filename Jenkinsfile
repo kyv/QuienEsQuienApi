@@ -5,7 +5,7 @@ def CREDENTIALS
 pipeline {
   agent { label 'swarm' }
   stages {
-    stage ('Checkout and Clean') {
+    stage ('Checkout') {
       steps {
         script {
           URL='http://gitlab.rindecuentas.org/equipo-qqw/QuienEsQuienApi.git'
@@ -33,7 +33,7 @@ pipeline {
         sh 'make clean'
       }
     }
-    stage ('Build') {
+    stage ('Build Image') {
       agent { label 'swarm' }
       steps {
         script {
@@ -42,7 +42,7 @@ pipeline {
         }
       }
     }
-    stage ('Test') {
+    stage ('Test Image') {
       agent { label 'swarm' }
       steps {
         script {
@@ -51,7 +51,7 @@ pipeline {
         }
       }
     }
-    stage ('Release') {
+    stage ('Release Image') {
       agent { label 'swarm' }
       steps {
         script {
@@ -62,7 +62,7 @@ pipeline {
         }
       }
     }
-    stage ('Deploy') {
+    stage ('Deploy to cluster') {
       steps {
         script {
           URL='http://gitlab.rindecuentas.org/equipo-qqw/qqw-doks.git'
@@ -84,7 +84,7 @@ pipeline {
               ]]
             ]
           }
-        echo "Deploy"
+        echo "Deploy to cluster"
         sh 'pwd'
         sh 'cd kubernetes/quienesquienapi; bash scripts/deploy.sh'
       }
