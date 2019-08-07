@@ -5,12 +5,11 @@
 # desc: Script to build, test and releaes the QuienEsQuienApi docker image.
 
 include /var/lib/jenkins/.env
+include /var/lib/jenkins/apps_data
 
-ORG_NAME = poder
-APP_NAME = quienesquienapi
+# DOCKER IMAGE ENV VARS
 APP_PORT = 8085:8080
-APP_VERSION = 0.4.2
-IMAGE_NAME = ${ORG_NAME}/${APP_NAME}:${APP_VERSION}
+IMAGE_NAME = ${API_ORG_NAME}/${API_APP_NAME}:${API_VERSION}
 MONGO_URL = localhost:27017
 MONGO_DB = dbname
 MONGODB_URI = MONGODB_URI=${MONGO_URL}/${MONGO_DB}
@@ -27,23 +26,23 @@ build:
 
 test:
 	@echo "Run ${IMAGE_NAME} image."
-	docker run --name ${APP_NAME} -p ${APP_PORT} --env ${MONGODB_URI} -d ${IMAGE_NAME} &
-	@echo "Wait until ${APP_NAME} is fully started."
+	docker run --name ${API_APP_NAME} -p ${APP_PORT} --env ${MONGODB_URI} -d ${IMAGE_NAME} &
+	@echo "Wait until ${API_APP_NAME} is fully started."
 	sleep 10
-	docker logs ${APP_NAME}
+	docker logs ${API_APP_NAME}
 
 release:
 	@echo "Release ${IMAGE_NAME} image to docker registry."
 	cat ${DOCKER_PWD} | docker login --username ${DOCKER_USER} --password-stdin
-	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
-	docker push ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
+	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
+	docker push ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
 
 clean:
 	@echo ""
 	@echo "Cleaning local build environment."
 	@echo ""
-	docker stop ${APP_NAME} 2>/dev/null; true
-	docker rm ${APP_NAME}  2>/dev/null; true
+	docker stop ${API_APP_NAME} 2>/dev/null; true
+	docker rm ${API_APP_NAME}  2>/dev/null; true
 	@echo ""
 	@echo "Purging local images."
 	docker rmi ${IMAGE_NAME} 2>/dev/null; true

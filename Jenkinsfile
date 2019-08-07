@@ -35,6 +35,8 @@ pipeline {
       agent { label 'swarm' }
       steps {
         script {
+          echo "Build App Vars"
+          sh 'bash setAppData.sh'
           echo "Build container"
           sh 'make build'
         }
