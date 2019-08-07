@@ -9,7 +9,7 @@ pipeline {
       steps {
         script {
           URL='http://gitlab.rindecuentas.org/equipo-qqw/QuienEsQuienApi.git'
-          BRANCH='*/master'
+          BRANCH='*/hotfix/pipeline_env'
           CREDENTIALS='f28cf2d5-ce55-4f0b-9bad-c84376ce401d'
         }
           dir('new-dir') { sh 'pwd' }
