@@ -62,5 +62,31 @@ pipeline {
         }
       }
     }
+    stage ('Deploy') {
+      steps {
+        script {
+          URL='http://gitlab.rindecuentas.org/equipo-qqw/qqw-doks.git'
+          BRANCH='*/master'
+          CREDENTIALS='f28cf2d5-ce55-4f0b-9bad-c84376ce401d'
+        }
+          dir('new-dir') { sh 'pwd' }
+          ansiColor('xterm') {
+            checkout changelog: false, poll: false, scm:
+            [$class:
+             'GitSCM', branches: [[name: BRANCH]],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [],
+              submoduleCfg: [],
+              userRemoteConfigs:
+              [[
+                credentialsId: CREDENTIALS,
+                url: URL
+              ]]
+            ]
+          }
+        echo "Deploy"
+        sh 'make deploy'
+      }
+    } // End stage deploy
   }
 }

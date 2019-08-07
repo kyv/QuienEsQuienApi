@@ -47,6 +47,10 @@ clean:
 	@echo "Purging local images."
 	docker rmi ${IMAGE_NAME} 2>/dev/null; true
 
+deploy:
+	cd kubernetes/${API_APP_NAME}
+	bash scripts/deploy.sh
+
 help:
 	@echo ""
 	@echo "Please use \`make <target>' where <target> is one of"
