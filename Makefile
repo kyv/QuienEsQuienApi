@@ -12,7 +12,9 @@ APP_PORT = 8085:8080
 MONGO_URL = localhost:27017
 MONGO_DB = dbname
 MONGODB_URI = MONGODB_URI=${MONGO_URL}/${MONGO_DB}
-IMAGE_NAME = ${API_ORG_NAME}/${API_APP_NAME}:${API_VERSION}
+IMAGE_NAME = ${API_DOCKER_REPO}
+#IMAGE_NAME = ${API_ORG_NAME}/${APP_NAME}:${APP_VERSION}
+
 
 .PHONY: all build test release clean help
 
@@ -34,9 +36,11 @@ test:
 release:
 	@echo "Release ${IMAGE_NAME} image to docker registry."
 	cat ${DOCKER_PWD} | docker login --username ${DOCKER_USER} --password-stdin
-	#docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
-	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_VERSION}
-	docker push ${DOCKER_REPO}:${API_APP_NAME}:${API_VERSION}
+	docker tag  ${IMAGE_NAME} ${API_DOCKER_REPO}
+	docker push ${API_DOCKER_REPO}
+
+	#docker tag  ${IMAGE_NAME} ${DOCKER_REPO}/:${APP_NAME}-${APP_VERSION}
+	#docker push ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
 
 clean:
 	@echo ""
