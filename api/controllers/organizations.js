@@ -34,14 +34,6 @@ const JOINS = [
   //     as: 'memberships.child_expanded',
   //   },
   // },
-  { // TODO add flags
-    $lookup: {
-      from: 'party_flags',
-      localField: 'id',
-      foreignField: 'party_id',
-      as: 'flags',
-    },
-  },
 ];
 
 function orgDataMap(o) {
@@ -76,6 +68,14 @@ function allOrganizations(req, res) {
     query.criteria.classification = 'company';
   } else {
     query.criteria.classification = 'institution';
+    JOINS.push({ // Adding flags only for instiutions
+      $lookup: {
+        from: 'party_flags',
+        localField: 'id',
+        foreignField: 'party.id',
+        as: 'flags',
+      },
+    });
   }
 
   // console.log("allOrganizations query",JSON.stringify(query));
