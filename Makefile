@@ -26,10 +26,10 @@ build:
 
 test:
 	@echo "Run ${API_DOCKER_REPO} image."
-	docker run --name ${API_DOCKER_REPO} -p ${APP_PORT} --env ${MONGODB_URI} -d ${API_DOCKER_REPO} &
+	docker run --name ${API_APP_NAME} -p ${APP_PORT} --env ${MONGODB_URI} -d ${API_DOCKER_REPO} &
 	@echo "Wait until ${API_DOCKER_REPO} is fully started."
 	sleep 10
-	docker logs ${API_DOCKER_REPO}
+	docker logs ${API_APP_NAME}
 
 release:
 	@echo "Release ${API_DOCKER_REPO} image to docker registry."
@@ -41,8 +41,8 @@ clean:
 	@echo ""
 	@echo "Cleaning local build environment."
 	@echo ""
-	docker stop ${API_DOCKER_REPO} 2>/dev/null; true
-	docker rm ${API_DOCKER_REPO}  2>/dev/null; true
+	docker stop ${API_APP_NAME} 2>/dev/null; true
+	docker rm ${API_APP_NAME}  2>/dev/null; true
 	@echo ""
 	@echo "Purging local images."
 	docker rmi ${API_DOCKER_REPO} 2>/dev/null; true
