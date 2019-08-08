@@ -34,8 +34,9 @@ test:
 release:
 	@echo "Release ${IMAGE_NAME} image to docker registry."
 	cat ${DOCKER_PWD} | docker login --username ${DOCKER_USER} --password-stdin
-	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
-	docker push ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
+	#docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_APP_NAME}-${API_VERSION}
+	docker tag  ${IMAGE_NAME} ${DOCKER_REPO}:${API_VERSION}
+	docker push ${DOCKER_REPO}:${API_APP_NAME}:${API_VERSION}
 
 clean:
 	@echo ""
