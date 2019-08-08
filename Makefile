@@ -12,8 +12,6 @@ APP_PORT = 8085:8080
 MONGO_URL = localhost:27017
 MONGO_DB = dbname
 MONGODB_URI = MONGODB_URI=${MONGO_URL}/${MONGO_DB}
-IMAGE_NAME = ${API_DOCKER_REPO}
-#IMAGE_NAME = ${API_ORG_NAME}/${APP_NAME}:${APP_VERSION}
 
 
 .PHONY: all build test release clean help
@@ -21,36 +19,33 @@ IMAGE_NAME = ${API_DOCKER_REPO}
 all: help
 
 build:
-	@echo "Building ${IMAGE_NAME} image."
-	docker build -t ${IMAGE_NAME} .
-	@echo "Listing ${IMAGE_NAME} image."
+	@echo "Building ${API_DOCKER_REPO} image."
+	docker build -t ${API_DOCKER_REPO} .
+	@echo "Listing ${API_DOCKER_REPO} image."
 	docker images
 
 test:
-	@echo "Run ${IMAGE_NAME} image."
-	docker run --name ${API_APP_NAME} -p ${APP_PORT} --env ${MONGODB_URI} -d ${IMAGE_NAME} &
-	@echo "Wait until ${API_APP_NAME} is fully started."
+	@echo "Run ${API_DOCKER_REPO} image."
+	docker run --name ${API_DOCKER_REPO} -p ${APP_PORT} --env ${MONGODB_URI} -d ${API_DOCKER_REPO} &
+	@echo "Wait until ${API_DOCKER_REPO} is fully started."
 	sleep 10
-	docker logs ${API_APP_NAME}
+	docker logs ${API_DOCKER_REPO}
 
 release:
-	@echo "Release ${IMAGE_NAME} image to docker registry."
+	@echo "Release ${API_DOCKER_REPO} image to docker registry."
 	cat ${DOCKER_PWD} | docker login --username ${DOCKER_USER} --password-stdin
-	docker tag  ${API_VERSION} ${API_DOCKER_REPO}
+	docker tag  ${API_DOCKER_REPO} ${API_DOCKER_REPO}
 	docker push ${API_DOCKER_REPO}
-
-	#docker tag  ${IMAGE_NAME} ${DOCKER_REPO}/:${APP_NAME}-${APP_VERSION}
-	#docker push ${DOCKER_REPO}:${APP_NAME}-${APP_VERSION}
 
 clean:
 	@echo ""
 	@echo "Cleaning local build environment."
 	@echo ""
-	docker stop ${API_APP_NAME} 2>/dev/null; true
-	docker rm ${API_APP_NAME}  2>/dev/null; true
+	docker stop ${API_DOCKER_REPO} 2>/dev/null; true
+	docker rm ${API_DOCKER_REPO}  2>/dev/null; true
 	@echo ""
 	@echo "Purging local images."
-	docker rmi ${IMAGE_NAME} 2>/dev/null; true
+	docker rmi ${API_DOCKER_REPO} 2>/dev/null; true
 
 help:
 	@echo ""
