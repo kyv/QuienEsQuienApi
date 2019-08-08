@@ -5,7 +5,7 @@ source /var/lib/jenkins/.env
 API_ORG_NAME=quienesquienapi
 API_APP_NAME=quienesquienapi
 API_VERSION=$(cat package.json | jq -r .version)
-API_DOCKER_REPO=${DOCKER_REPO}/${API_ORG_NAME}:${WEB_IMG_NAME}
+API_DOCKER_REPO=${DOCKER_REPO}/${API_ORG_NAME}:${API_VERSION}
 APPS_DATA_FILE=/var/lib/jenkins/apps_data
 
 [[ ! -f "$APPS_DATA_FILE" ]] && touch $APPS_DATA_FILE
