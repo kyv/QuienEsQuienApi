@@ -9,10 +9,10 @@ include /var/lib/jenkins/apps_data
 
 # DOCKER IMAGE ENV VARS
 APP_PORT = 8085:8080
-IMAGE_NAME = ${API_ORG_NAME}/${API_APP_NAME}:${API_VERSION}
 MONGO_URL = localhost:27017
 MONGO_DB = dbname
 MONGODB_URI = MONGODB_URI=${MONGO_URL}/${MONGO_DB}
+IMAGE_NAME = ${API_ORG_NAME}/${API_APP_NAME}:${API_VERSION}
 
 .PHONY: all build test release clean help
 
