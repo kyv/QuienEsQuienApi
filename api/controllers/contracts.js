@@ -9,24 +9,24 @@ const allDocuments = require('./lib').allDocuments;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 const recordPackageBase = {
-  'uri': '',
-  'version': '1.1',
-  'extensions': [
+  uri: '',
+  version: '1.1',
+  extensions: [
     'https://raw.githubusercontent.com/transpresupuestaria/ocds_contract_data_extension/master/extension.json',
     'https://raw.githubusercontent.com/open-contracting-extensions/ocds_partyDetails_scale_extension/master/extension.json',
     'https://raw.githubusercontent.com/open-contracting/ocds_budget_breakdown_extension/master/extension.json',
     'https://raw.githubusercontent.com/open-contracting-extensions/ocds_memberOf_extension/master/extension.json',
-    'https://raw.githubusercontent.com/ProjectPODER/ocds_compranet_extension/master/extension.json'
+    'https://raw.githubusercontent.com/ProjectPODER/ocds_compranet_extension/master/extension.json',
 
   ],
-  'publisher': {
-    'name': 'QuienEsQuien.wiki',
-    'uri': 'https://quienesquien.wiki/'
+  publisher: {
+    name: 'QuienEsQuien.wiki',
+    uri: 'https://quienesquien.wiki/',
   },
-  'license': 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
-  'publicationPolicy': 'https://quienesquien.wiki/about',
-  'publishedDate': '',
-  'records': [],
+  license: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es',
+  publicationPolicy: 'https://quienesquien.wiki/about',
+  publishedDate: '',
+  records: [],
 };
 
 const JOINS = [
@@ -65,14 +65,14 @@ function addRecordPackage(object) {
     recordPackage.records = object[1];
     recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
     recordPackage.publishedDate = object[1][0].compiledRelease.date;
-    object[1] = recordPackage;
+    object[1] = [recordPackage];
   }
   return object;
 }
 
 function contractMapData(object) {
 
-  return {};
+  return object;
   //
   // const data = omit(object, [
   //   'user_id',
@@ -92,17 +92,53 @@ function contractMapData(object) {
   // return omitEmpty(data);
 }
 
-function allContracts(req, res) {
+async function allContracts(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
-  console.log("allContracts",query);
+  if (query.criteria['compiledRelease.awards.suppliers.name']) {
+    // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
+    const sq = { $in: await db.get('organizations').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] }) };
+
+    query.embed = true;
+    query.criteria['compiledRelease.awards.suppliers.id'] = sq;
+    delete query.criteria['compiledRelease.awards.suppliers.name'];
+  }
+
+  if (query.criteria['compiledRelease.awards.suppliers.id']) {
+    query.embed = true;
+    query.criteria['compiledRelease.awards.suppliers.id'] = { $in: await db.get('organizations').distinct('id',
+      {
+        id: query.criteria['compiledRelease.awards.suppliers.id'],
+      }),
+    };
+  }
+
+  if (query.criteria['compiledRelease.parties.memberOf.name']) {
+    query.embed = true;
+    query.criteria['compiledRelease.parties.memberOf.id'] = { $in: await db.get('organizations').distinct('id',
+      {
+        name: query.criteria['compiledRelease.parties.memberOf.name'],
+        classification: 'institution',
+      }),
+    };
+    delete query.criteria['compiledRelease.parties.memberOf.name'];
+  }
+
+
+  // if query.  compiledRelease.awards.suppliers.name
+  //  query.embed = true
+
+  // db.records.aggregate({$match:{ "compiledRelease.awards.suppliers.id": { $in: db.organizations.distinct("id",{name: /test/i}) } }})
+
+
+  // console.log("allContracts",query);
 
   allDocuments(query, collection, JOINS)
     .then(addRecordPackage)
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
     .catch(err => {
-      console.error('allContracts', err);
+      // console.error('allContracts', err);
       if (err) {
         return err;
       }
