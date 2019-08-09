@@ -59,6 +59,7 @@ const JOINS = [
 ];
 
 function addRecordPackage(object) {
+  // console.log("addRecordPackage", object);
   if (object[1][0]) {
     const recordPackage = clone(recordPackageBase);
 

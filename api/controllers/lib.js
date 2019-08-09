@@ -170,6 +170,8 @@ function allDocuments(query, collection, JOINS) {
     return Promise.all([countP, resultsP]);
   }
 
+  // console.log("allDocuments query",JSON.stringify(query));
+
   const resultsP = collection.find(query.criteria, query.options).catch(err => {
     // console.error("allDocuments",err);
     if (err) {
