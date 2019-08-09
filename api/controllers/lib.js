@@ -6,6 +6,8 @@ const isDate = require('lodash/fp/isDate');
 const isObject = require('lodash/fp/isObject');
 const isString = require('lodash/fp/isString');
 const clone = require('lodash/fp/clone');
+const orderBy = require('lodash/fp/orderBy');
+const slice = require('lodash/fp/slice');
 const isNil = require('lodash/fp/isNil');
 const extend = require('lodash/extend');
 const omit = require('lodash/omit');
@@ -160,10 +162,16 @@ function allDocuments(query, collection, JOINS) {
   if (query.embed) {
     const p = queryToPipeline(query, clone(JOINS));
     const pipeline = arrayResultsOptions(query, p);
+
+    // console.log("allDocuments pipeline",JSON.stringify(pipeline));
+
     const resultsP = collection.aggregate(pipeline);
 
     return Promise.all([countP, resultsP]);
   }
+
+  // console.log("allDocuments query",JSON.stringify(query));
+
   const resultsP = collection.find(query.criteria, query.options).catch(err => {
     // console.error("allDocuments",err);
     if (err) {
@@ -185,6 +193,8 @@ function omitEmpty(object) {
 }
 
 function dataReturn(res, array, offset, embed, objectFormat) {
+  // console.log("dataReturn",array);
+
   let data = array[1];
   const size = array[1].length;
 
@@ -280,6 +290,8 @@ function calculateSummaries(orgID, records) {
   //  Generar los objetos para cada gráfico
   const yearSummary = {};
   const typeSummary = {};
+  const allBuyers = {};
+  const allSuppliers = {};
   const relationSummary = { nodes: [], links: [] };
 
   for (const r in records) {
@@ -297,6 +309,16 @@ function calculateSummaries(orgID, records) {
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
           const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
           const year = new Date(contract.period.startDate).getFullYear();
+
+          // To calculate top3buyers
+          if (!isBuyerContract) {
+            if (!allBuyers[memberOfParty.id]) {
+              allBuyers[memberOfParty.id] = memberOfParty;
+              allBuyers[memberOfParty.id].contract_amount_top_buyer = 0;
+              allBuyers[memberOfParty.id].type = buyerParty.type;
+            }
+            allBuyers[memberOfParty.id].contract_amount_top_buyer += award.value.amount;
+          }
 
           if (!yearSummary[year]) {
             yearSummary[year] = {
@@ -356,6 +378,13 @@ function calculateSummaries(orgID, records) {
               if (supplierParty) {
                 addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
                 addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: parseInt(contract.value.amount, 10) });
+
+                // To calculate top3suppliers
+                if (!allSuppliers[supplierParty.id]) {
+                  allSuppliers[supplierParty.id] = supplierParty;
+                  allSuppliers[supplierParty.id].contract_amount_top_supplier = 0;
+                }
+                allSuppliers[supplierParty.id].contract_amount_top_supplier += award.value.amount;
               }
               // else {
               //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
@@ -366,11 +395,17 @@ function calculateSummaries(orgID, records) {
       }
     }
   }
+  // console.log("allBuyers",sortBy('contract_amount_top_buyer', allBuyers))
+
+  const top3buyers = slice(0, 3, orderBy('contract_amount_top_buyer', 'desc', allBuyers));
+  const top3suppliers = slice(0, 3, orderBy('contract_amount_top_supplier', 'desc', allSuppliers));
 
   const summary = {
     year: yearSummary,
     type: typeSummary,
     relation: relationSummary,
+    top_buyers: top3buyers,
+    top_suppliers: top3suppliers,
   };
 
   return summary;

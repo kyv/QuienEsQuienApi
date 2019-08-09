@@ -27,6 +27,14 @@ const JOINS = [
       as: 'memberships.parent',
     },
   },
+  { // adding flags
+    $lookup: {
+      from: 'party_flags',
+      localField: 'id',
+      foreignField: 'party.id',
+      as: 'flags',
+    },
+  },
 ];
 
 function personDataMap(o) {
