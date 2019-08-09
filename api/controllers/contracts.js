@@ -67,6 +67,7 @@ function addRecordPackage(object) {
     recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
     recordPackage.publishedDate = object[1][0].compiledRelease.date;
     object[1] = [recordPackage];
+    object[2] = object[1][0].records.length;
   }
   return object;
 }

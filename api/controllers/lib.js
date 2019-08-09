@@ -134,15 +134,14 @@ function queryToPipeline(query, JOINS) {
 }
 
 function arrayResultsOptions(query, pipeline) {
+  if (query.options.sort) {
+    pipeline.push({ $sort: query.options.sort });
+  }
   if (query.options.skip) {
     pipeline.push({ $skip: query.options.skip });
   }
   if (query.options.limit) {
     pipeline.push({ $limit: query.options.limit });
-  }
-
-  if (query.options.sort) {
-    pipeline.push({ $sort: query.options.sort });
   }
 
   return pipeline;
@@ -163,7 +162,7 @@ function allDocuments(query, collection, JOINS) {
     const p = queryToPipeline(query, clone(JOINS));
     const pipeline = arrayResultsOptions(query, p);
 
-    // console.log("allDocuments pipeline",JSON.stringify(pipeline));
+    // console.log("allDocuments pipeline",query,JSON.stringify(pipeline,null,4));
 
     const resultsP = collection.aggregate(pipeline);
 
@@ -196,7 +195,10 @@ function dataReturn(res, array, offset, embed, objectFormat) {
   // console.log("dataReturn",array);
 
   let data = array[1];
-  const size = array[1].length;
+
+  // Contracts have a different structure and their length comes in the third item in the array
+  // console.log("dataReturn",array);
+  const size = array[2] || array[1].length;
 
   if (embed) {
     data = array[1].map(o => (objectFormat(o)));
