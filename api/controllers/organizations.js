@@ -63,24 +63,25 @@ function allOrganizations(req, res) {
   const offset = query.options.skip || 0;
 
   query.embed = true; // Forzar que incluya los subobjetos de los JOINS
+  let typeJoins = [];
 
   if (req.originalUrl.indexOf('companies') > -1) {
     query.criteria.classification = 'company';
   } else {
     query.criteria.classification = 'institution';
-    JOINS.push({ // Adding flags only for instiutions
+    typeJoins = [{ // Adding flags only for instiutions
       $lookup: {
         from: 'party_flags',
         localField: 'id',
         foreignField: 'party.id',
         as: 'flags',
       },
-    });
+    }];
   }
 
   // console.log("allOrganizations query",JSON.stringify(query));
 
-  allDocuments(query, collection, JOINS)
+  allDocuments(query, collection, [...JOINS, ...typeJoins])
     .then(array => (addGraphs(collection, array, db)))
     .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
