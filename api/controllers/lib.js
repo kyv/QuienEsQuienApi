@@ -399,6 +399,9 @@ function calculateSummaries(orgID, records) {
   }
   // console.log("allBuyers",sortBy('contract_amount_top_buyer', allBuyers))
 
+  //Cut the top 3 of all ordered by contract amount, except the current org
+  delete allBuyers[orgID];
+  delete allSuppliers[orgID];
   const top3buyers = slice(0, 3, orderBy('contract_amount_top_buyer', 'desc', allBuyers));
   const top3suppliers = slice(0, 3, orderBy('contract_amount_top_supplier', 'desc', allSuppliers));
 
