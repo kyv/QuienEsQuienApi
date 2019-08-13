@@ -249,23 +249,35 @@ function addLink(relationSummary, link) {
     return false;
   }
 
-  const source = find(relationSummary.nodes, { label: link.source });
-  const target = find(relationSummary.nodes, { label: link.target });
+  const source = find(relationSummary.nodes, { id: link.source });
+  const target = find(relationSummary.nodes, { id: link.target });
 
   if (source && target) {
 
     // console.log('addLink',link,sourceId,target.id);
-    // if (!source.fixedWeight){
-    //   source.weight = source.weight + 0.5;
-    // }
     const existentLink = find(relationSummary.links, { source: source.id, target: target.id });
 
     if (!existentLink) {
-      // console.log('addLink',link);
-      relationSummary.links.push({ id: relationSummary.links.length, source: source.id, target: target.id, weight: link.weight || 0 });
+      const newLink = {
+        id: relationSummary.links.length,
+        source: source.id,
+        target: target.id,
+        weight: link.weight || 1,
+        type: link.type || "regular"
+      };
+      // console.log('addLink',newLink);
+      relationSummary.links.push(newLink);
     } else {
-      existentLink.weight += link.weight;
+      existentLink.weight += link.weight || 1;
     }
+
+    if (!target.fixedWeight){
+      target.weight = parseFloat(target.weight) + (link.weight || 1);
+    }
+    if (!source.fixedWeight){
+      source.weight = parseFloat(source.weight) + (link.weight || 1);
+    }
+
   }
   // else {
   //   console.error('Faltó agregar algún nodo', link);
@@ -277,14 +289,35 @@ function addNode(relationSummary, node) {
     return false;
   }
 
-  if (!find(relationSummary.nodes, { label: node.label })) {
+  if (!find(relationSummary.nodes, { id: node.id })) {
     // console.log('addNode',node);
-    node.id = relationSummary.nodes.length;
+
+    if (!node.weight) {
+      node.weight = 1;
+    }
     relationSummary.nodes.push(node);
   }
   return true;
 }
 
+function getMaxContractAmount(records) {
+  let maxContractAmount = 0;
+  for (const r in records) {
+    if (Object.prototype.hasOwnProperty.call(records, r)) {
+      const compiledRelease = records[r].compiledRelease;
+      for (const c in compiledRelease.contracts) {
+        if (Object.prototype.hasOwnProperty.call(compiledRelease.contracts, c)) {
+          const contract = compiledRelease.contracts[c];
+          const amount = parseFloat(contract.value.amount);
+          if (amount > maxContractAmount) {
+            maxContractAmount = amount;
+          }
+        }
+      }
+    }
+  }
+  return maxContractAmount;
+}
 
 function calculateSummaries(orgID, records) {
   // console.log('calculateSummaries',records.length);
@@ -295,6 +328,7 @@ function calculateSummaries(orgID, records) {
   const allBuyers = {};
   const allSuppliers = {};
   const relationSummary = { nodes: [], links: [] };
+  const maxContractAmount = getMaxContractAmount(records);
 
   for (const r in records) {
     if (Object.prototype.hasOwnProperty.call(records, r)) {
@@ -360,17 +394,11 @@ function calculateSummaries(orgID, records) {
 
           // TODO: sumar los amounts en MXN siempre
 
-          // organización 1
-          if (buyerParty.memberOf.name) {
-            addNode(relationSummary, { label: buyerParty.memberOf.name, type: buyerParty.details.type });
-          }
-          addNode(relationSummary, { label: buyerParty.name, weight: 50, type: buyerParty.details.type });
-          addNode(relationSummary, { label: procurementMethod, type: 'procurementMethod' });
+          // UC
+          addNode(relationSummary, { id: buyerParty.id,label: buyerParty.name, type: buyerParty.details.type });
+          // addNode(relationSummary, { id: procurementMethod,label: procurementMethod, type: 'procurementMethod' });
 
-          if (buyerParty.memberOf.name) {
-            addLink(relationSummary, { source: buyerParty.name, target: buyerParty.memberOf.name });
-          }
-          addLink(relationSummary, { source: buyerParty.name, target: procurementMethod });
+          // addLink(relationSummary, { source: buyerParty.id, target: procurementMethod });
 
 
           for (const a in award.suppliers) {
@@ -378,8 +406,9 @@ function calculateSummaries(orgID, records) {
               const supplierParty = find(compiledRelease.parties, { id: award.suppliers[a].id });
 
               if (supplierParty) {
-                addNode(relationSummary, { label: award.suppliers[a].name, type: supplierParty.details.type });
-                addLink(relationSummary, { source: procurementMethod, target: award.suppliers[a].name, weight: parseInt(contract.value.amount, 10) });
+                addNode(relationSummary, { id: award.suppliers[a].id,label: award.suppliers[a].name, type: supplierParty.details.type });
+                const linkWeight = Math.round((parseFloat(contract.value.amount)/parseFloat(maxContractAmount))*10);
+                addLink(relationSummary, { source: buyerParty.id, target: award.suppliers[a].id, weight: linkWeight, type: procurementMethod });
 
                 // To calculate top3suppliers
                 if (!allSuppliers[supplierParty.id]) {
@@ -393,6 +422,13 @@ function calculateSummaries(orgID, records) {
               // }
             }
           }
+
+          if (buyerParty.memberOf[0].name) {
+            addNode(relationSummary, { id: buyerParty.memberOf[0].id, label: buyerParty.memberOf[0].name, type: "dependency" });
+            addLink(relationSummary, { source: buyerParty.id, target: buyerParty.memberOf[0].id });
+          }
+
+
         }
       }
     }
