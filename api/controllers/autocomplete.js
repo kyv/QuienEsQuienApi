@@ -26,19 +26,19 @@ function autocomplete(req, res) {
       organizations.find({ name: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
         .then(orgDocs => {
           orgDocs.forEach(o => {
-            o.type = 'organization';
+            o.type = o.classification;
           });
           results = results.concat(orgDocs);
           // console.log('orgs', org_docs);
-          contracts.find({ title: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
-            .then(contractDocs => {
-              contractDocs.forEach(c => {
-                c.type = 'contract';
-              });
-              results = results.concat(contractDocs);
+          // contracts.find({ compiledRelease.contracts.title: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
+          //   .then(contractDocs => {
+          //     contractDocs.forEach(c => {
+          //       c.type = 'contract';
+          //     });
+          //     results = results.concat(contractDocs);
               // console.log('contracts', contractDocs);
               dataReturn(res, [1, results], 0, true, a => a);
-            });
+            // });
         });
     });
 }
