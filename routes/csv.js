@@ -35,29 +35,43 @@ function api2csv(apiResponse, collection) {
 
       switch (collection) {
       case 'contracts': {
-        // console.log(item.rsecords[0].compiledRelease);
-        const buyerParty = values(pickBy(item.records[0].compiledRelease.parties, i => i.id === item.records[0].compiledRelease.buyer.id));
-        // console.log(buyerParty,item.records[0].compiledRelease.buyer.id);
+        for (const r in item.records) {
+          const record = item.records[r];
+          // console.log(record.compiledRelease);
+          const buyerParty = values(pickBy(record.compiledRelease.parties, i => i.roles[0] == "buyer"));
+          if (!buyerParty) { buyerParty = [{name:"(desconocido)", memberOf:[{name:"(desconocido)"}]}] }
+          // console.log(JSON.stringify(buyerParty[0],null,4));
 
-        for (const c in item.records[0].compiledRelease.contracts) {
-          if (Object.prototype.hasOwnProperty.call(item.records[0].compiledRelease.contracts, c)) {
-            const award = pickBy(item.records[0].compiledRelease.awards, i => i.id === item.records[0].compiledRelease.contracts[c].awardID);
-            const row = [
-              item.records[0].ocid,
-              item.records[0].compiledRelease.contracts[c].title.toString().replace(/"/g, '\''),
-              values(award)[0].suppliers[0].name.replace(/"/g, '\''), // .suppliers.name
-              buyerParty[0].name.replace(/"/g, '\''),
-              buyerParty[0].memberOf[0].name.replace(/"/g, '\''),
-              item.records[0].compiledRelease.total_amount,
-              item.records[0].compiledRelease.tender.procurementMethod,
-              item.records[0].compiledRelease.contracts[c].period.startDate,
-              item.records[0].compiledRelease.contracts[c].period.endDate,
-              item.records[0].compiledRelease.contracts[c].value.amount,
-              item.records[0].compiledRelease.contracts[c].value.currency,
-              item.records[0].compiledRelease.source,
-            ];
+          for (const c in record.compiledRelease.contracts) {
+            if (Object.prototype.hasOwnProperty.call(record.compiledRelease.contracts, c)) {
+              try {
+                const award = pickBy(record.compiledRelease.awards, i => i.id === record.compiledRelease.contracts[c].awardID);
+                const suppliersNames = values(award)[0].suppliers.map(s => { if (s.name.toString()) { return s.name.replace(/"/g, '\'')}}).join(";");
+                const sources = record.compiledRelease.source.map(s => s.url.replace(/ /g,"%20")).join(" ");
 
-            csv.push(`"${row.join('","')}"`);
+                // console.log("source",JSON.stringify(sources,null,4))
+                const row = [
+                  record.ocid,
+                  record.compiledRelease.contracts[c].title.toString().replace(/"/g, '\''),
+                  suppliersNames, // .suppliers.name
+                  buyerParty[0].name.replace(/"/g, '\''),
+                  buyerParty[0].memberOf[0].name.replace(/"/g, '\''),
+                  record.compiledRelease.total_amount,
+                  record.compiledRelease.tender.procurementMethod,
+                  record.compiledRelease.contracts[c].period.startDate,
+                  record.compiledRelease.contracts[c].period.endDate,
+                  record.compiledRelease.contracts[c].value.amount,
+                  record.compiledRelease.contracts[c].value.currency,
+                  sources,
+                ];
+
+                csv.push(`"${row.join('","')}"`);
+              }
+              catch (e) {
+                console.error("error",e);
+                console.log(record);
+              }
+            }
           }
         }
         break;
@@ -94,8 +108,8 @@ function api2csv(apiResponse, collection) {
 
 router.get('/:collection', async(req, res) => {
   // console.log("get");
-  const limit = 1000;
-  const params = `&fields=records.ocid,records.compiledRelease.buyer.id,records.compiledRelease.buyer.name,records.compiledRelease.contracts.title,records.compiledRelease.contracts.awardID,records.compiledRelease.awards.suppliers.name,,records.compiledRelease.awards.id,records.compiledRelease.parties,records.compiledRelease.total_amount,records.compiledRelease.tender.procurementMethod,records.compiledRelease.contracts.period.startDate,records.compiledRelease.contracts.period.endDate,records.compiledRelease.contracts.value,records.compiledRelease.source&limit=${limit}`;
+  const limit = 50000;
+  const params = `&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source&limit=${limit}`;
   const question = (req.originalUrl.indexOf('?') === -1 ? '?' : '');
   const url = `http://${req.headers.host + req.originalUrl.replace('csv/', '')}${question}${params}`;
   const collection = req.params.collection;
