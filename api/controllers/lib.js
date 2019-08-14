@@ -248,15 +248,25 @@ async function getContracts(type, id, db, limit) {
   const options = { limit: `-${limit}`, sort: { 'compiledRelease.total_amount': -1 } };
   let filter = {};
 
-  if (type === 'buyer') {
-    filter = { $or: [
-      { 'compiledRelease.buyer.id': id },
-      { 'compiledRelease.parties.memberOf.id': id },
-    ] };
-  } else {
-    filter = {
-      'compiledRelease.awards.suppliers.id': id,
-    };
+  switch (type) {
+    case "buyer":
+      filter = { $or: [
+        { 'compiledRelease.buyer.id': id },
+        { 'compiledRelease.parties.memberOf.id': id },
+      ] };
+
+      break;
+    case "supplier":
+      filter = {
+        'compiledRelease.awards.suppliers.id': id,
+      };
+      break;
+    case "funder":
+      filter = {
+        'compiledRelease.parties.id': id,
+        'compiledRelease.parties.roles': "funder",
+      };
+      break;
   }
   // console.log('getContracts query', `db.records.find(${JSON.stringify(filter)},${JSON.stringify(options)})`);
 
@@ -366,11 +376,13 @@ function calculateSummaries(orgID, records) {
           const contract = compiledRelease.contracts[c];
           const award = find(compiledRelease.awards, { id: contract.awardID });
           const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
+          const funderParty = find(compiledRelease.parties, { roles: ["funder"] }) || {};
+          // console.log("funderParty",funderParty,compiledRelease.parties);
           const memberOfParty = find(compiledRelease.parties, 'memberOf');
           // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
           const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
+          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID  || funderParty.id === orgID;
           const year = new Date(contract.period.startDate).getFullYear();
 
           // To calculate top3buyers
@@ -491,7 +503,8 @@ async function addGraphs(collection, array, db) {
       // console.log('addContracts 2', index);
       const buyerContracts = await getContracts('buyer', item.id, db, 100);
       const supplierContracts = await getContracts('supplier', item.id, db, 100);
-      const allContracts = [...buyerContracts, ...supplierContracts];
+      const funderContracts = await getContracts('funder', item.id, db, 100);
+      const allContracts = [...buyerContracts, ...supplierContracts, ...funderContracts];
 
       // extend(allContracts, supplierContracts);
       // extend(allContracts, buyerContracts);
@@ -499,7 +512,7 @@ async function addGraphs(collection, array, db) {
 
       item.summaries = calculateSummaries(item.id, allContracts);
       item.top3contracts = {
-        buyer: buyerContracts.slice(0, 3),
+        buyer: [...buyerContracts, ...funderContracts].slice(0, 3),
         supplier: supplierContracts.slice(0, 3),
       };
 
