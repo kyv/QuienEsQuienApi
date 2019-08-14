@@ -30,32 +30,14 @@ const recordPackageBase = {
 };
 
 const JOINS = [
-//   { $unwind: {
-//     path: '$suppliers_person',
-//     preserveNullAndEmptyArrays: true,
-//   },
-//   },
-//   { $unwind: {
-//     path: '$suppliers_org',
-//     preserveNullAndEmptyArrays: true,
-//   },
-//   },
-//   {
-//     $lookup: {
-//       from: 'organizations',
-//       localField: 'suppliers_org',
-//       foreignField: 'simple',
-//       as: 'suppliersOrg',
-//     },
-//   },
-//   {
-//     $lookup: {
-//       from: 'persons',
-//       localField: 'suppliers_person',
-//       foreignField: 'simple',
-//       as: 'suppliersPerson',
-//     },
-//   },
+  {
+    $lookup: {
+      from: 'contract_flags',
+      localField: 'ocid',
+      foreignField: 'ocid',
+      as: 'flags',
+    },
+  }
 ];
 
 function addRecordPackage(object) {
@@ -129,7 +111,7 @@ async function allContracts(req, res) {
 
 
   // if query.  compiledRelease.awards.suppliers.name
-  //  query.embed = true
+   query.embed = true
 
   // db.records.aggregate({$match:{ "compiledRelease.awards.suppliers.id": { $in: db.organizations.distinct("id",{name: /test/i}) } }})
 
