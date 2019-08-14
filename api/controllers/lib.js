@@ -156,28 +156,39 @@ function personMemberMap(doc) {
 }
 
 function allDocuments(query, collection, JOINS) {
+  let debug = false;
+  // console.log("q",query.criteria);
+  if (query.criteria.debug) {
+    debug = true;
+    delete query.criteria.debug;
+    console.log("DEBUG allDocuments",collection.name);
+  }
   const countP = collection.count(query.criteria);
   const maxTime = 1000*5;
 
-  query.options.maxTimeMS = maxTime;
+  // query.options.maxTimeMS = maxTime;
 
   if (query.embed) {
     const p = queryToPipeline(query, clone(JOINS));
     const pipeline = arrayResultsOptions(query, p);
 
     const pipelineOptions = {
-      allowDiskUse: true,
-      maxTimeMS: maxTime
+    //   allowDiskUse: true,
+    //   maxTimeMS: maxTime
     }
 
-    // console.log("allDocuments pipeline",query,JSON.stringify(pipeline,null,4));
+    if (debug) {
+      console.log("DEBUG allDocuments pipeline",JSON.stringify(pipeline,null,4));
+    }
 
     const resultsP = collection.aggregate(pipeline, pipelineOptions);
 
     return Promise.all([countP, resultsP]);
   }
 
-  // console.log("allDocuments query",JSON.stringify(query));
+  if (debug) {
+    console.log("DEBUG allDocuments query",JSON.stringify(query,null,4));
+  }
 
   const resultsP = collection.find(query.criteria, query.options).catch(err => {
     // console.error("allDocuments",err);
