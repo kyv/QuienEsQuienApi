@@ -439,6 +439,13 @@ function calculateSummaries(orgID, records) {
 
           // addLink(relationSummary, { source: buyerParty.id, target: procurementMethod });
 
+          const linkWeight = Math.round((parseFloat(contract.value.amount)/parseFloat(maxContractAmount))*10);
+
+          if (funderParty) {
+            addNode(relationSummary, { id: funderParty.id,label: funderParty.name, type: funderParty.details.type });
+            addLink(relationSummary, { source: buyerParty.id, target: funderParty.id, weight: linkWeight });
+          }
+
 
           for (const a in award.suppliers) {
             if (Object.prototype.hasOwnProperty.call(award.suppliers, a)) {
@@ -446,7 +453,6 @@ function calculateSummaries(orgID, records) {
 
               if (supplierParty) {
                 addNode(relationSummary, { id: award.suppliers[a].id,label: award.suppliers[a].name, type: supplierParty.details.type });
-                const linkWeight = Math.round((parseFloat(contract.value.amount)/parseFloat(maxContractAmount))*10);
                 addLink(relationSummary, { source: buyerParty.id, target: award.suppliers[a].id, weight: linkWeight, type: procurementMethod });
 
                 // To calculate top3suppliers
