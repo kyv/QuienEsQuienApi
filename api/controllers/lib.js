@@ -441,7 +441,7 @@ function calculateSummaries(orgID, records) {
 
           const linkWeight = Math.round((parseFloat(contract.value.amount)/parseFloat(maxContractAmount))*10);
 
-          if (funderParty) {
+          if (funderParty.details) {
             addNode(relationSummary, { id: funderParty.id,label: funderParty.name, type: funderParty.details.type });
             addLink(relationSummary, { source: buyerParty.id, target: funderParty.id, weight: linkWeight });
           }
