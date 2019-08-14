@@ -111,7 +111,7 @@ async function allContracts(req, res) {
 
 
   // if query.  compiledRelease.awards.suppliers.name
-   query.embed = true
+   // query.embed = true
 
   // db.records.aggregate({$match:{ "compiledRelease.awards.suppliers.id": { $in: db.organizations.distinct("id",{name: /test/i}) } }})
 
@@ -122,7 +122,7 @@ async function allContracts(req, res) {
     .then(addRecordPackage)
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
     .catch(err => {
-      // console.error('allContracts', err);
+      console.error('allContracts', err);
       if (err) {
         return err;
       }

@@ -157,14 +157,22 @@ function personMemberMap(doc) {
 
 function allDocuments(query, collection, JOINS) {
   const countP = collection.count(query.criteria);
+  const maxTime = 1000*5;
+
+  query.options.maxTimeMS = maxTime;
 
   if (query.embed) {
     const p = queryToPipeline(query, clone(JOINS));
     const pipeline = arrayResultsOptions(query, p);
 
+    const pipelineOptions = {
+      allowDiskUse: true,
+      maxTimeMS: maxTime
+    }
+
     // console.log("allDocuments pipeline",query,JSON.stringify(pipeline,null,4));
 
-    const resultsP = collection.aggregate(pipeline);
+    const resultsP = collection.aggregate(pipeline, pipelineOptions);
 
     return Promise.all([countP, resultsP]);
   }
@@ -195,18 +203,26 @@ function dataReturn(res, array, offset, embed, objectFormat) {
   // console.log("dataReturn",array);
 
   let data = array[1];
+  let status = "success";
+  let size = 0;
 
   // Contracts have a different structure and their length comes in the third item in the array
   // console.log("dataReturn",array);
-  const size = array[2] || array[1].length;
-
-  if (embed) {
-    data = array[1].map(o => (objectFormat(o)));
+  if (array[2] || array[1]) {
+    size = array[2] || array[1].length;
+    if (embed) {
+      data = array[1].map(o => (objectFormat(o)));
+    }
   }
+  else {
+    status = "error";
+  }
+
+
 
   res.set('Content-Type', 'application/json; charset=utf-8');
   res.json({
-    status: 'success',
+    status: status,
     data,
     size,
     offset,

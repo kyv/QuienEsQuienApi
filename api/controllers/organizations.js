@@ -62,7 +62,6 @@ function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
 
-  query.embed = true; // Forzar que incluya los subobjetos de los JOINS
   let typeJoins = [];
 
   if (req.originalUrl.indexOf('companies') > -1) {
@@ -83,7 +82,14 @@ function allOrganizations(req, res) {
 
   allDocuments(query, collection, [...JOINS, ...typeJoins])
     .then(array => (addGraphs(collection, array, db)))
-    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
+    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)))
+    .catch(err => {
+      console.error('allOrganizations', err);
+      if (err) {
+        return err;
+      }
+      return false;
+    });
 }
 
 function distinctOrganization(req, res) {

@@ -66,10 +66,15 @@ function allPersons(req, res) {
   // console.log("allPersons",query);
   // return {};
 
-  query.embed = true; // Forzar que incluya los subobjetos de los JOINS
-
   allDocuments(query, collection, JOINS)
     .then(array => (addGraphs(collection, array, db)))
+    .catch(err => {
+      console.error('allPersons', err);
+      if (err) {
+        return err;
+      }
+      return false;
+    })
     .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)));
 }
 
