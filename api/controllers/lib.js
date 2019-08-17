@@ -169,7 +169,7 @@ function allDocuments(query, collection, JOINS) {
   const maxTime = 1000*5;
 
   query.options.maxTimeMS = maxTime;
-  const countP = collection.count(query.criteria,clone(query.options)).catch(err => {
+  const countP = collection.count(query.criteria,{maxTimeMS: query.options.maxTimeMS}).catch(err => {
     console.error("allDocuments count error",err);
     if (err) {
       return `error: ${err}`;
