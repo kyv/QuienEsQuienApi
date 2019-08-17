@@ -163,10 +163,16 @@ function allDocuments(query, collection, JOINS) {
     delete query.criteria.debug;
     console.log("DEBUG allDocuments",collection.name);
   }
-  const countP = collection.count(query.criteria);
   const maxTime = 1000*5;
 
-  // query.options.maxTimeMS = maxTime;
+  query.options.maxTimeMS = maxTime;
+  const countP = collection.count(query.criteria,query.options).catch(err => {
+    console.error("allDocuments count error",err);
+    if (err) {
+      return `error: ${err}`;
+    }
+    return err;
+  });
 
   if (query.embed) {
     const p = queryToPipeline(query, clone(JOINS));
@@ -174,7 +180,7 @@ function allDocuments(query, collection, JOINS) {
 
     const pipelineOptions = {
     //   allowDiskUse: true,
-    //   maxTimeMS: maxTime
+      maxTimeMS: maxTime
     }
 
     if (debug) {
@@ -191,9 +197,9 @@ function allDocuments(query, collection, JOINS) {
   }
 
   const resultsP = collection.find(query.criteria, query.options).catch(err => {
-    // console.error("allDocuments",err);
+    console.error("allDocuments error",err);
     if (err) {
-      return 'error: {err}';
+      return `error: ${err}`;
     }
     return err;
   });
@@ -211,15 +217,13 @@ function omitEmpty(object) {
 }
 
 function dataReturn(res, array, offset, embed, objectFormat, debug) {
-  // console.log("dataReturn",array);
-
   let data = array[1];
   let status = "success";
   let size = 0;
 
   // Contracts have a different structure and their length comes in the third item in the array
   // console.log("dataReturn",array);
-  if (array[2] || array[1]) {
+  if (array[2] || (array[1] && typeof array[1] == "object")) {
     size = array[2] || array[1].length;
     if (embed) {
       data = array[1].map(o => (objectFormat(o)));

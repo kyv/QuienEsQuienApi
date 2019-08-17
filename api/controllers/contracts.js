@@ -40,9 +40,11 @@ const JOINS = [
   }
 ];
 
-function addRecordPackage(object) {
-  // console.log("addRecordPackage", object);
-  if (object[1][0]) {
+function addRecordPackage(object, debug) {
+  if (debug) {
+    console.log("addRecordPackage", object);
+  }
+  if (typeof object[1][0] == "object") {
     const recordPackage = clone(recordPackageBase);
 
     recordPackage.records = object[1];
@@ -80,6 +82,7 @@ async function allContracts(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
   const debug = req.query.debug;
+  // console.log("allContracts debug",debug);
 
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
@@ -120,7 +123,7 @@ async function allContracts(req, res) {
   // console.log("allContracts",query);
 
   allDocuments(query, collection, JOINS)
-    .then(addRecordPackage)
+    .then(array => (addRecordPackage(array, debug)))
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)))
     .catch(err => {
       console.error('allContracts', err);
