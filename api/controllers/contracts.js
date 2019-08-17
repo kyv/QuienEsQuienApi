@@ -120,13 +120,15 @@ async function allContracts(req, res) {
   // db.records.aggregate({$match:{ "compiledRelease.awards.suppliers.id": { $in: db.organizations.distinct("id",{name: /test/i}) } }})
 
 
-  // console.log("allContracts",query);
+  if (debug) {
+    console.log("DEBUG allContracts query",JSON.stringify(query,null,4));
+  }
 
   allDocuments(query, collection, JOINS)
     .then(array => (addRecordPackage(array, debug)))
     .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)))
     .catch(err => {
-      console.error('allContracts', err);
+      console.error('allContracts error', err);
       if (err) {
         return err;
       }

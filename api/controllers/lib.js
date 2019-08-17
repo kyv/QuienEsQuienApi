@@ -127,6 +127,7 @@ function getDistinct(req, res, collection) {
 }
 
 function queryToPipeline(query, JOINS) {
+  // console.log("queryToPipeline",query,JOINS);
   JOINS.unshift({
     $match: query.criteria,
   });
@@ -134,6 +135,7 @@ function queryToPipeline(query, JOINS) {
 }
 
 function arrayResultsOptions(query, pipeline) {
+  // console.log("arrayResultsOptions",query.options.sort,query.options.sort);
   if (query.options.sort) {
     pipeline.push({ $sort: query.options.sort });
   }
@@ -162,11 +164,12 @@ function allDocuments(query, collection, JOINS) {
     debug = true;
     delete query.criteria.debug;
     console.log("DEBUG allDocuments",collection.name);
+    console.log("DEBUG allDocuments query 1",JSON.stringify(query,null,4));
   }
   const maxTime = 1000*5;
 
   query.options.maxTimeMS = maxTime;
-  const countP = collection.count(query.criteria,query.options).catch(err => {
+  const countP = collection.count(query.criteria,clone(query.options)).catch(err => {
     console.error("allDocuments count error",err);
     if (err) {
       return `error: ${err}`;
@@ -184,6 +187,7 @@ function allDocuments(query, collection, JOINS) {
     }
 
     if (debug) {
+      console.log("DEBUG allDocuments query 2",JSON.stringify(query,null,4));
       console.log("DEBUG allDocuments pipeline",JSON.stringify(pipeline,null,4));
     }
 
