@@ -210,7 +210,7 @@ function omitEmpty(object) {
   )(object);
 }
 
-function dataReturn(res, array, offset, embed, objectFormat) {
+function dataReturn(res, array, offset, embed, objectFormat, debug) {
   // console.log("dataReturn",array);
 
   let data = array[1];
@@ -229,6 +229,9 @@ function dataReturn(res, array, offset, embed, objectFormat) {
     status = "error";
   }
 
+  if (debug) {
+    console.log("dataReturn",size);
+  }
 
 
   res.set('Content-Type', 'application/json; charset=utf-8');

@@ -62,13 +62,14 @@ function personDataMap(o) {
 function allPersons(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+  const debug = req.query.debug;
 
   // console.log("allPersons",query);
   // return {};
 
   allDocuments(query, collection, JOINS)
     .then(array => (addGraphs(collection, array, db)))
-    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap)))
+    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap, debug)))
     .catch(err => {
       console.error('allPersons', err);
       if (err) {

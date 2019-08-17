@@ -79,6 +79,7 @@ function contractMapData(object) {
 async function allContracts(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+  const debug = req.query.debug;
 
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
@@ -120,7 +121,7 @@ async function allContracts(req, res) {
 
   allDocuments(query, collection, JOINS)
     .then(addRecordPackage)
-    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData)))
+    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)))
     .catch(err => {
       console.error('allContracts', err);
       if (err) {

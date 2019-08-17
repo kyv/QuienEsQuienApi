@@ -62,6 +62,7 @@ function orgDataMap(o) {
 function allOrganizations(req, res) {
   const query = getQuery(req);
   const offset = query.options.skip || 0;
+  const debug = req.query.debug;
 
   let typeJoins = [];
 
@@ -104,7 +105,7 @@ function singleOrganization(req, res) {
 
   collection.aggregate(pipeline)
     .then(array => (addGraphs(collection, array, db)))
-    .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap)));
+    .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap, debug)));
 }
 
 module.exports = {

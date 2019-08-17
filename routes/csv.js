@@ -5,7 +5,7 @@ const request = require('request');
 const pickBy = require('lodash/pickBy');
 const values = require('lodash/values');
 
-function api2csv(apiResponse, collection) {
+function api2csv(apiResponse, collection, debug) {
   const csv = [];
   const headers = {
     contracts: [
@@ -28,7 +28,10 @@ function api2csv(apiResponse, collection) {
   };
 
   csv.push(headers[collection]);
-  // console.log(apiResponse);
+
+  if (debug) {
+    console.log("api2csv",apiResponse);
+  }
   for (const r in apiResponse.data) {
     if (Object.prototype.hasOwnProperty.call(apiResponse.data, r)) {
       const item = apiResponse.data[r];
@@ -47,7 +50,7 @@ function api2csv(apiResponse, collection) {
               try {
                 const award = pickBy(record.compiledRelease.awards, i => i.id === record.compiledRelease.contracts[c].awardID);
                 const suppliersNames = values(award)[0].suppliers.map(s => { if (s.name.toString()) { return s.name.replace(/"/g, '\'')}}).join(";");
-                const sources = record.compiledRelease.source.map(s => s.url.replace(/ /g,"%20")).join(" ");
+                const sources = (record.compiledRelease.source) ? record.compiledRelease.source.map(s => s.url.replace(/ /g,"%20")).join(" ") : "";
 
                 // console.log("source",JSON.stringify(sources,null,4))
                 const row = [
@@ -108,16 +111,19 @@ function api2csv(apiResponse, collection) {
 
 router.get('/:collection', async(req, res) => {
   // console.log("get");
-  const limit = 50000;
+  const limit = 1000;
   const params = `&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source&limit=${limit}`;
   const question = (req.originalUrl.indexOf('?') === -1 ? '?' : '');
   const url = `http://${req.headers.host + req.originalUrl.replace('csv/', '')}${question}${params}`;
   const collection = req.params.collection;
+  const debug = req.query.debug;
   // console.log(url);
 
   request(url, (req2, res2, response) => {
-    // console.log(response);
-    const csv = api2csv(JSON.parse(response), collection);
+    if (debug) {
+      console.log(response);
+    }
+    const csv = api2csv(JSON.parse(response), collection, debug);
 
     res.set('Content-Type', 'text/plain');
     res.send(csv);
