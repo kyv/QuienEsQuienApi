@@ -69,14 +69,14 @@ function allPersons(req, res) {
 
   allDocuments(query, collection, JOINS)
     .then(array => (addGraphs(collection, array, db)))
-    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap, debug)))
     .catch(err => {
       console.error('allPersons', err);
       if (err) {
         return err;
       }
       return false;
-    });
+    })
+    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap, debug)));
 }
 
 function distinctPerson(req, res) {

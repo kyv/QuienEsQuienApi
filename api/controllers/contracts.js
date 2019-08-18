@@ -126,14 +126,14 @@ async function allContracts(req, res) {
 
   allDocuments(query, collection, JOINS)
     .then(array => (addRecordPackage(array, debug)))
-    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)))
     .catch(err => {
       console.error('allContracts error', err);
       if (err) {
         return err;
       }
       return false;
-    });
+    })
+    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)));
 }
 
 function distinctContract(req, res) {

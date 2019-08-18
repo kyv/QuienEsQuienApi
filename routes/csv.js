@@ -92,6 +92,7 @@ function api2csv(apiResponse, collection, debug) {
         break;
       }
       case 'institutions': {
+        // console.log(item);
         const row = [item.id, item.name, item.classification, item.subclassification, item.contract_amount.supplier, item.contract_count.supplier, item.contract_amount.buyer, item.contract_count.buyer];
 
         csv.push(`"${row.join('","')}"`);
@@ -112,10 +113,13 @@ function api2csv(apiResponse, collection, debug) {
 router.get('/:collection', async(req, res) => {
   // console.log("get");
   const limit = 1000;
-  const params = `&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source&limit=${limit}`;
   const question = (req.originalUrl.indexOf('?') === -1 ? '?' : '');
-  const url = `http://${req.headers.host + req.originalUrl.replace('csv/', '')}${question}${params}`;
   const collection = req.params.collection;
+  const fields = {
+    contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source"
+  }
+  const params = `${fields[collection]}&limit=${limit}`;
+  const url = `http://${req.headers.host + req.originalUrl.replace('csv/', '')}${question}${params}`;
   const debug = req.query.debug;
   // console.log(url);
 

@@ -84,14 +84,14 @@ function allOrganizations(req, res) {
 
   allDocuments(query, collection, [...JOINS, ...typeJoins])
     .then(array => (addGraphs(collection, array, db)))
-    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)))
     .catch(err => {
       console.error('allOrganizations', err);
       if (err) {
         return err;
       }
       return false;
-    });
+    })
+    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
 }
 
 function distinctOrganization(req, res) {
