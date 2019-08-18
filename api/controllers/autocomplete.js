@@ -29,17 +29,12 @@ function autocomplete(req, res) {
             o.type = o.classification;
           });
           results = results.concat(orgDocs);
-          // console.log('orgs', org_docs);
-          // contracts.find({ compiledRelease.contracts.title: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
-          //   .then(contractDocs => {
-          //     contractDocs.forEach(c => {
-          //       c.type = 'contract';
-          //     });
-          //     results = results.concat(contractDocs);
-              // console.log('contracts', contractDocs);
-              dataReturn(res, [1, results], 0, true, a => a);
-            // });
+          dataReturn(res, [1, results], 0, true, query.options.limit, a => a);
         });
+    })
+    .catch(err => {
+      console.error("autocomplete error",err);
+      res.json({"error": "error"})
     });
 }
 

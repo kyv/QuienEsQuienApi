@@ -85,13 +85,19 @@ function allOrganizations(req, res) {
   allDocuments(query, collection, [...JOINS, ...typeJoins])
     .then(array => (addGraphs(collection, array, db)))
     .catch(err => {
-      console.error('allOrganizations', err);
+      console.error('allOrganizations query error', err);
       if (err) {
         return err;
       }
       return false;
     })
-    .then(array => (dataReturn(res, array, offset, query.embed, orgDataMap)));
+    .then(array => {
+      return dataReturn(res, array, offset, query.options.limit, query.embed, orgDataMap)
+    } )
+    .catch(err => {
+      console.error("allOrganizations return error",err);
+      res.json({"error": "error"})
+    });
 }
 
 function distinctOrganization(req, res) {
@@ -105,7 +111,7 @@ function singleOrganization(req, res) {
 
   collection.aggregate(pipeline)
     .then(array => (addGraphs(collection, array, db)))
-    .then(docs => (dataReturn(res, [1, docs], 0, true, orgDataMap, debug)));
+    .then(docs => (dataReturn(res, [1, docs], 0, true, query.options.limit, orgDataMap, debug)));
 }
 
 module.exports = {

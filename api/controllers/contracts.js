@@ -127,13 +127,20 @@ async function allContracts(req, res) {
   allDocuments(query, collection, JOINS)
     .then(array => (addRecordPackage(array, debug)))
     .catch(err => {
-      console.error('allContracts error', err);
+      console.error('allContracts query error', err);
       if (err) {
         return err;
       }
       return false;
     })
-    .then(array => (dataReturn(res, array, offset, query.embed, contractMapData, debug)));
+    .then(array => {
+      return dataReturn(res, array, offset, query.options.limit, query.embed, contractMapData, debug)
+    } )
+    .catch(err => {
+      console.error("allContracts return error",err);
+      res.json({"error": "error"})
+    });
+
 }
 
 function distinctContract(req, res) {
@@ -147,7 +154,7 @@ function singleContract(req, res) {
   // console.log("singleContract",pipeline);
 
   collection.aggregate(pipeline)
-    .then(docs => (dataReturn(res, [1, docs], 0, true, contractMapData)));
+    .then(docs => (dataReturn(res, [1, docs], 0, query.options.limit, true, contractMapData)));
 
 }
 

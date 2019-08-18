@@ -70,13 +70,20 @@ function allPersons(req, res) {
   allDocuments(query, collection, JOINS)
     .then(array => (addGraphs(collection, array, db)))
     .catch(err => {
-      console.error('allPersons', err);
+      console.error('allPersons query error', err);
       if (err) {
         return err;
       }
       return false;
     })
-    .then(array => (dataReturn(res, array, offset, query.embed, personDataMap, debug)));
+    .then(array => {
+      return dataReturn(res, array, offset, query.options.limit, query.embed, personDataMap, debug)
+    } )
+    .catch(err => {
+      console.error("allPersons return error",err);
+      res.json({"error": "error"})
+    });
+
 }
 
 function distinctPerson(req, res) {
@@ -89,7 +96,7 @@ function singlePerson(req, res) {
 
   collection.aggregate(pipeline)
     .then(array => (addGraphs(collection, array, db)))
-    .then(docs => (dataReturn(res, [1, docs], 0, true, personDataMap)));
+    .then(docs => (dataReturn(res, [1, docs], 0, query.options.limit, true, personDataMap)));
 }
 
 module.exports = {

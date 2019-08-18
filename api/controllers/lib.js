@@ -220,7 +220,7 @@ function omitEmpty(object) {
   )(object);
 }
 
-function dataReturn(res, array, offset, embed, objectFormat, debug) {
+function dataReturn(res, array, offset, limit, embed, objectFormat, debug) {
   let data = array[1];
   let status = "success";
   let size = 0;
@@ -241,15 +241,19 @@ function dataReturn(res, array, offset, embed, objectFormat, debug) {
     console.log("dataReturn",size);
   }
 
+  const pageSize = limit || size;
+  const pagesNum = Math.ceil((array[0] / pageSize));
+
 
   res.set('Content-Type', 'application/json; charset=utf-8');
   res.json({
     status: status,
-    data,
     size,
+    limit,
     offset,
-    pages: Math.ceil((array[0] / size)),
+    pages: pagesNum,
     count: array[0],
+    data,
   });
 }
 
