@@ -30,7 +30,7 @@ function api2csv(apiResponse, collection, debug) {
   csv.push(headers[collection]);
 
   if (debug) {
-    console.log("api2csv",apiResponse);
+    // console.log("api2csv",apiResponse);
   }
   for (const r in apiResponse.data) {
     if (Object.prototype.hasOwnProperty.call(apiResponse.data, r)) {
@@ -72,7 +72,7 @@ function api2csv(apiResponse, collection, debug) {
               }
               catch (e) {
                 console.error("error",e);
-                console.log(record);
+                // console.log(record);
               }
             }
           }
@@ -112,7 +112,7 @@ function api2csv(apiResponse, collection, debug) {
 
 router.get('/:collection', async(req, res) => {
   // console.log("get");
-  const limit = 1000;
+  const limit = 500;
   const question = (req.originalUrl.indexOf('?') === -1 ? '?' : '');
   const collection = req.params.collection;
   const fields = {
@@ -125,12 +125,25 @@ router.get('/:collection', async(req, res) => {
 
   request(url, (req2, res2, response) => {
     if (debug) {
-      console.log(response);
+      console.log("response status",response);
     }
-    const csv = api2csv(JSON.parse(response), collection, debug);
+    try {
+      const responseJson = JSON.parse(response);
+      if (responseJson.status == "success") {
+        const csv = api2csv(responseJson, collection, debug);
 
-    res.set('Content-Type', 'text/plain');
-    res.send(csv);
+        res.set('Content-Type', 'text/plain');
+        res.send(csv);
+      }
+      else {
+        throw(response);
+      }
+    }
+    catch(e) {
+      console.error("CSV Error",e);
+      res.set('Content-Type', 'text/plain');
+      res.send("Error");
+    }
   });
 });
 
