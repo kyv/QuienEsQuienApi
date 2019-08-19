@@ -29,7 +29,7 @@ const recordPackageBase = {
   records: [],
 };
 
-const JOINS = [
+const flagJoins = [
   {
     $lookup: {
       from: 'contract_flags',
@@ -84,6 +84,8 @@ async function allContracts(req, res) {
   const debug = req.query.debug;
   // console.log("allContracts debug",debug);
 
+  let joins = [];
+
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
     const sq = { $in: await db.get('organizations').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] }) };
@@ -113,6 +115,10 @@ async function allContracts(req, res) {
     delete query.criteria['compiledRelease.parties.memberOf.name'];
   }
 
+  if (query.options.limit == 1) {
+    joins = flagJoins;
+  }
+
 
   // if query.  compiledRelease.awards.suppliers.name
    // query.embed = true
@@ -124,7 +130,7 @@ async function allContracts(req, res) {
     console.log("DEBUG allContracts query",JSON.stringify(query,null,4));
   }
 
-  allDocuments(query, collection, JOINS)
+  allDocuments(query, collection, joins)
     .then(array => (addRecordPackage(array, debug)))
     .catch(err => {
       console.error('allContracts query error', err);
@@ -149,7 +155,7 @@ function distinctContract(req, res) {
 
 function singleContract(req, res) {
   const query = getQuery(req);
-  const pipeline = queryToPipeline(query, JOINS);
+  const pipeline = queryToPipeline(query, flagJoins);
 
   // console.log("singleContract",pipeline);
 

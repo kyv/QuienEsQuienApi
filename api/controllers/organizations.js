@@ -9,7 +9,7 @@ const addGraphs = require('./lib').addGraphs;
 const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 
-const JOINS = [
+const membershipJoins = [
   {
     $lookup: {
       from: 'memberships',
@@ -65,6 +65,7 @@ function allOrganizations(req, res) {
   const debug = req.query.debug;
 
   let typeJoins = [];
+  let joins = [];
 
   if (req.originalUrl.indexOf('companies') > -1) {
     query.criteria.classification = 'company';
@@ -80,9 +81,17 @@ function allOrganizations(req, res) {
     }];
   }
 
+  if (query.criteria.subclassification == "unidad-compradora") {
+    joins = typeJoins
+  }
+  else {
+    joins = [...membershipJoins, ...typeJoins]
+  }
+
+
   // console.log("allOrganizations query",JSON.stringify(query));
 
-  allDocuments(query, collection, [...JOINS, ...typeJoins])
+  allDocuments(query, collection, joins)
     .then(array => (addGraphs(collection, array, db)))
     .catch(err => {
       console.error('allOrganizations query error', err);
@@ -107,7 +116,7 @@ function distinctOrganization(req, res) {
 
 function singleOrganization(req, res) {
   const query = getQuery(req);
-  const pipeline = queryToPipeline(query, JOINS);
+  const pipeline = queryToPipeline(query, membershipJoins);
 
   collection.aggregate(pipeline)
     .then(array => (addGraphs(collection, array, db)))
