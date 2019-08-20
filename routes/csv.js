@@ -142,7 +142,7 @@ router.get('/:collection', async(req, res) => {
     catch(e) {
       console.error("CSV Error",e);
       res.set('Content-Type', 'text/plain');
-      res.send("Error");
+      res.send("Error. Nos vamos a recuperar de esta.\n\n Por favor intenta de nuevo.\n\n Si el problema persiste contáctanos.\n\n www.quienesquien.wiki");
     }
   });
 });
