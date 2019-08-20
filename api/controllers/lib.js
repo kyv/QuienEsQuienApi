@@ -268,6 +268,7 @@ async function getContracts(type, id, db, limit) {
       filter = { $or: [
         { 'compiledRelease.buyer.id': id },
         { 'compiledRelease.parties.memberOf.id': id },
+        { 'compiledRelease.parties.contactPoint.id': id },
       ] };
 
       break;
