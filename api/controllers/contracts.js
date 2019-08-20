@@ -86,14 +86,6 @@ async function allContracts(req, res) {
 
   let joins = [];
 
-  if (query.criteria['compiledRelease.awards.suppliers.name']) {
-    // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
-    const sq = { $in: await db.get('organizations').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] }) };
-
-    query.embed = true;
-    query.criteria['compiledRelease.awards.suppliers.id'] = sq;
-    delete query.criteria['compiledRelease.awards.suppliers.name'];
-  }
 
   if (query.criteria['compiledRelease.awards.suppliers.id']) {
     query.embed = true;
@@ -114,6 +106,20 @@ async function allContracts(req, res) {
     };
     delete query.criteria['compiledRelease.parties.memberOf.name'];
   }
+
+  if (query.criteria['compiledRelease.awards.suppliers.name']) {
+    // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
+    const sq = await db.get('organizations').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] });
+    const pq = await db.get('persons').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] });
+
+    query.embed = true;
+    query.criteria['compiledRelease.awards.suppliers.id'] = { $in: [...sq, ...pq]  };
+    if (debug) {
+      console.log("Filtro por compiledRelease.awards.suppliers.name, ids:",query.criteria['compiledRelease.awards.suppliers.id']);
+    }
+    delete query.criteria['compiledRelease.awards.suppliers.name'];
+  }
+
 
   if (query.options.limit == 1) {
     joins = flagJoins;
