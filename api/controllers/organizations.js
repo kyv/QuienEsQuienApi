@@ -70,7 +70,7 @@ function allOrganizations(req, res) {
   if (req.originalUrl.indexOf('companies') > -1) {
     query.criteria.classification = 'company';
   } else {
-    query.criteria.classification = 'institution';
+    query.criteria.classification = query.criteria.classification || 'institution';
     typeJoins = [{ // Adding flags only for instiutions
       $lookup: {
         from: 'party_flags',
@@ -81,12 +81,12 @@ function allOrganizations(req, res) {
     }];
   }
 
-  if (query.criteria.subclassification == "unidad-compradora") {
-    joins = typeJoins
-  }
-  else {
+  // if (query.criteria.subclassification == "unidad-compradora") {
+  //   joins = typeJoins
+  // }
+  // else {
     joins = [...membershipJoins, ...typeJoins]
-  }
+  // }
 
 
   // console.log("allOrganizations query",JSON.stringify(query));
