@@ -79,9 +79,9 @@ function contractMapData(object) {
 }
 
 async function allContracts(req, res) {
-  const query = getQuery(req);
-  const offset = query.options.skip || 0;
   const debug = req.query.debug;
+  const query = getQuery(req,debug);
+  const offset = query.options.skip || 0;
   // console.log("allContracts debug",debug);
 
   let joins = [];

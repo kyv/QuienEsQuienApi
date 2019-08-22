@@ -26,13 +26,11 @@ const moment = require('moment');
 // https://www.npmjs.com/package/query-to-mongo#field-selection
 
 function parseDates(string) {
-  if (typeof string === 'number') {
+  if (typeof string === 'number' || typeof string === 'object' || typeof string === 'boolean'  ) {
     return string;
   }
-  if (typeof string === 'object') {
-    return string;
-  }
-  // console.log('parseDates',string);
+
+  console.log('parseDates',string);
   const object = new Date(string);
   const isValidDate = moment(object).isValid();
 
@@ -48,7 +46,7 @@ function simpleName(string) {
     .toLowerCase();
 }
 
-function getQuery(req) {
+function getQuery(req, debug) {
   const params = pickBy(req.swagger.params, p => (p.value));
   const sane = sanitize(req.query);
 
@@ -56,7 +54,9 @@ function getQuery(req) {
 
   extend(sane, mapped);
 
-  // console.log('getQuery',sane);
+  if (debug) {
+    console.log('DEBUG getQuery sane',sane);
+  }
   //
   // // Fix underscore to dot params
   // for (const paramName in sane) {
@@ -77,6 +77,11 @@ function getQuery(req) {
   // console.log(string);
   const query = q2m(string, { ignore: 'embed' });
   // console.log('getQuery',query);
+
+  if (debug) {
+    console.log('DEBUG getQuery q2m',query);
+  }
+
 
   // Fix array criteria
   for (const criteria in query.criteria) {
@@ -99,9 +104,19 @@ function getQuery(req) {
 
   const parsed = parser.parse(query.criteria);
 
-  // console.log("getQuery parsed",JSON.stringify(parsed,null,4));
+  if (debug) {
+    console.log('DEBUG getQuery parsed',JSON.stringify(parsed,null,4));
+  }
+
+  // console.log("getQuery parsed",);
 
   query.criteria = parsed.mapValues((field, value) => (parseDates(value)));
+
+  if (debug) {
+    console.log('DEBUG getQuery criteria',JSON.stringify(query.criteria,null,4));
+  }
+
+
   // console.log("getQuery criteria",query.criteria);
   query.embed = (isString(sane.embed));
   return query;
