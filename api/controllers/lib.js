@@ -396,6 +396,7 @@ function calculateSummaries(orgID, records) {
   const typeSummary = {};
   const allBuyers = {};
   const allSuppliers = {};
+  const allFundees = {};
   const relationSummary = { nodes: [], links: [] };
   const maxContractAmount = getMaxContractAmount(records);
 
@@ -414,11 +415,21 @@ function calculateSummaries(orgID, records) {
           // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
           const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID  || funderParty.id === orgID;
+          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID;
+          const isFunderContract = (funderParty.id === orgID) ;
           const year = new Date(contract.period.startDate).getFullYear();
 
+          if (isFunderContract) {
+            if (!allFundees[memberOfParty.id]) {
+              allFundees[memberOfParty.id] = memberOfParty;
+              allFundees[memberOfParty.id].contract_amount_top_funder = 0;
+              allFundees[memberOfParty.id].type = buyerParty.type;
+            }
+            allFundees[memberOfParty.id].contract_amount_top_funder += award.value.amount;
+          }
+
           // To calculate top3buyers
-          if (!isBuyerContract) {
+          if (isSupplierContract) {
             if (!allBuyers[memberOfParty.id]) {
               allBuyers[memberOfParty.id] = memberOfParty;
               allBuyers[memberOfParty.id].contract_amount_top_buyer = 0;
@@ -431,6 +442,7 @@ function calculateSummaries(orgID, records) {
             yearSummary[year] = {
               buyer: { value: 0, count: 0 },
               supplier: { value: 0, count: 0 },
+              funder: { value: 0, count: 0 },
             };
           }
 
@@ -443,12 +455,17 @@ function calculateSummaries(orgID, records) {
             yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
             yearSummary[year].buyer.count += 1;
           }
+          if (isFunderContract) {
+            yearSummary[year].funder.value += parseInt(contract.value.amount, 10);
+            yearSummary[year].funder.count += 1;
+          }
 
 
           if (!typeSummary[procurementMethod]) {
             typeSummary[procurementMethod] = {
               buyer: { value: 0, count: 0 },
               supplier: { value: 0, count: 0 },
+              funder: { value: 0, count: 0 },
             };
           }
 
@@ -459,6 +476,10 @@ function calculateSummaries(orgID, records) {
           if (isBuyerContract) {
             typeSummary[procurementMethod].buyer.value += parseInt(contract.value.amount, 10);
             typeSummary[procurementMethod].buyer.count += 1;
+          }
+          if (isFunderContract) {
+            typeSummary[procurementMethod].funder.value += parseInt(contract.value.amount, 10);
+            typeSummary[procurementMethod].funder.count += 1;
           }
 
 
@@ -487,12 +508,14 @@ function calculateSummaries(orgID, records) {
                 addNode(relationSummary, { id: award.suppliers[a].id,label: award.suppliers[a].name, type: supplierParty.details.type });
                 addLink(relationSummary, { source: buyerParty.id, target: award.suppliers[a].id, weight: linkWeight, type: procurementMethod });
 
-                // To calculate top3suppliers
-                if (!allSuppliers[supplierParty.id]) {
-                  allSuppliers[supplierParty.id] = supplierParty;
-                  allSuppliers[supplierParty.id].contract_amount_top_supplier = 0;
+                if (isBuyerContract) {
+                  // To calculate top3suppliers
+                  if (!allSuppliers[supplierParty.id]) {
+                    allSuppliers[supplierParty.id] = supplierParty;
+                    allSuppliers[supplierParty.id].contract_amount_top_supplier = 0;
+                  }
+                  allSuppliers[supplierParty.id].contract_amount_top_supplier += award.value.amount;
                 }
-                allSuppliers[supplierParty.id].contract_amount_top_supplier += award.value.amount;
               }
               // else {
               //   console.error('Party id error','award:',award,'parties:',compiledRelease.parties);
@@ -515,8 +538,10 @@ function calculateSummaries(orgID, records) {
   //Cut the top 3 of all ordered by contract amount, except the current org
   delete allBuyers[orgID];
   delete allSuppliers[orgID];
+  delete allFundees[orgID];
   const top3buyers = slice(0, 3, orderBy('contract_amount_top_buyer', 'desc', allBuyers));
   const top3suppliers = slice(0, 3, orderBy('contract_amount_top_supplier', 'desc', allSuppliers));
+  const top3fundees = slice(0, 3, orderBy('contract_amount_top_funder', 'desc', allFundees));
 
   const summary = {
     year: yearSummary,
@@ -524,6 +549,7 @@ function calculateSummaries(orgID, records) {
     relation: relationSummary,
     top_buyers: top3buyers,
     top_suppliers: top3suppliers,
+    top_fundees: top3fundees,
   };
 
   return summary;
@@ -550,7 +576,8 @@ async function addGraphs(collection, array, db) {
 
       item.summaries = calculateSummaries(item.id, allContracts);
       item.top3contracts = {
-        buyer: [...buyerContracts, ...funderContracts].slice(0, 3),
+        funder: funderContracts.slice(0, 3),
+        buyer: buyerContracts.slice(0, 3),
         supplier: supplierContracts.slice(0, 3),
       };
 
