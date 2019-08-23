@@ -30,7 +30,7 @@ function parseDates(string) {
     return string;
   }
 
-  console.log('parseDates',string);
+  // console.log('parseDates',string);
   const object = new Date(string);
   const isValidDate = moment(object).isValid();
 
@@ -99,6 +99,7 @@ function getQuery(req, debug) {
       delete query.criteria[criteria];
     }
   }
+  delete query.criteria.debug;
 
   // console.log("getQuery",JSON.stringify(query));
 

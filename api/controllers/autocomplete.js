@@ -1,12 +1,13 @@
 const db = require('../db');
 const persons = db.get('persons', { castIds: false });
 const organizations = db.get('organizations', { castIds: false });
-const contracts = db.get('contracts', { castIds: false });
+const contracts = db.get('records', { castIds: false });
 const getQuery = require('./lib').getQuery;
 const dataReturn = require('./lib').dataReturn;
 
 function autocomplete(req, res) {
-  const query = getQuery(req);
+  const debug = req.query.debug;
+  const query = getQuery(req, debug);
 
   query.options = { limit: 10 };
   query.fields = { name: 1, simple: 1 };
@@ -29,7 +30,18 @@ function autocomplete(req, res) {
             o.type = o.classification;
           });
           results = results.concat(orgDocs);
-          dataReturn(res, [1, results], 0, true, query.options.limit, a => a);
+          // console.log('orgs', org_docs);
+          contracts.find({ "compiledRelease.contracts.title": { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
+            .then(contractDocs => {
+              contractDocs.forEach(c => {
+                c.type = 'contract';
+              });
+              results = results.concat(contractDocs);
+              if (debug) {
+                console.log('contracts', contractDocs);
+              }
+              dataReturn(res, [1, results], 0, query.options.limit, false, a => a);
+            });
         });
     })
     .catch(err => {
