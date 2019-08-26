@@ -1,5 +1,11 @@
 # Mensajes de error
-## Entidad inexistente
+
+Cuando la API no puede devolver resultados, devuelve un conjunto vacío pero el status sigue siendo success.
+
+La API devuelve un mensaje de error cuando no pudo procesar la consulta.
+
+Hay un límite máximo de 5 segundos a las consultas a la base de datos. Las consultas realizadas sobre campos sin índice normalmente exceden este límite y generan mensajes de error.
+
 ## Parámetro inexistente
 ```json
 {
@@ -35,7 +41,3 @@
 
 }
 ```
-
-
-## Parámetro inválido
-## Consulta sin resultados

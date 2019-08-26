@@ -6,3 +6,7 @@ Este tutorial no es una introducción a nodejs, sino más bien una secuencia de 
 ### El cliente de API node-qqw
 
 node-qqw es un paquete de npm disponible en github para incluir en tus proyectos.
+
+https://github.com/ProjectPODER/node-qqw/
+
+Este tutorial está incompleto, si desea utilizar la api puede consultarnos a info@quienesquien.wiki

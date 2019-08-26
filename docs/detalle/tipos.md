@@ -1,7 +1,7 @@
 # Tipos de datos
-## society
+## company
 
-JSON Schema:
+Popolo Oranization JSON Schema:
 
 ```
 {
@@ -208,7 +208,7 @@ Example:
 ## institution
 
 
-JSON Schema:
+Popolo Oranization JSON Schema:
 
 ```
 {
@@ -413,7 +413,7 @@ Example:
 
 
 ## person
-JSON Schema:
+Popolo Person JSON Schema:
 ```
 {
   "$schema": "http://json-schema.org/draft-03/schema#",
@@ -619,6 +619,9 @@ Example:
 ```
 
 ## membership
+
+Popolo Membership JSON Schema:
+
 ```
 {
   "$schema": "http://json-schema.org/draft-03/schema#",
@@ -758,6 +761,8 @@ Example:
 ```
 
 ## recordPackage
+
+OCDS Record Package:
 
 ```
 {
@@ -984,7 +989,7 @@ Example:
 }
 ```
 
-## release
+OCDS Release:
 
 ```
 
@@ -3197,7 +3202,7 @@ Example:
 ```
 
 
-## source
+## source (no implementado)
 ```
 {
 importador
