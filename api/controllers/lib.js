@@ -54,7 +54,9 @@ function getQuery(req, debug) {
 
   extend(sane, mapped);
 
+
   if (debug) {
+    // console.log('DEBUG getQuery req.swagger.params',req.swagger.params);
     console.log('DEBUG getQuery sane',sane);
   }
   //
@@ -96,6 +98,10 @@ function getQuery(req, debug) {
       query.criteria.$and.push(obj);
       // console.log("a2",query.criteria.$and);
       // Object.assign(query.criteria,and);
+      delete query.criteria[criteria];
+    }
+    if (criteria == "compiledRelease.contracts.title") {
+      query.criteria.$text = { $search: query.criteria[criteria] };
       delete query.criteria[criteria];
     }
   }
