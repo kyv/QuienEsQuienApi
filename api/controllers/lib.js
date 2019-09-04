@@ -256,6 +256,7 @@ function dataReturn(res, array, offset, limit, embed, objectFormat, debug) {
     }
   }
   else {
+    console.error("dataReturn error",array);
     status = "error";
   }
 

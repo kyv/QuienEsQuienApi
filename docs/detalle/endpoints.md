@@ -119,5 +119,63 @@ Ejemplo: Si tenemos una búsqueda de contratos ordenada por el importe `https://
 
 Lo mismo resulta válido para los otros endpoints.
 
-## /sources (no implementado)
-Devuelve una source.
+Para cada tipo de entidad se generan diferentes tablas.
+
+### Contracts
+
+La tabla de CSV tiene las siguientes columnas:
+```
+"OCID", records.ocid (Repeated for each contract in a compiledRelase)
+"Contract title", records.compiledRelease.contracts.title
+"Suppliers name", records.compiledRelease.awards.suppliers.name
+"Buyer name", records.compiledRelease.party.name
+"Buyer parent", records.compiledRelease.party.memberOf.name
+"Total amount", records.compiledRelase.total_amount (sum of all contracts in this compiledRelease)
+"Procurement method",records.compiledRelease.tender.procurementMethod
+"Start date", records.compiledRelease.contracts.period.startDate
+"End date", records.compiledRelease.contracts.period.endDate
+"Contract amount", records.compiledRelease.contracts.value.amount
+"Contract currency", records.compiledRelease.contracts.value.currency
+"Source", records.compiledRelease.source
+```
+
+### Persons
+La tabla de CSV tiene las siguientes columnas:
+```
+'id',
+'name',
+'contract_amount_supplier',
+'contract_count_supplier'
+```
+
+### Institutions:
+La tabla de CSV tiene las siguientes columnas:
+```
+'id',
+'name',
+'classification',
+'subclassification',
+'contract_amount_supplier',
+'contract_count_supplier',
+'contract_amount_buyer',
+'contract_count_buyer'
+```
+
+### Companies
+La tabla de CSV tiene las siguientes columnas:
+```
+'id',
+'name',
+'classification',
+'subclassification',
+'contract_amount_supplier',
+'contract_count_supplier',
+'contract_amount_buyer',
+'contract_count_buyer'
+```
+
+
+## /sources
+Devuelve un información sobre cantidades de entidad por fuente y por tipo de entidad en QuienEsQuien.wiki.
+
+Tiene dos objetos, uno de fuentes `sources` que tiene por cada fuente la cantidad de elementos de cada tipo de entidad. Y otro de colecciones `collections` que tiene la cantidad elementos de cada tipo de entidad.
