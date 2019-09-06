@@ -136,7 +136,7 @@ async function allContracts(req, res) {
     console.log("DEBUG allContracts query",JSON.stringify(query,null,4));
   }
 
-  allDocuments(query, collection, joins)
+  allDocuments(query, collection, joins, debug)
     .then(array => (addRecordPackage(array, debug)))
     .catch(err => {
       console.error('allContracts query error', err);

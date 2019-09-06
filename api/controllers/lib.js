@@ -179,10 +179,9 @@ function personMemberMap(doc) {
   return omit(member, ['sob_org']);
 }
 
-function allDocuments(query, collection, JOINS) {
-  let debug = false;
+function allDocuments(query, collection, JOINS, debug=false) {
   // console.log("q",query.criteria);
-  if (query.criteria.debug) {
+  if (query.criteria.debug || debug) {
     debug = true;
     delete query.criteria.debug;
     console.log("DEBUG allDocuments",collection.name);
