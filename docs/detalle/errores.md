@@ -41,3 +41,42 @@ Hay un límite máximo de 5 segundos a las consultas a la base de datos. Las con
 
 }
 ```
+
+# Resultado vacío
+
+Si el conjunto de filtros eliminan todos los registros, lo que ocurre es que se devuelve un estado de éxito pero sin resultados.
+
+Ejemplo:
+
+```
+{
+
+    "status": "success",
+    "size": 0,
+    "limit": 1,
+    "offset": 0,
+    "pages": 0,
+    "count": 0,
+    "data": [ ]
+
+}
+```
+
+# Exceso de tiempo de procesamiento
+
+Las consultas de API no deben tardar más de 6 segundos en ejecutarse en la base de datos, es por esto que si se realizan consultas sobre campos indexistentes o que no tienen índice o que por sus relaciones con otras tablas o por otras razones toman más de 6 segundos, estas consultas devuelven un mensaje de error.
+
+Ejemplo:
+```
+{
+
+    "status": "error",
+    "size": 0,
+    "limit": 1,
+    "offset": 0,
+    "pages": null,
+    "count": "error: MongoError: Exec error resulting in state DEAD :: caused by :: errmsg: \"operation exceeded time limit\"",
+    "data": "error: MongoError: Executor error during find command :: caused by :: errmsg: \"operation exceeded time limit\""
+
+}
+```

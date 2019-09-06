@@ -3,6 +3,6 @@ La mayoría de la información contenida en la API de QuienEsQuienWiki tiene su 
 
 En todos los casos, cada consulta incluirá las fuentes originales de cada dato para que puedan ser verificadas de forma independiente por el usuario. Aunque no siempre la información seguirá disponible, por lo que se incluye la fecha y hora en que la información entró por primera vez a la base de datos de QuienEsQuienWiki.
 
-Para conocer el listado completo de fuentes disponibles, está pendiente la realización de una página específica.
+Para conocer el listado completo de fuentes disponibles, puede utilizar [/sources](endpoints#sources).
 
 Sugerimos referirse también al [aviso de privacidad](https://www.quienesquien.wiki/privacidad).

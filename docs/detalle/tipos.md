@@ -3212,3 +3212,387 @@ url_origen
 coleccion
 }
 ```
+
+
+## summaries
+
+Cuando se solicita un sólo elemento de persons, companies o institutions, este incluirán sus summaries, que es un resúmen de los contratos. Estos incluyen:
+* Resúmen de contratos por año de contratación y rol, desglosando importe y cantidad.
+* Resúmen de contratos por tipo de contratación y rol, desglosando importe y cantidad.
+* Resúmen de relaciones, que se compone de un listado de nodos y otro de enlaces para poder construir un grafo de relaciones
+* Resúmen de los tres compradores más grandes por importe de contratación
+* Resúmen de los tres proveedores más grandes por importe de contratación
+* Los tres contratos más grandes por cada rol
+* Resúmen de los tres contratos más grandes por cada rol
+
+Los roles son: funder (financiador), supplier (proveedor), buyer (comprador).
+
+
+Ejemplo:
+```
+summaries": {
+
+    //Resúmen de contratos por año de contratación y rol, desglosando importe y cantidad.
+    "year": {
+        "2009": {
+            "buyer": {
+                "value": 0,
+                "count": 0
+            },
+            "supplier": {
+                "value": 2023983,
+                "count": 2
+            },
+            "funder": {
+                "value": 0,
+                "count": 0
+            }
+        },
+    },
+    //Resúmen de contratos por tipo de contratación y rol, desglosando importe y cantidad.
+    "type": {
+        "open": {
+            "buyer": {
+                "value": 0,
+                "count": 0
+            },
+            "supplier": {
+                "value": 14780278,
+                "count": 11
+            },
+            "funder": {
+                "value": 0,
+                "count": 0
+            }
+        },
+        "limited": {
+            "buyer": {
+                "value": 0,
+                "count": 0
+            },
+            "supplier": {
+                "value": 4139566,
+                "count": 3
+            },
+            "funder": {
+                "value": 0,
+                "count": 0
+            }
+        },
+        "direct": {
+            "buyer": {
+                "value": 0,
+                "count": 0
+            },
+            "supplier": {
+                "value": 230339,
+                "count": 1
+            },
+            "funder": {
+                "value": 0,
+                "count": 0
+            }
+        }
+    },
+    //El resúmen de relaciones se compone de un listado de nodos y otro de enlaces para poder construir un grafo de relaciones
+    "relation": {
+        //Nodos para un grafo de relaciones
+        "nodes": [
+            {
+                "id": "direccion-general-de-conservacion-de-carreteras-secretaria-de-comunicaciones-y-transportes",
+                "label": "Dirección General de Conservación de Carreteras",
+                "type": "institution",
+                "weight": 35
+            },
+        ],
+        //Enlaces entre nodos
+        "links": [
+            {
+                "id": 0,
+                "source": "direccion-general-de-conservacion-de-carreteras-secretaria-de-comunicaciones-y-transportes",
+                "target": "internacional-de-auditorias-y-consultorias-tecnicas-s-s-de-rl",
+                "weight": 1,
+                "type": "open"
+            },
+        ]
+    },
+    // Resúmen de los tres compradores más grandes por importe de contratación
+    "top_buyers": [
+        //Aquí se incluyen tres "parties" de OCDS Records si esta entidad hizo contratos como proveedor
+        // Ejemplo:
+        {
+            "roles": [
+                "buyer"
+            ],
+            "id": "direccion-general-de-conservacion-de-carreteras-secretaria-de-comunicaciones-y-transportes",
+            "name": "Dirección General de Conservación de Carreteras",
+            "address": {
+                "countryName": "Mexico"
+            },
+            "memberOf": [
+                {
+                    "name": "SECRETARÍA DE COMUNICACIONES Y TRANSPORTES",
+                    "id": "secretaria-de-comunicaciones-y-transportes"
+                }
+            ],
+            "identifier": {
+                "scheme": "MX-CPA",
+                "id": "9002",
+                "legalName": "Dirección General de Conservación de Carreteras",
+                "uri": "https://sites.google.com/site/cnetuc/directorio"
+            },
+            "details": {
+                "type": "institution"
+            },
+            "contract_amount_top_buyer": 9307597.55
+        }
+    ],
+    // Resúmen de los tres proveedores más grandes por importe de contratación
+    "top_suppliers": [
+    //Aquí se incluyen tres "parties" de OCDS Records si esta entidad hizo contratos como comprador
+    ],
+    "top_fundees": [
+    //Aquí se incluyen tres "parties" de OCDS Records si esta entidad hizo contratos como financiador
+    ]
+
+},
+//Resúmen de los tres contratos más grandes por cada rol
+"top3contracts": {
+
+    "funder": [
+    //Aquí se incluyen tres OCDS Records si esta entidad hizo contratos como financiador
+    ],
+    "buyer": [
+    //Aquí se incluyen tres OCDS Records si esta entidad hizo contratos como comprador
+    ],
+    "supplier": [
+      //Aquí se incluyen tres OCDS Records si esta entidad hizo contratos como proveedor
+    ]
+```
+
+## party_flags
+
+Para cada institution y person, si se solicita una sola y con embed en true se devuelve sus flags, es decir, el resultado de la aplicación de las banderas OCDS del sistema Groucho, para detalles sobre la metodología revisar [TodosLosContratos.mx](https://www.todosloscontratos.mx/#metodologia).
+
+Estas incluyen:
+* Información sobre la entidad evaluada
+* Puntajes de las banderas de contrato agregadas por categoría
+* Resúmen de puntajes de las banderas de contrato para esta entidad. Para saber qué evaluación se aplica en cada regla puede revisar el archivo donde se especifican las reglas en OCDS_RedFlags [flagsMX.json](https://github.com/ProjectPODER/OCDS_RedFlags/blob/master/flagsMX.json)
+* Resúmen de puntajes de las banderas de contrato para esta entidad por cada año
+* Resúmen de puntajes de las banderas de nodo para esta entidad
+* Resúmen de puntajes de las banderas de nodo agregadas por categoría
+* Resúmen de puntajes de las categorías de nodo y de contrato agregadas por categoría
+* Puntaje total, promedio de node y contract categories
+
+
+Ejemplo:
+
+```
+flags": [
+
+    {
+        "_id": "13bd42c06e4bf5229b870901323d0bfa493e587d",
+        //Información sobre la entidad evaluada
+        "party": {
+            "id": "banco-interamericano-de-desarrollo",
+            "type": "supplier"
+        },
+        //Puntajes de las banderas de contrato agregadas por categoría
+        "contract_categories": {
+            "total_score": 0.708688222522045,
+            "trans": 0.4838571823253367,
+            "temp": 0.7107533108103375,
+            "comp": 0.9729379795396419,
+            "traz": 0.6672044174128638
+        },
+        //Resúmen de puntajes de las banderas de contrato para esta entidad
+        "contract_rules": {
+            "trans-ov": 0,
+            "trans-sc": 0.9999433876811594,
+            "trans-ccm": 0.7498177043807246,
+            "trans-cc": 0.18566763723946264,
+            "temp-cft": 0.3483126759593723,
+            "temp-tipo": 0.6018280004618168,
+            "temp-dl": 0.9919503389330976,
+            "temp-fs": 0.9009222278870633,
+            "comp-cfc": 0.9458759590792839,
+            "comp-pf": 1,
+            "traz-ei": 0.5143459501905567,
+            "traz-cft": 0,
+            "traz-mc": 0.9831310659715391,
+            "traz-ip": 0,
+            "traz-pf": 1,
+            "traz-ir": 0.9885163669914354,
+            "traz-ct": 0.8519816300624237,
+            "traz-fro": 0.9996603260869565
+        },
+        //Resúmen de puntajes de las banderas de contrato para esta entidad por cada año
+        "years": [
+            {
+                "year": "2016",
+                "contract_score": {
+                    "total_score": 0.7264003134327688,
+                    "trans": 0.4918784276441186,
+                    "temp": 0.8736413043478264,
+                    "comp": 0.8967391304347827,
+                    "traz": 0.6433423913043479
+                },
+                "contract_rules": {
+                    "trans-ov": 0,
+                    "trans-sc": 0.9995471014492755,
+                    "trans-ccm": 0.7755084151472668,
+                    "trans-cc": 0.19245819397993222,
+                    "temp-cft": 0.8695652173913045,
+                    "temp-tipo": 0.6277173913043484,
+                    "temp-dl": 1,
+                    "temp-fs": 0.9972826086956522,
+                    "comp-cfc": 0.7934782608695654,
+                    "comp-pf": 1,
+                    "traz-ei": 0.49184782608695654,
+                    "traz-cft": 0,
+                    "traz-mc": 0.9619565217391305,
+                    "traz-ip": 0,
+                    "traz-pf": 1,
+                    "traz-ir": 1,
+                    "traz-ct": 0.6956521739130435,
+                    "traz-fro": 0.9972826086956522
+                },
+                "node_rules": {
+                    "conf": 0.0026422839545957796,
+                    "aepm": {
+                        "score": 1
+                    },
+                    "aepc": {
+                        "score": 1
+                    },
+                    "tcr10": {
+                        "score": 1
+                    },
+                    "mcr10": {
+                        "score": 1
+                    },
+                    "celp": {
+                        "score": 1
+                    },
+                    "rla": {
+                        "score": 1
+                    },
+                    "ncap3": {
+                        "date": "08-12",
+                        "value": 0.07588075880758807,
+                        "score": 0
+                    },
+                    "total_score": 0.7503302854943245
+                }
+            },
+        ],
+        //Resúmen de puntajes de las banderas de nodo para esta entidad
+        "node_rules": {
+            "conf": 0.673441838691284,
+            "aepm": 1,
+            "aepc": 1,
+            "tcr10": 0.625,
+            "mcr10": 0.875,
+            "celp": 1,
+            "rla": 1,
+            "ncap3": 0
+        },
+        //Resúmen de puntajes de las banderas de nodo agregadas por categoría
+        "node_categories": {
+            "comp": 0.8,
+            "traz": 0.75,
+            "total_score": 0.775
+        },
+        //Resúmen de puntajes de las categorías de nodo y de contrato agregadas por categoría
+        "category_score": {
+            "comp": 0.886468989769821,
+            "traz": 0.7086022087064319
+        },
+        //Puntaje total, promedio de node y contract categories
+        "total_score": 0.7418441112610226
+    }
+
+]
+```
+
+## contract_flags
+Para cada contract, si se solicita uno sola y con embed en true se devuelve sus flags, es decir, el resultado de la aplicación de las banderas OCDS del sistema Groucho, para detalles sobre la metodología revisar [TodosLosContratos.mx](https://www.todosloscontratos.mx/#metodologia).
+
+
+* Información del contrato.
+* Puntajes agregados por categoría.
+* Puntajes de cada evaluación en este contrato en grupos por categoría. Para saber qué evaluación se aplica en cada regla puede revisar el archivo donde se especifican las reglas en OCDS_RedFlags [flagsMX.json](https://github.com/ProjectPODER/OCDS_RedFlags/blob/master/flagsMX.json)
+
+Ejemplo:
+
+```
+"flags": [
+
+    {
+        "_id": "05373fc128e6d4fab25e25849f7a64ce44d88765",
+        //Información del contrato
+        "id": "030/2009",
+        "ocid": "ocds-0ud2q6-44936001-007-09",
+        "date_signed": "2009-01-04T00:00:00.000Z",
+        "parties": [
+            {
+                "id": "secretaria-de-finanzas-planeacion-y-administracion-del-estado-de-mexico",
+                "entity": "dependency"
+            },
+            {
+                "id": "coordinacion-administrativa-secretaria-de-finanzas-planeacion-y-administracion-del-estado-de-mexico",
+                "entity": "buyer",
+                "parent": {
+                    "id": "secretaria-de-finanzas-planeacion-y-administracion-del-estado-de-mexico"
+                }
+            },
+            {
+                "id": "impresora-silvaform-sa-de-cv",
+                "entity": "supplier"
+            }
+        ],
+        "value": {
+            "amount": 138945760000,
+            "currency": "MXN"
+        },
+        //Puntajes agregados por categoría
+        "contract_score": {
+            "total_score": 0.5657309760132341,
+            "trans": 0.3879239040529363,
+            "temp": 0.25,
+            "comp": 1,
+            "traz": 0.625
+        },
+        //Puntajes de cada evaluación en este contrato en grupos por categoría
+        "rules_score": {
+            "trans": {
+                "trans-ov": 0,
+                "trans-sc": 0.8333333333333334,
+                "trans-ccm": 0.5645161290322581,
+                "trans-cc": 0.15384615384615385
+            },
+            "temp": {
+                "temp-cft": 0,
+                "temp-tipo": 0,
+                "temp-dl": 0,
+                "temp-fs": 1
+            },
+            "comp": {
+                "comp-cfc": 1,
+                "comp-pf": 1
+            },
+            "traz": {
+                "traz-ei": 0,
+                "traz-cft": 0,
+                "traz-mc": 1,
+                "traz-ip": 0,
+                "traz-pf": 1,
+                "traz-ir": 1,
+                "traz-ct": 1,
+                "traz-fro": 1
+            }
+        }
+    }
+
+]
+```

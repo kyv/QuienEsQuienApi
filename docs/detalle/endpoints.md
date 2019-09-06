@@ -179,3 +179,5 @@ La tabla de CSV tiene las siguientes columnas:
 Devuelve un información sobre cantidades de entidad por fuente y por tipo de entidad en QuienEsQuien.wiki.
 
 Tiene dos objetos, uno de fuentes `sources` que tiene por cada fuente la cantidad de elementos de cada tipo de entidad. Y otro de colecciones `collections` que tiene la cantidad elementos de cada tipo de entidad.
+
+Nota: Este endpoint está en construcción.
