@@ -13,41 +13,47 @@ function autocomplete(req, res) {
   query.fields = { name: 1, simple: 1 };
 
   if (!query.criteria.name) {
-    query.criteria.name = '';
+    return dataReturn(res, [0, {}], 0, query.options.limit, false, a => a);
   }
   // console.log("autocomplete",query);
   let results = [];
+  try {
 
-  persons.find({ name: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
-    .then(personDocs => {
-      personDocs.forEach(p => {
-        p.type = 'person';
-      });
-      results = results.concat(personDocs);
-      organizations.find({ name: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
-        .then(orgDocs => {
-          orgDocs.forEach(o => {
-            o.type = o.classification;
-          });
-          results = results.concat(orgDocs);
-          // console.log('orgs', org_docs);
-          contracts.find({ "compiledRelease.contracts.title": { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
-            .then(contractDocs => {
-              contractDocs.forEach(c => {
-                c.type = 'contract';
-              });
-              results = results.concat(contractDocs);
-              if (debug) {
-                console.log('contracts', contractDocs);
-              }
-              dataReturn(res, [1, results], 0, query.options.limit, false, a => a);
-            });
+    persons.find({ name: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
+      .then(personDocs => {
+        personDocs.forEach(p => {
+          p.type = 'person';
         });
-    })
-    .catch(err => {
-      console.error("autocomplete error",err);
+        results = results.concat(personDocs);
+        organizations.find({ name: { $regex: query.criteria.name, $options: 'i' } }, query.options, query.fields)
+          .then(orgDocs => {
+            orgDocs.forEach(o => {
+              o.type = o.classification;
+            });
+            results = results.concat(orgDocs);
+            // console.log('orgs', org_docs);
+            contracts.find({ $text: { $search: query.criteria.name } }, query.options, query.fields)
+              .then(contractDocs => {
+                contractDocs.forEach(c => {
+                  c.type = 'contract';
+                });
+                results = results.concat(contractDocs);
+                if (debug) {
+                  console.log('contracts', contractDocs);
+                }
+                dataReturn(res, [1, results], 0, query.options.limit, false, a => a);
+              });
+          });
+      })
+      .catch(err => {
+        console.error("autocomplete error",err);
+        res.json({"error": "error"})
+      });
+    }
+    catch(err) {
+      console.error("autocomplete error 2",err);
       res.json({"error": "error"})
-    });
+    }
 }
 
 module.exports = {

@@ -10,7 +10,7 @@ Hay algunos filtros genéricos que aplican a todos los endpoints, y otros que ap
 La cantidad de registros que se incluyen en cada página de resultados. Default: 25 registros. Tipo: 1000 >= entero > 0.
 
 ## offset
-El número de registros a omitir desde el principio. Default: 0 registros (página inicial). Tipo: entero >= 0. Si el offset es mayor al número total de registro devuelve una respuesta vacía.
+El número de registros a omitir desde el principio. Default: 0 registros (página inicial). Tipo: entero >= 0. Si el offset es mayor al número total de registros devuelve una respuesta vacía.
 
 ## embed
 Bandera que indica si se incluyen referencias a otras colecciones dentro de cada documento en la respuesta. Esto inclurá las memberships, flags y summaries para cada entidad que lo tenga disponible. Default: false. Tipo: boolean.
