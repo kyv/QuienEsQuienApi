@@ -15,7 +15,7 @@ const membershipJoins = [
       from: 'memberships',
       localField: 'id',
       foreignField: 'organization_id',
-      as: 'memberships.parent',
+      as: 'memberships.child',
     },
   },
   {
@@ -23,7 +23,7 @@ const membershipJoins = [
       from: 'memberships',
       localField: 'id',
       foreignField: 'parent_id',
-      as: 'memberships.child',
+      as: 'memberships.parent',
     },
   },
   // {

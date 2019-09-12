@@ -421,7 +421,7 @@ function calculateSummaries(orgID, records) {
           // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
           const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID || buyerParty.contactPoint.id === orgID;
+          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID);
           const isFunderContract = (funderParty.id === orgID) ;
           const year = new Date(contract.period.startDate).getFullYear();
 
