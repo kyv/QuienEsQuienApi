@@ -100,7 +100,7 @@ async function allContracts(req, res) {
     query.embed = true;
     query.criteria['compiledRelease.parties.memberOf.id'] = { $in: await db.get('organizations').distinct('id',
       {
-        name: query.criteria['compiledRelease.parties.memberOf.name'],
+        "other_names.name": query.criteria['compiledRelease.parties.memberOf.name'],
         classification: 'institution',
       }),
     };

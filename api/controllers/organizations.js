@@ -14,7 +14,7 @@ const membershipJoins = [
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'organization_id',
+      foreignField: 'compiledRelease.organization_id',
       as: 'memberships.child',
     },
   },
@@ -22,7 +22,7 @@ const membershipJoins = [
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'parent_id',
+      foreignField: 'compiledRelease.parent_id',
       as: 'memberships.parent',
     },
   },
@@ -60,17 +60,17 @@ function orgDataMap(o) {
 }
 
 function allOrganizations(req, res) {
-  const query = getQuery(req);
-  const offset = query.options.skip || 0;
   const debug = req.query.debug;
+  const query = getQuery(req,debug);
+  const offset = query.options.skip || 0;
 
   let typeJoins = [];
   let joins = [];
 
   if (req.originalUrl.indexOf('companies') > -1) {
-    query.criteria.classification = 'company';
+    query.criteria["compiledRelease.classification"] = 'company';
   } else {
-    query.criteria.classification = query.criteria.classification || 'institution';
+    query.criteria["compiledRelease.classification"] = query.criteria["compiledRelease.classification"] || 'institution';
     typeJoins = [{ // Adding flags only for instiutions
       $lookup: {
         from: 'party_flags',
@@ -81,7 +81,7 @@ function allOrganizations(req, res) {
     }];
   }
 
-  // if (query.criteria.subclassification == "unidad-compradora") {
+  // if (query.criteria.compiledRelease.subclassification == "unidad-compradora") {
   //   joins = typeJoins
   // }
   // else {
@@ -91,7 +91,7 @@ function allOrganizations(req, res) {
 
   // console.log("allOrganizations query",JSON.stringify(query));
 
-  allDocuments(query, collection, joins)
+  allDocuments(query, collection, joins, debug)
     .then(array => (addGraphs(collection, array, db)))
     .catch(err => {
       console.error('allOrganizations query error', err);
@@ -101,7 +101,7 @@ function allOrganizations(req, res) {
       return false;
     })
     .then(array => {
-      return dataReturn(res, array, offset, query.options.limit, query.embed, orgDataMap)
+      return dataReturn(res, array, offset, query.options.limit, query.embed, orgDataMap, debug)
     } )
     .catch(err => {
       console.error("allOrganizations return error",err);

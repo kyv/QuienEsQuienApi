@@ -187,7 +187,7 @@ function allDocuments(query, collection, JOINS, debug=false) {
     console.log("DEBUG allDocuments",collection.name);
     console.log("DEBUG allDocuments query 1",JSON.stringify(query,null,4));
   }
-  const maxTime = 1000*6;
+  const maxTime = 1000*8;
 
   query.options.maxTimeMS = maxTime;
   const countP = collection.count(query.criteria,{maxTimeMS: query.options.maxTimeMS}).catch(err => {
@@ -421,9 +421,13 @@ function calculateSummaries(orgID, records) {
           // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
           const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
-          const isBuyerContract = buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID);
+          const isBuyerContract = buyerParty.id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID) || memberOfParty && memberOfParty.memberOf[0].id === orgID;
           const isFunderContract = (funderParty.id === orgID) ;
-          const year = new Date(contract.period.startDate).getFullYear();
+          // console.log("contract.period",contract.period,compiledRelease.ocid);
+          let year = "undefined";
+          if (contract.period) {
+            year = new Date(contract.period.startDate).getFullYear();
+          }
 
           if (isFunderContract) {
             if (!allFundees[memberOfParty.id]) {
@@ -436,12 +440,14 @@ function calculateSummaries(orgID, records) {
 
           // To calculate top3buyers
           if (isSupplierContract) {
-            if (!allBuyers[memberOfParty.id]) {
-              allBuyers[memberOfParty.id] = memberOfParty;
-              allBuyers[memberOfParty.id].contract_amount_top_buyer = 0;
-              allBuyers[memberOfParty.id].type = buyerParty.type;
+            if (memberOfParty) {
+              if (!allBuyers[memberOfParty.id]) {
+                allBuyers[memberOfParty.id] = memberOfParty;
+                allBuyers[memberOfParty.id].contract_amount_top_buyer = 0;
+                allBuyers[memberOfParty.id].type = buyerParty.type;
+              }
+              allBuyers[memberOfParty.id].contract_amount_top_buyer += award.value.amount;
             }
-            allBuyers[memberOfParty.id].contract_amount_top_buyer += award.value.amount;
           }
 
           if (!yearSummary[year]) {
@@ -529,9 +535,13 @@ function calculateSummaries(orgID, records) {
             }
           }
 
-          if (buyerParty.memberOf[0].name) {
-            addNode(relationSummary, { id: buyerParty.memberOf[0].id, label: buyerParty.memberOf[0].name, type: "dependency" });
-            addLink(relationSummary, { source: buyerParty.id, target: buyerParty.memberOf[0].id });
+          // console.log("calculateSummaries buyerParty",buyerParty);
+          if (buyerParty.memberOf) {
+
+            if (buyerParty.memberOf[0].name) {
+              addNode(relationSummary, { id: buyerParty.memberOf[0].id, label: buyerParty.memberOf[0].name, type: "dependency" });
+              addLink(relationSummary, { source: buyerParty.id, target: buyerParty.memberOf[0].id });
+            }
           }
 
 
