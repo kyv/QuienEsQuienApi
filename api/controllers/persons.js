@@ -15,7 +15,7 @@ const JOINS = [
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'person_id',
+      foreignField: 'compiledRelease.person_id',
       as: 'memberships.child',
     },
   },
@@ -23,7 +23,7 @@ const JOINS = [
     $lookup: {
       from: 'memberships',
       localField: 'id',
-      foreignField: 'parent_id',
+      foreignField: 'compiledRelease.parent_id',
       as: 'memberships.parent',
     },
   },
