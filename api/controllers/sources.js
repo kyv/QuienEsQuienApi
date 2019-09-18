@@ -21,7 +21,7 @@ function aggregateSources(array) {
     switch (c) {
       // 0: organizations sources count
       case "0":
-        collectionName = "organizationsa";
+        collectionName = "organizations";
         break;
       // 1: persons sources count
       case "1":
@@ -62,7 +62,7 @@ function aggregateSources(array) {
       case "6": //persons date
         // console.log(c,array[c][0].date);
         collectionName = "persons";
-        lastModified = array[c][0].date;
+        lastModified = array[c][0].compiledRelease.date;
         collections[collectionName].lastModified = lastModified;
         break;
       // 7: records lastModified
@@ -84,7 +84,7 @@ function aggregateSources(array) {
       if (c < 2) {
         if (array[c][s]._id.hasOwnProperty("source")) {
           sourceName = array[c][s]._id.source;
-          collectionName =  array[c][s]._id.classification;
+          collectionName =  array[c][s]._id["classification"];
         }
         else {
           sourceName = array[c][s]._id;
@@ -116,21 +116,23 @@ function allSources(req, res) {
 
   const queries = [
     // 0: organizations sources count
-    db.get("organizations").aggregate([{$unwind: "$source"},{$group: {_id: {source:"$source",classification:"$classification"}, count: {$sum:1}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}}}]),
     // 1: persons sources count
-    db.get("persons").aggregate([{$unwind: "$source"},{$group: {_id: "$source", count: {$sum:1}}}]),
+    db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
     // 2: organizations type count
-    db.get("organizations").aggregate([{$unwind: "$classification"},{$group: {_id: "$classification", count: {$sum:1}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", count: {$sum:1}}}]),
     // 3: persons count
     db.get("persons").count(),
     // 4: records count
     db.get("records").count({hidden: false}),
     // 5: organizations lastModified
-    db.get("organizations").aggregate([{$unwind: "$classification"},{$group: {_id: "$classification", lastModified: {$max:"$date"}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", lastModified: {$max:"$compiledRelease.date"}}}]),
     // 6: persons lastModified
-    db.get("persons").find({},{projection: {date: 1}, sort: {date: -1}, limit: 1}),
+    db.get("persons").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}),
     // 7: records lastModified
     db.get("records").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}),
+    // 8: contracts sources count
+    // db.get("records").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
   ];
 
   // console.log("allSources")
