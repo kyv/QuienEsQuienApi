@@ -98,19 +98,18 @@ async function allContracts(req, res) {
 
   if (query.criteria['compiledRelease.parties.memberOf.name']) {
     query.embed = true;
-    query.criteria['compiledRelease.parties.memberOf.id'] = { $in: await db.get('organizations').distinct('id',
-      {
-        "other_names.name": query.criteria['compiledRelease.parties.memberOf.name'],
-        classification: 'institution',
-      }),
+    let memberOfQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.parties.memberOf.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.parties.memberOf.name'] }]};
+
+    query.criteria['compiledRelease.parties.memberOf.id'] = { $in: await db.get('organizations').distinct('id',memberOfQuery),
     };
     delete query.criteria['compiledRelease.parties.memberOf.name'];
   }
 
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
-    const sq = await db.get('organizations').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] });
-    const pq = await db.get('persons').distinct('id', { name: query.criteria['compiledRelease.awards.suppliers.name'] });
+    let suppliersQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.awards.suppliers.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.awards.suppliers.name'] }]};
+    const sq = await db.get('organizations').distinct('id', suppliersQuery);
+    const pq = await db.get('persons').distinct('id', suppliersQuery);
 
     query.embed = true;
     query.criteria['compiledRelease.awards.suppliers.id'] = { $in: [...sq, ...pq]  };

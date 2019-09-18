@@ -104,6 +104,15 @@ function getQuery(req, debug) {
       query.criteria.$text = { $search: query.criteria[criteria] };
       delete query.criteria[criteria];
     }
+    if (criteria == "compiledRelease.name") {
+      if (!query.criteria.$or) {
+        query.criteria.$or = [];
+      }
+      query.criteria.$or.push({ "compiledRelease.name": query.criteria[criteria] });
+      query.criteria.$or.push({ "compiledRelease.other_names.name": query.criteria[criteria] });
+
+      delete query.criteria[criteria];
+    }
   }
   delete query.criteria.debug;
 
