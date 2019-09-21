@@ -196,7 +196,7 @@ function allDocuments(query, collection, JOINS, debug=false) {
     console.log("DEBUG allDocuments",collection.name);
     console.log("DEBUG allDocuments query 1",JSON.stringify(query,null,4));
   }
-  const maxTime = 1000*8;
+  const maxTime = 1000*12;
 
   query.options.maxTimeMS = maxTime;
   const countP = collection.count(query.criteria,{maxTimeMS: query.options.maxTimeMS}).catch(err => {

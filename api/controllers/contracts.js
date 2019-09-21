@@ -121,7 +121,7 @@ async function allContracts(req, res) {
 
 
   if (query.options.limit == 1) {
-    joins = flagJoins;
+    joins = clone(flagJoins);
   }
 
 
