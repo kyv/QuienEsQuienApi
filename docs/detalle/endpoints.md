@@ -180,4 +180,6 @@ Devuelve un información sobre cantidades de entidad por fuente y por tipo de en
 
 Tiene dos objetos, uno de fuentes `sources` que tiene por cada fuente la cantidad de elementos de cada tipo de entidad. Y otro de colecciones `collections` que tiene la cantidad elementos de cada tipo de entidad.
 
+Para más información sobre las fuentes se puede consultar la sección de [Fuentes](../fuentes/listado).
+
 Nota: Este endpoint está en construcción.

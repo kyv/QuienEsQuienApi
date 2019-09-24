@@ -26,6 +26,16 @@ Nota: Esta documentación está en proceso de actualización. Por cualquier cons
    detalle/errores.md
 
 .. toctree::
+  :maxdepth: 2
+  :caption: Fuentes
+
+  detalle/listado.md
+  detalle/compranet.md
+  detalle/compranet3.md
+  detalle/pot.md
+  detalle/tdc.md
+
+.. toctree::
    :maxdepth: 2
    :caption: Tutoriales
 
