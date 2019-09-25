@@ -83,8 +83,8 @@ Origen de los datos: [https://sites.google.com/site/cnetuc/descargas](https://si
 
 |VALOR ORIGINAL|VALOR OCDS|
 |--------------|----------|
-|Electrónica||
-|Mixta||
+|Electrónica|electronicSubmission|
+|Mixta|electronicSubmission|
 |Presencial|inPerson|
 
 #### Estatus y Etiqueta de Contrato (tag, contracts.status)
