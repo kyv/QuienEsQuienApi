@@ -29,11 +29,11 @@ Nota: Esta documentación está en proceso de actualización. Por cualquier cons
   :maxdepth: 2
   :caption: Fuentes
 
-  detalle/listado.md
-  detalle/compranet.md
-  detalle/compranet3.md
-  detalle/pot.md
-  detalle/tdc.md
+  fuentes/listado.md
+  fuentes/compranet.md
+  fuentes/compranet3.md
+  fuentes/pot.md
+  fuentes/tdc.md
 
 .. toctree::
    :maxdepth: 2
