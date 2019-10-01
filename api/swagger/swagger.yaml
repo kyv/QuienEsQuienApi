@@ -3,12 +3,12 @@ schemes:
 - http
 info:
   description: >-
-    QuienEsQuien.Wiki API. [Source Code](https://github.com/ProjectPODER/QuienEsQuienApi)
+    QuienEsQuien.Wiki API. [DOCS](https://QuienEsQuienApi.readthedocs.io).  [Source](https://github.com/ProjectPODER/QuienEsQuienApi).
   title: API de QuienEsQuien
-  version: '2.0'
+  version: '2.0.1'
   contact:
     name: Tecnologías para la Transparencia (PODER)
-    url: 'https://www.quienesquien.wiki/contact'
+    url: 'https://www.quienesquien.wiki/contacto'
     email: info@quienesquien.wiki
   license:
     name: GPL-3.0
