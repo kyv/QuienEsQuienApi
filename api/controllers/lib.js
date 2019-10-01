@@ -59,22 +59,17 @@ function getQuery(req, debug) {
     // console.log('DEBUG getQuery req.swagger.params',req.swagger.params);
     console.log('DEBUG getQuery sane',sane);
   }
-  //
-  // // Fix underscore to dot params
-  // for (const paramName in sane) {
-  //   if (Object.prototype.hasOwnProperty.call(sane, paramName) ) {
-  //     // console.log('min', paramName, sane[paramName]);
-  //     const dotParamName = paramName.replace(/_/g, '.');
-  //
-  //     sane[dotParamName] = sane[paramName];
-  //     // sane[dotParamName].parameterObject.name=dotParamName;
-  //     if (dotParamName !== paramName) {
-  //       delete sane[paramName];
-  //     }
-  //   }
-  // }
 
+  // const string =  decodeURIComponent(decodeURIComponent(clone(qs.stringify(sane))));
+  //Fix values with commas
+  for (s in sane) {
+    // console.log("non-decoded",typeof sane[s],sane[s]);
+    sane[s] = decodeURIComponent(decodeURIComponent(clone(sane[s])));
+    // console.log("decoded", typeof sane[s],sane[s]);
+
+  }
   const string = qs.stringify(sane);
+
 
   // console.log(string);
   const query = q2m(string, { ignore: 'embed' });
@@ -84,9 +79,10 @@ function getQuery(req, debug) {
     console.log('DEBUG getQuery q2m',query);
   }
 
-
-  // Fix array criteria
+  // Fix criteria
   for (const criteria in query.criteria) {
+
+    // Fix array criteria
     if (criteria.indexOf('[') > -1) {
       const cleanCriteria = criteria.substr(0, criteria.indexOf('['));
       const obj = {};
@@ -94,25 +90,30 @@ function getQuery(req, debug) {
       if (!query.criteria.$and) {
         query.criteria.$and = [];
       }
-      obj[cleanCriteria] = query.criteria[criteria];
+      obj[cleanCriteria] = clone(query.criteria[criteria]);
       query.criteria.$and.push(obj);
       // console.log("a2",query.criteria.$and);
       // Object.assign(query.criteria,and);
       delete query.criteria[criteria];
     }
+
+    // Fix text search
     if (criteria == "compiledRelease.contracts.title") {
-      query.criteria.$text = { $search: query.criteria[criteria] };
+      query.criteria.$text = { $search: clone(query.criteria[criteria]) };
       delete query.criteria[criteria];
     }
+
+    //Fix name search (on two fields)
     if (criteria == "compiledRelease.name") {
       if (!query.criteria.$or) {
         query.criteria.$or = [];
       }
-      query.criteria.$or.push({ "compiledRelease.name": query.criteria[criteria] });
-      query.criteria.$or.push({ "compiledRelease.other_names.name": query.criteria[criteria] });
+      query.criteria.$or.push({ "compiledRelease.name": clone(query.criteria[criteria]) });
+      query.criteria.$or.push({ "compiledRelease.other_names.name": clone(query.criteria[criteria]) });
 
       delete query.criteria[criteria];
     }
+
   }
   delete query.criteria.debug;
 
@@ -126,7 +127,7 @@ function getQuery(req, debug) {
 
   // console.log("getQuery parsed",);
 
-  query.criteria = parsed.mapValues((field, value) => (parseDates(value)));
+  query.criteria = parsed.mapValues((field, value) => ( parseDates(value)));
 
   if (debug) {
     console.log('DEBUG getQuery criteria',JSON.stringify(query.criteria,null,4));

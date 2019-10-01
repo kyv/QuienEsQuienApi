@@ -27,7 +27,7 @@
     "mongo-sanitize": "^1.0.1",
     "monk": "^4.0.0",
     "qs": "^6.4.0",
-    "query-to-mongo": "^0.10.0",
+    "query-to-mongo": "^0.10.1",
     "raml-object-to-raml": "0.0.7",
     "@chezearth/swagger-express-mw": "^0.7.2",
     "swagger-ui-express": "^4.0.6",
