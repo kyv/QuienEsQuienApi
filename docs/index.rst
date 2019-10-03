@@ -31,9 +31,9 @@ Nota: Esta documentación está en proceso de actualización. Por cualquier cons
 
   fuentes/listado.md
   fuentes/compranet.rst
-  fuentes/compranet3.md
-  fuentes/pot.md
-  fuentes/tdc.md
+  fuentes/compranet3.rst
+  fuentes/pot.rst
+  fuentes/tdc.rst
 
 .. toctree::
    :maxdepth: 2
