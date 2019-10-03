@@ -30,7 +30,7 @@ Nota: Esta documentación está en proceso de actualización. Por cualquier cons
   :caption: Fuentes
 
   fuentes/listado.md
-  fuentes/compranet.md
+  fuentes/compranet.rst
   fuentes/compranet3.md
   fuentes/pot.md
   fuentes/tdc.md
