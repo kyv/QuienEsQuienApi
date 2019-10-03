@@ -31,6 +31,7 @@ Nota: Esta documentación está en proceso de actualización. Por cualquier cons
 
   fuentes/listado.md
   fuentes/compranet.rst
+  fuentes/compranet2019.rst
   fuentes/compranet3.rst
   fuentes/pot.rst
   fuentes/tdc.rst
