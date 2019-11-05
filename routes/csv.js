@@ -21,6 +21,7 @@ function api2csv(apiResponse, collection, debug) {
       'Contract amount',
       'Contract currency',
       'Source',
+      'QQW Link'
     ],
     persons: ['id', 'name', 'contract_amount_supplier', 'contract_count_supplier'],
     institutions: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
@@ -48,24 +49,26 @@ function api2csv(apiResponse, collection, debug) {
           for (const c in record.compiledRelease.contracts) {
             if (Object.prototype.hasOwnProperty.call(record.compiledRelease.contracts, c)) {
               try {
-                const award = pickBy(record.compiledRelease.awards, i => i.id === record.compiledRelease.contracts[c].awardID);
-                const suppliersNames = values(award)[0].suppliers.map(s => { if (s.name.toString()) { return s.name.replace(/"/g, '\'')}}).join(";");
-                const sources = (record.compiledRelease.source) ? record.compiledRelease.source.map(s => s.url.replace(/ /g,"%20")).join(" ") : "";
+                const awardE = pickBy(record.compiledRelease.awards, i => i.id === record.compiledRelease.contracts[c].awardID);
+                const award = values(awardE)[0];
+                // console.log("award",JSON.stringify(award,null,4))
+                const suppliersNames = award.suppliers.map(s => { if (s.name.toString()) { return s.name.replace(/"/g, '\'')}}).join(";");
+                const sources = (award.documents) ? award.documents.map(s => s.url.replace(/ /g,"%20")).join(" ") : "";
 
-                // console.log("source",JSON.stringify(sources,null,4))
                 const row = [
                   record.ocid,
                   record.compiledRelease.contracts[c].title.toString().replace(/"/g, '\''),
                   suppliersNames, // .suppliers.name
                   buyerParty[0].name.replace(/"/g, '\''),
-                  buyerParty[0].memberOf[0].name.replace(/"/g, '\''),
+                  (buyerParty[0].memberOf) ? buyerParty[0].memberOf[0].name.replace(/"/g, '\'') : "",
                   record.compiledRelease.total_amount,
                   record.compiledRelease.tender.procurementMethod,
-                  record.compiledRelease.contracts[c].period.startDate,
-                  record.compiledRelease.contracts[c].period.endDate,
+                  (record.compiledRelease.contracts[c].period) ? record.compiledRelease.contracts[c].period.startDate : "",
+                  (record.compiledRelease.contracts[c].period) ? record.compiledRelease.contracts[c].period.endDate : "",
                   record.compiledRelease.contracts[c].value.amount,
                   record.compiledRelease.contracts[c].value.currency,
                   sources,
+                  "https://www.quienesquien.wiki/contratos/"+encodeURIComponent(record.ocid)
                 ];
 
                 csv.push(`"${row.join('","')}"`);
@@ -113,15 +116,16 @@ function api2csv(apiResponse, collection, debug) {
 router.get('/:collection', async(req, res) => {
   // console.log("get");
   const limit = 500;
-  const question = (req.originalUrl.indexOf('?') === -1 ? '?' : '');
   const collection = req.params.collection;
   const fields = {
-    contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source"
+    contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source"
   }
   const params = `${fields[collection]}&limit=${limit}`;
-  const url = `http://${req.headers.host + req.originalUrl.replace('csv/', '')}${question}${params}`;
+  const newURL = req.originalUrl.replace('csv/', '').replace(/&limit=[0-9]*/,"");
+  const url = `http://${req.headers.host + newURL}${params}`;
   const debug = req.query.debug;
-  // console.log(url);
+  console.log(req.originalUrl);
+  console.log(url);
 
   request(url, (req2, res2, response) => {
     if (debug) {
