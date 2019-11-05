@@ -5,7 +5,7 @@ info:
   description: >-
     QuienEsQuien.Wiki API. [DOCS](https://QuienEsQuienApi.readthedocs.io).  [Source](https://github.com/ProjectPODER/QuienEsQuienApi).
   title: API de QuienEsQuien
-  version: '2.0.1'
+  version: '2.0.2'
   contact:
     name: Tecnologías para la Transparencia (PODER)
     url: 'https://www.quienesquien.wiki/contacto'
