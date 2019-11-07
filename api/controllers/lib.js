@@ -460,29 +460,31 @@ function calculateSummaries(orgID, records) {
             }
           }
 
-          if (!yearSummary[year]) {
-            yearSummary[year] = {
-              buyer: { value: 0, count: 0 },
-              supplier: { value: 0, count: 0 },
-              funder: { value: 0, count: 0 },
-            };
-          }
+          if (year != "undefined") {
+            if (!yearSummary[year]) {
+              yearSummary[year] = {
+                buyer: { value: 0, count: 0 },
+                supplier: { value: 0, count: 0 },
+                funder: { value: 0, count: 0 },
+              };
+            }
 
-          // TODO: sumar los amounts en MXN siempre
-          if (isSupplierContract) {
-            yearSummary[year].supplier.value += parseInt(contract.value.amount, 10);
-            yearSummary[year].supplier.count += 1;
-          }
-          if (isBuyerContract) {
-            yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
-            yearSummary[year].buyer.count += 1;
-          }
-          if (isFunderContract) {
-            yearSummary[year].funder.value += parseInt(contract.value.amount, 10);
-            yearSummary[year].funder.count += 1;
-          }
+            // TODO: sumar los amounts en MXN siempre
+            if (isSupplierContract) {
+              yearSummary[year].supplier.value += parseInt(contract.value.amount, 10);
+              yearSummary[year].supplier.count += 1;
+            }
+            if (isBuyerContract) {
+              yearSummary[year].buyer.value += parseInt(contract.value.amount, 10);
+              yearSummary[year].buyer.count += 1;
+            }
+            if (isFunderContract) {
+              yearSummary[year].funder.value += parseInt(contract.value.amount, 10);
+              yearSummary[year].funder.count += 1;
+            }
 
-
+          }
+          
           if (!typeSummary[procurementMethod]) {
             typeSummary[procurementMethod] = {
               buyer: { value: 0, count: 0 },
