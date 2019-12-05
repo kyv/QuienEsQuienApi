@@ -63,9 +63,11 @@ function getQuery(req, debug) {
   // const string =  decodeURIComponent(decodeURIComponent(clone(qs.stringify(sane))));
   //Fix values with commas
   for (s in sane) {
+    if (typeof sane[s] != "object") {
     // console.log("non-decoded",typeof sane[s],sane[s]);
-    sane[s] = decodeURIComponent(decodeURIComponent(clone(sane[s])));
+      sane[s] = decodeURIComponent(decodeURIComponent(clone(sane[s])));
     // console.log("decoded", typeof sane[s],sane[s]);
+    }
 
   }
   const string = qs.stringify(sane);
@@ -431,6 +433,11 @@ function calculateSummaries(orgID, records) {
           // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
           const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
+          // console.log("compiledRelease.buyer.id",compiledRelease.buyer.id);
+          if (!buyerParty) {
+            // console.log("compiledRelease.parties",compiledRelease.parties);
+
+        }
           const isBuyerContract = buyerParty.id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID) || memberOfParty && memberOfParty.memberOf[0].id === orgID;
           const isFunderContract = (funderParty.id === orgID) ;
           // console.log("contract.period",contract.period,compiledRelease.ocid);
@@ -484,7 +491,7 @@ function calculateSummaries(orgID, records) {
             }
 
           }
-          
+
           if (!typeSummary[procurementMethod]) {
             typeSummary[procurementMethod] = {
               buyer: { value: 0, count: 0 },
