@@ -86,7 +86,7 @@ async function allContracts(req, res) {
 
   let joins = [];
 
-
+  //Double query system - supplier id
   if (query.criteria['compiledRelease.awards.suppliers.id']) {
     query.embed = true;
     query.criteria['compiledRelease.awards.suppliers.id'] = { $in: await db.get('organizations').distinct('id',
@@ -96,6 +96,7 @@ async function allContracts(req, res) {
     };
   }
 
+  //Double query system - buyer parent name
   if (query.criteria['compiledRelease.parties.memberOf.name']) {
     query.embed = true;
     let memberOfQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.parties.memberOf.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.parties.memberOf.name'] }]};
@@ -105,6 +106,17 @@ async function allContracts(req, res) {
     delete query.criteria['compiledRelease.parties.memberOf.name'];
   }
 
+  //Double query system - contactPoint name
+  if (query.criteria['compiledRelease.parties.contactPoint.name']) {
+    query.embed = true;
+    let contactPointQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.parties.contactPoint.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.parties.contactPoint.name'] }]};
+
+    query.criteria['compiledRelease.parties.contactPoint.id'] = { $in: await db.get('persons').distinct('id',contactPointQuery),
+    };
+    delete query.criteria['compiledRelease.parties.contactPoint.name'];
+  }
+
+  //Double query system - supplier name
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
     let suppliersQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.awards.suppliers.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.awards.suppliers.name'] }]};
