@@ -48,7 +48,7 @@ function addRecordPackage(object, debug) {
     const recordPackage = clone(recordPackageBase);
 
     recordPackage.records = object[1];
-    recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/${object[1][0].ocid}`;
+    recordPackage.uri = `https://api.beta.quienesquien.wiki/v2/contracts/${object[1][0].ocid}`;
     recordPackage.publishedDate = object[1][0].compiledRelease.date;
     object[1] = [recordPackage];
     object[2] = object[1][0].records.length;
