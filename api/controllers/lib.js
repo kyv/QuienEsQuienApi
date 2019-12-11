@@ -103,6 +103,9 @@ function getQuery(req, debug) {
     if (criteria == "compiledRelease.contracts.title") {
       query.criteria.$text = { $search: clone(query.criteria[criteria]) };
       delete query.criteria[criteria];
+
+      //Contract search with title do not sort -- because of mongo memory restrictions
+      delete query.options.sort;
     }
 
     //Fix name search (on two fields)
@@ -199,7 +202,7 @@ function allDocuments(query, collection, JOINS, debug=false) {
     console.log("DEBUG allDocuments",collection.name);
     console.log("DEBUG allDocuments query 1",JSON.stringify(query,null,4));
   }
-  const maxTime = 1000*12;
+  const maxTime = 1000*30;
 
   query.options.maxTimeMS = maxTime;
   const countP = collection.count(query.criteria,{maxTimeMS: query.options.maxTimeMS}).catch(err => {
@@ -437,7 +440,7 @@ function calculateSummaries(orgID, records) {
           if (!buyerParty) {
             // console.log("compiledRelease.parties",compiledRelease.parties);
 
-        }
+          }
           const isBuyerContract = buyerParty.id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID) || memberOfParty && memberOfParty.memberOf[0].id === orgID;
           const isFunderContract = (funderParty.id === orgID) ;
           // console.log("contract.period",contract.period,compiledRelease.ocid);
