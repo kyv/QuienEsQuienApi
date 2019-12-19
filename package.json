@@ -27,7 +27,7 @@
     "mongo-parse": "^2.1.0",
     "mongo-querystring": "^4.1.1",
     "mongo-sanitize": "^1.0.1",
-    "monk": "^4.0.0",
+    "monk": "^7.1.1",
     "qs": "^6.4.0",
     "query-to-mongo": "^0.10.1",
     "raml-object-to-raml": "0.0.7",
