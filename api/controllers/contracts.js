@@ -116,6 +116,18 @@ async function allContracts(req, res) {
     delete query.criteria['compiledRelease.parties.contactPoint.name'];
   }
 
+
+  //Double query system - funder name
+  if (query.criteria['funder']) {
+    query.embed = true;
+    let funderQuery = { "$or": [{ "compiledRelease.name": query.criteria['funder'] },{ "compiledRelease.other_names.name": query.criteria['funder'] }]};
+
+    query.criteria['compiledRelease.parties.id'] = { $in: await db.get('organizations').distinct('id',funderQuery) };
+    query.criteria['compiledRelease.parties.details.type'] = "funder";
+
+    delete query.criteria['funder'];
+  }
+
   //Double query system - supplier name
   if (query.criteria['compiledRelease.awards.suppliers.name']) {
     // console.log('allContracts','compiledRelease.awards.suppliers.name',query.criteria['compiledRelease.awards.suppliers.name']);
