@@ -23,7 +23,8 @@ function api2csv(apiResponse, collection, debug) {
       'Source',
       'QQW Link'
     ],
-    persons: ['id', 'name', 'contract_amount_supplier', 'contract_count_supplier'],
+    persons: ['id', 'name', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
+    mujeres: ['name', 'role', 'company', 'country', 'gender', 'source'],
     institutions: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
     companies: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
   };
@@ -83,20 +84,81 @@ function api2csv(apiResponse, collection, debug) {
         break;
       }
       case 'persons': {
-        const row = [item.id, item.name, item.contract_amount.supplier, item.contract_count.supplier];
+        const row = [item.compiledRelease.id, item.compiledRelease.name];
+        if (item.compiledRelease.contract_amount) {
+          row.push(item.compiledRelease.contract_amount.supplier)
+          row.push(item.compiledRelease.contract_amount.buyer)
+        }
+        else { row.push("");row.push(""); }
+        if (item.compiledRelease.contract_count) {
+          row.push(item.compiledRelease.contract_count.supplier)
+          row.push(item.compiledRelease.contract_count.buyer)
+        }
+        else { row.push("");row.push(""); }
 
         csv.push(`"${row.join('","')}"`);
         break;
       }
+      case 'mujeres': {
+        if (1) {
+          //item.compiledRelease.memberships && (item.compiledRelease.memberships.child.length > 0 || item.compiledRelease.memberships.parent.length > 0)
+          //console.log(item.compiledRelease.memberships.child,item);
+          const row = [item.compiledRelease.name,item.compiledRelease.memberships.child.length];
+
+          if (item.compiledRelease.memberships) {
+            row.push(item.compiledRelease.memberships.parent.compiledRelease.role);
+          }
+          else { row.push(""); }
+
+          if (item.compiledRelease.memberships.child.length > 0 || item.compiledRelease.memberships.parent.length > 0) {
+            row.push(item.compiledRelease.memberships.parent.compiledRelease.organization_name);
+          }
+          else { row.push(""); }
+
+
+          if (item.compiledRelease.area) {
+            row.push(item.compiledRelease.area.name);
+          }
+          else { row.push(""); }
+
+          if (item.compiledRelease.gender) {
+            row.push(item.compiledRelease.gender);
+          }
+          else { row.push(""); }
+
+          if (item.compiledRelease.source) {
+            row.push(item.compiledRelease.source.map(s => s.id).join(" "));
+          }
+          else { row.push(""); }
+
+          csv.push(`"${row.join('","')}"`);
+        }
+        break;
+      }
       case 'companies': {
-        const row = [item.id, item.name, item.classification, item.subclassification, item.contract_amount.supplier, item.contract_count.supplier, item.contract_amount.buyer, item.contract_count.buyer];
+        const row = [item.compiledRelease.id, item.compiledRelease.name, item.compiledRelease.classification, item.compiledRelease.subclassification];
+        if (item.compiledRelease.contract_amount) {
+          row.push(item.compiledRelease.contract_amount.supplier)
+          row.push(item.compiledRelease.contract_amount.buyer)
+        }
+        if (item.compiledRelease.contract_count) {
+          row.push(item.compiledRelease.contract_count.supplier)
+          row.push(item.compiledRelease.contract_count.buyer)
+        }
 
         csv.push(`"${row.join('","')}"`);
         break;
       }
       case 'institutions': {
-        // console.log(item);
-        const row = [item.id, item.name, item.classification, item.subclassification, item.contract_amount.supplier, item.contract_count.supplier, item.contract_amount.buyer, item.contract_count.buyer];
+        const row = [item.compiledRelease.id, item.compiledRelease.name, item.compiledRelease.classification, item.compiledRelease.subclassification];
+        if (item.compiledRelease.contract_amount) {
+          row.push(item.compiledRelease.contract_amount.supplier)
+          row.push(item.compiledRelease.contract_amount.buyer)
+        }
+        if (item.compiledRelease.contract_count) {
+          row.push(item.compiledRelease.contract_count.supplier)
+          row.push(item.compiledRelease.contract_count.buyer)
+        }
 
         csv.push(`"${row.join('","')}"`);
         break;
@@ -115,21 +177,34 @@ function api2csv(apiResponse, collection, debug) {
 
 router.get('/:collection', async(req, res) => {
   // console.log("get");
-  const limit = 500;
+  const limit = req.query.limit || 1000;
   const collection = req.params.collection;
   const fields = {
-    contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source"
+    contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source",
+    persons: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
+    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.name",
+    companies: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
+    institutions: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
   }
-  const params = `${fields[collection]}&limit=${limit}`;
-  const newURL = req.originalUrl.replace('csv/', '').replace(/&limit=[0-9]*/,"");
+  let params = `${fields[collection]}&limit=${limit}`;
+  let newURL = req.originalUrl.replace('csv/', '').replace(/&limit=[0-9]*/,"");
+
+  console.log("collection: ", collection);
+  if (collection=="mujeres") {
+    newURL = newURL.replace("mujeres","persons");
+    params+="&embed=1";
+  }
+
+  //Add question mark before parameters if it's not there already
+  if (newURL.indexOf("?") == -1) { newURL+="?" }
   const url = `http://${req.headers.host + newURL}${params}`;
   const debug = req.query.debug;
-  console.log(req.originalUrl);
-  console.log(url);
+  console.log("originalUrl:", req.originalUrl);
+  console.log("URL:", url);
 
   request(url, (req2, res2, response) => {
     if (debug) {
-      console.log("response status",response);
+      // console.log("response status",response);
     }
     try {
       const responseJson = JSON.parse(response);

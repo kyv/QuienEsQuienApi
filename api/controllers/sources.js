@@ -116,7 +116,7 @@ function allSources(req, res) {
 
   const queries = [
     // 0: organizations sources count
-    db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"} }}]),
     // 1: persons sources count
     db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
     // 2: organizations type count
