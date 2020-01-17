@@ -100,38 +100,44 @@ function api2csv(apiResponse, collection, debug) {
         break;
       }
       case 'mujeres': {
-        if (1) {
-          //item.compiledRelease.memberships && (item.compiledRelease.memberships.child.length > 0 || item.compiledRelease.memberships.parent.length > 0)
-          //console.log(item.compiledRelease.memberships.child,item);
-          const row = [item.compiledRelease.name,item.compiledRelease.memberships.child.length];
+        if (item.memberships) {
+          const memberships = [...item.memberships.parent, ...item.memberships.child];
 
-          if (item.compiledRelease.memberships) {
-            row.push(item.compiledRelease.memberships.parent.compiledRelease.role);
+          for (m in memberships) {
+            let membership = memberships[m];
+            // console.log("a",item.id,membership);
+            const row = [item.compiledRelease.name];
+            if (membership.compiledRelease) {
+
+              if (membership.compiledRelease.role) {
+                row.push(membership.compiledRelease.role);
+              }
+              else { row.push(""); }
+
+              if (membership.compiledRelease.organization_name || membership.compiledRelease.parent_name) {
+                row.push(membership.compiledRelease.organization_name || membership.compiledRelease.parent_name);
+              }
+              else { row.push(""); }
+
+
+              if (item.compiledRelease.area) {
+                row.push(item.compiledRelease.area.name);
+              }
+              else { row.push(""); }
+
+              if (item.compiledRelease.gender) {
+                row.push(item.compiledRelease.gender);
+              }
+              else { row.push(""); }
+
+              if (item.compiledRelease.source) {
+                row.push(item.compiledRelease.source.map(s => s.id).join(" "));
+              }
+              else { row.push(""); }
+
+              csv.push(`"${row.join('","')}"`);
+            }
           }
-          else { row.push(""); }
-
-          if (item.compiledRelease.memberships.child.length > 0 || item.compiledRelease.memberships.parent.length > 0) {
-            row.push(item.compiledRelease.memberships.parent.compiledRelease.organization_name);
-          }
-          else { row.push(""); }
-
-
-          if (item.compiledRelease.area) {
-            row.push(item.compiledRelease.area.name);
-          }
-          else { row.push(""); }
-
-          if (item.compiledRelease.gender) {
-            row.push(item.compiledRelease.gender);
-          }
-          else { row.push(""); }
-
-          if (item.compiledRelease.source) {
-            row.push(item.compiledRelease.source.map(s => s.id).join(" "));
-          }
-          else { row.push(""); }
-
-          csv.push(`"${row.join('","')}"`);
         }
         break;
       }
@@ -197,8 +203,12 @@ router.get('/:collection', async(req, res) => {
 
   //Add question mark before parameters if it's not there already
   if (newURL.indexOf("?") == -1) { newURL+="?" }
+
+  //Remove download parameter before parameters if it's not there already
+  if (newURL.indexOf("download=true") != -1) { newURL = newURL.replace("download=true","") }
   const url = `http://${req.headers.host + newURL}${params}`;
   const debug = req.query.debug;
+  const download = req.query.download;
   console.log("originalUrl:", req.originalUrl);
   console.log("URL:", url);
 
@@ -211,7 +221,13 @@ router.get('/:collection', async(req, res) => {
       if (responseJson.status == "success") {
         const csv = api2csv(responseJson, collection, debug);
 
-        res.set('Content-Type', 'text/plain');
+        if (req.query.download == "true") {
+          res.set('Content-Type', 'text/csv');
+          res.set('Content-Disposition', "attachment");
+        }
+        else {
+          res.set('Content-Type', 'text/plain');
+        }
         res.send(csv);
       }
       else {
