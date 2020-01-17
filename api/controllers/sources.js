@@ -101,6 +101,7 @@ function aggregateSources(array) {
         }
 
         sources[sourceName][collectionName].count += parseInt(array[c][s].count);
+        sources[sourceName][collectionName].lastModified = array[c][s].lastModified;
       }
     }
     }
@@ -118,7 +119,7 @@ function allSources(req, res) {
     // 0: organizations sources count
     db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"} }}]),
     // 1: persons sources count
-    db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
+    db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"}}}]),
     // 2: organizations type count
     db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", count: {$sum:1}}}]),
     // 3: persons count
