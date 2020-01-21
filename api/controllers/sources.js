@@ -106,7 +106,7 @@ function aggregateSources(array) {
     }
     }
     catch (e) {
-      console.error("Porcessing error:",e);
+      console.error("Sources: Processing error:",e);
     }
   }
   // console.log("aggregateSources s",sources);

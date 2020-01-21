@@ -408,8 +408,8 @@ paths:
         - Sources
       parameters:
         - in: query
-          name: title
-          description: Title of contract.
+          name: name
+          description: Name of source.
           type: string
           required: false
           allowEmptyValue: true
@@ -420,6 +420,32 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Source'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /countries:
+    x-swagger-router-controller: countries
+    get:
+      operationId: allCountries
+      summary: Retrieve array of countries and states
+      description: Retrieve array of countries and states
+      tags:
+        - Countries
+      parameters:
+        - in: query
+          name: name
+          description: Name of country
+          type: string
+          required: false
+          allowEmptyValue: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Area'
         default:
           description: Error
           schema:
@@ -760,7 +786,18 @@ definitions:
         type: string
         minLength: 1
         pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
-
+  Area:
+    description: An area
+    type: object
+    properties:
+      id:
+        type: string
+        minLength: 1
+        pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17}$'
+      states:
+        type: array
+        items:
+          $ref: '#/definitions/Area'
 parameters:
   fields:
     in: query

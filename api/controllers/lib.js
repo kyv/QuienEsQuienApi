@@ -146,9 +146,15 @@ function getQuery(req, debug) {
 
 function getDistinct(req, res, collection) {
   const field = req.swagger.params.field.value;
-  const sane = sanitize(req.query);
-  const string = qs.stringify(sane);
-  const query = q2m(string, { ignore: 'embed' });
+  console.log("Distinct",field);
+
+  const debug = req.query.debug;
+  const query = getQuery(req,debug);
+
+  // const sane = sanitize(req.query);
+  // const string = qs.stringify(sane);
+  // const query = q2m(string, { ignore: 'embed' });
+
 
   res.set('Content-Type', 'application/json; charset=utf-8');
   return collection.distinct(field, query.criteria)
@@ -160,7 +166,13 @@ function getDistinct(req, res, collection) {
         data,
         size,
       });
-    });
+    }).catch(err => {
+      console.error("getDistinct error",err);
+      if (err) {
+        return `error: ${err}`;
+      }
+      return err;
+    });;
 }
 
 function queryToPipeline(query, JOINS) {
