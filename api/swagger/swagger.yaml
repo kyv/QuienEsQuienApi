@@ -427,9 +427,9 @@ paths:
   /countries:
     x-swagger-router-controller: countries
     get:
-      operationId: allCountries
-      summary: Retrieve array of countries and states
-      description: Retrieve array of countries and states
+      operationId: singleCountry
+      summary: Retrieve data of a specific country
+      description: Retrieve data of a specific country
       tags:
         - Countries
       parameters:
@@ -439,6 +439,32 @@ paths:
           type: string
           required: false
           allowEmptyValue: true
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Area'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /countries/{id}:
+    x-swagger-router-controller: countries
+    get:
+      operationId: singleCountry
+      summary: Retrieve array of countries and states
+      description: Retrieve array of countries and states
+      tags:
+        - Countries
+      parameters:
+        - name: id
+          in: path
+          description: Alpha2 code of country
+          required: true
+          type: string
+          pattern: '^[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{2}$'
       responses:
         '200':
           description: OK
