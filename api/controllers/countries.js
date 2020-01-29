@@ -9,6 +9,34 @@ const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 const countries = require("i18n-iso-countries");
 
+//TODO: Estos lookups deben ser de estados, empresas, instituciones y persons
+const membershipJoins = [
+  {
+    $lookup: {
+      from: 'memberships',
+      localField: 'id',
+      foreignField: 'compiledRelease.organization_id',
+      as: 'memberships.child',
+    },
+  },
+  {
+    $lookup: {
+      from: 'memberships',
+      localField: 'id',
+      foreignField: 'compiledRelease.parent_id',
+      as: 'memberships.parent',
+    },
+  },
+  // {
+  //   $lookup: {
+  //     from: 'organizations',
+  //     localField: 'memberships.child.organization_id',
+  //     foreignField: 'id',
+  //     as: 'memberships.child_expanded',
+  //   },
+  // },
+];
+
 
 function aggregateCountries(array) {
   // console.log("aggregateCountries 1",array);

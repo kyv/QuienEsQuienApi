@@ -24,7 +24,7 @@ function api2csv(apiResponse, collection, debug) {
       'QQW Link'
     ],
     persons: ['id', 'name', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
-    mujeres: ['name', 'role', 'company', 'country', 'gender', 'source'],
+    mujeres: ['name', 'role', 'title', 'company', 'country', 'gender', 'source'],
     institutions: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
     companies: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
   };
@@ -114,14 +114,24 @@ function api2csv(apiResponse, collection, debug) {
               }
               else { row.push(""); }
 
+              if (membership.compiledRelease.title) {
+                row.push(membership.compiledRelease.title);
+              }
+              else { row.push(""); }
+
               if (membership.compiledRelease.organization_name || membership.compiledRelease.parent_name) {
                 row.push(membership.compiledRelease.organization_name || membership.compiledRelease.parent_name);
               }
               else { row.push(""); }
 
-
+              // console.log(item.compiledRelease.area);
               if (item.compiledRelease.area) {
-                row.push(item.compiledRelease.area.name);
+                if (item.compiledRelease.area.hasOwnProperty("id")) {
+                  row.push(item.compiledRelease.area.id);
+                }
+                else if (item.compiledRelease.area.length > 0) {
+                  row.push(item.compiledRelease.area[0].id);
+                }
               }
               else { row.push(""); }
 
@@ -188,7 +198,7 @@ router.get('/:collection', async(req, res) => {
   const fields = {
     contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source",
     persons: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
-    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.name",
+    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.title,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.id",
     companies: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
     institutions: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
   }
