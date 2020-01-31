@@ -4,6 +4,7 @@ const router = routerLib();
 const request = require('request');
 const pickBy = require('lodash/pickBy');
 const values = require('lodash/values');
+const countries = require("i18n-iso-countries");
 
 function api2csv(apiResponse, collection, debug) {
   const csv = [];
@@ -106,6 +107,10 @@ function api2csv(apiResponse, collection, debug) {
           for (m in memberships) {
             let membership = memberships[m];
             // console.log("a",item.id,membership);
+            if (membership.compiledRelease.parent_subclass == "stock-exchange") {
+              // console.log("Ignorando bolsa");
+              continue;
+            }
             const row = [item.compiledRelease.name];
             if (membership.compiledRelease) {
 
@@ -127,10 +132,11 @@ function api2csv(apiResponse, collection, debug) {
               // console.log(item.compiledRelease.area);
               if (item.compiledRelease.area) {
                 if (item.compiledRelease.area.hasOwnProperty("id")) {
-                  row.push(item.compiledRelease.area.id);
+                  row.push(countries.getName(item.compiledRelease.area.id,"es"));
                 }
                 else if (item.compiledRelease.area.length > 0) {
-                  row.push(item.compiledRelease.area[0].id);
+                  const areasNames = item.compiledRelease.area.map(a => { if (a.id) { return countries.getName(a.id,"es") }}).join(" ");
+                  row.push(areasNames);
                 }
               }
               else { row.push(""); }
@@ -232,8 +238,12 @@ router.get('/:collection', async(req, res) => {
         const csv = api2csv(responseJson, collection, debug);
 
         if (req.query.download == "true") {
+          let nameParams = "";
+          if (req.query["compiledRelease.area.id"]) {
+            nameParams = "-"+req.query["compiledRelease.area.id"];
+          }
           res.set('Content-Type', 'text/csv');
-          res.set('Content-Disposition', "attachment");
+          res.set('Content-Disposition', "attachment; filename="+collection+nameParams+".csv");
         }
         else {
           res.set('Content-Type', 'text/plain');

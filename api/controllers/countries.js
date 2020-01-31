@@ -115,10 +115,15 @@ function getCountryData(countryId,embed) {
 
 
 function singleCountry(req, res) {
-  console.log("singleCountry",req.swagger.params.id.value);
-  const debug = req.query.debug;
-  const countryData = getCountryData(req.swagger.params.id.value, true);
-  dataReturn(res, [1, countryData], 0, true, 0, getCountryData, debug);
+  if (req.swagger.params.id) {
+    console.log("singleCountry",req.swagger.params.id.value);
+    const debug = req.query.debug;
+    const countryData = getCountryData(req.swagger.params.id.value, true);
+    dataReturn(res, [1, countryData], 0, true, 0, getCountryData, debug);
+  }
+  else {
+    console.error("singleCountry error: No country id specified.")
+  }
 }
 
 function allCountries(req, res) {

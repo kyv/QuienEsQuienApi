@@ -427,7 +427,7 @@ paths:
   /countries:
     x-swagger-router-controller: countries
     get:
-      operationId: singleCountry
+      operationId: allCountries
       summary: Retrieve data of a specific country
       description: Retrieve data of a specific country
       tags:
