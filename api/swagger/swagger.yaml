@@ -439,6 +439,12 @@ paths:
           type: string
           required: false
           allowEmptyValue: true
+        - in: query
+          name: id
+          description: Two-letter id of country
+          type: string
+          required: false
+          allowEmptyValue: true
       responses:
         '200':
           description: OK

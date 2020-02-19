@@ -38,7 +38,7 @@ const membershipJoins = [
 ];
 
 
-function aggregateCountries(array) {
+function aggregateCountries(array,embed) {
   // console.log("aggregateCountries 1",array);
 
   let countriesList = [];
@@ -85,7 +85,7 @@ function aggregateCountries(array) {
   const countriesData = [];
 
   for (c in countriesList) {
-    const countryData = getCountryData(countriesList[c], false);
+    const countryData = getCountryData(countriesList[c], embed);
     if (countryData) {
       countriesData.push(countryData);
     }
@@ -115,6 +115,8 @@ function getCountryData(countryId,embed) {
 
 
 function singleCountry(req, res) {
+  const debug = req.query.debug;
+
   if (req.swagger.params.id) {
     console.log("singleCountry",req.swagger.params.id.value);
     const debug = req.query.debug;
@@ -127,29 +129,48 @@ function singleCountry(req, res) {
 }
 
 function allCountries(req, res) {
+  const debug = req.query.debug;
+  const embed = req.query.embed;
+
+  const id = (req.swagger.params.id) ? req.swagger.params.id.value : "";
+  let match = {$match: { "compiledRelease.area.classification": "country" }};
+  if (id) {
+    match.$match["compiledRelease.area.id"] = id;
+  }
 
   const queries = [
     // 0: organizations countries count
     db.get("organizations").aggregate([
         {$unwind: "$compiledRelease.area"},
-        {$match: { "compiledRelease.area.classification": "country" }},
+        match,
         {$group: {_id: "$compiledRelease.area.id", count: {$sum: 1}}}
     ]),
     // 1: persons countries count
     db.get("persons").aggregate([
         {$unwind: "$compiledRelease.area"},
-        {$match: { "compiledRelease.area.classification": "country" }},
+        match,
         {$group: {_id: "$compiledRelease.area.id", count: {$sum: 1}}}
     ])
   ];
 
   console.log("allCountries")
+  if (debug) {
+    console.log("allCountries",id,match);
+  }
 
   Promise.all(queries)
+    .then(array => (aggregateCountries(array, debug)))
+    .catch(err => {
+      console.error('allCountries query error', err);
+      if (err) {
+        return err;
+      }
+      return false;
+    })
     .then(array => {
       // console.log("aggregateCountries 0",array);
 
-      return dataReturn(res, aggregateCountries(array), 0, 0, false, (a)=>a, false);
+      return dataReturn(res, array, 0, 0, embed, a=>a, debug);
     })
     .catch(err => {
       console.error('aggregateCountries error', err);
