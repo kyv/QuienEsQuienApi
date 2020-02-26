@@ -25,7 +25,7 @@ function api2csv(apiResponse, collection, req, debug) {
       'QQW Link'
     ],
     persons: ['id', 'name', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
-    mujeres: ['name', 'role', 'title', 'company', 'country', 'gender', 'source'],
+    mujeres: ['name', 'role', 'title', 'company', 'person_country', 'organization_country', 'gender', 'source'],
     institutions: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
     companies: ['id', 'name', 'classification', 'subclassification', 'contract_amount_supplier', 'contract_count_supplier', 'contract_amount_buyer', 'contract_count_buyer'],
   };
@@ -101,63 +101,66 @@ function api2csv(apiResponse, collection, req, debug) {
         break;
       }
       case 'mujeres': {
-        if (item.memberships) {
-          const memberships = [...item.memberships.parent, ...item.memberships.child];
 
-          for (m in memberships) {
-            let membership = memberships[m];
-            // console.log("a",item.id,membership);
+        let membership = item.memberships.parent;
+        // console.log("a",item.id,membership);
 
-            // Ignore stock exchanges from person memberships
-            if (membership.compiledRelease.parent_subclass == "stock-exchange") {
-              // console.log("Ignorando bolsa");
-              continue;
+
+
+        const row = [item.compiledRelease.name];
+        if (membership.compiledRelease) {
+
+          if (membership.compiledRelease.role) {
+            row.push(membership.compiledRelease.role);
+          }
+          else { row.push(""); }
+
+          if (membership.compiledRelease.title) {
+            row.push(membership.compiledRelease.title);
+          }
+          else { row.push(""); }
+
+          if (membership.compiledRelease.organization_name || membership.compiledRelease.parent_name) {
+            row.push(membership.compiledRelease.organization_name || membership.compiledRelease.parent_name);
+          }
+          else { row.push(""); }
+
+          // console.log(item.compiledRelease.area);
+          if (item.compiledRelease.area) {
+            if (item.compiledRelease.area.hasOwnProperty("id")) {
+              row.push(countries.getName(item.compiledRelease.area.id,"es"));
             }
-
-            const row = [item.compiledRelease.name];
-            if (membership.compiledRelease) {
-
-              if (membership.compiledRelease.role) {
-                row.push(membership.compiledRelease.role);
-              }
-              else { row.push(""); }
-
-              if (membership.compiledRelease.title) {
-                row.push(membership.compiledRelease.title);
-              }
-              else { row.push(""); }
-
-              if (membership.compiledRelease.organization_name || membership.compiledRelease.parent_name) {
-                row.push(membership.compiledRelease.organization_name || membership.compiledRelease.parent_name);
-              }
-              else { row.push(""); }
-
-              // console.log(item.compiledRelease.area);
-              if (item.compiledRelease.area) {
-                if (item.compiledRelease.area.hasOwnProperty("id")) {
-                  row.push(countries.getName(item.compiledRelease.area.id,"es"));
-                }
-                else if (item.compiledRelease.area.length > 0) {
-                  const areasNames = item.compiledRelease.area.map(a => { if (a.id) { return countries.getName(a.id,"es") }}).join(" ");
-                  row.push(areasNames);
-                }
-              }
-              else { row.push(""); }
-
-              if (item.compiledRelease.gender) {
-                row.push(item.compiledRelease.gender);
-              }
-              else { row.push(""); }
-
-              if (item.compiledRelease.source) {
-                row.push(item.compiledRelease.source.map(s => s.id).join(" "));
-              }
-              else { row.push(""); }
-
-              csv.push(`"${row.join('","')}"`);
+            else if (item.compiledRelease.area.length > 0) {
+              const areasNames = item.compiledRelease.area.map(a => { if (a.id) { return countries.getName(a.id,"es") }}).join(" ");
+              row.push(areasNames);
             }
           }
+          else { row.push(""); }
+
+          if (item.organizations.compiledRelease.area) {
+            if (item.organizations.compiledRelease.area.hasOwnProperty("id")) {
+              row.push(countries.getName(item.organizations.compiledRelease.area.id,"es"));
+            }
+            else if (item.organizations.compiledRelease.area.length > 0) {
+              const areasNames = item.organizations.compiledRelease.area.map(a => { if (a.id) { return countries.getName(a.id,"es") }}).join(" ");
+              row.push(areasNames);
+            }
+          }
+          else { row.push(""); }
+
+          if (item.compiledRelease.gender) {
+            row.push(item.compiledRelease.gender);
+          }
+          else { row.push(""); }
+
+          if (item.compiledRelease.source) {
+            row.push(item.compiledRelease.source.map(s => s.id).join(" "));
+          }
+          else { row.push(""); }
+
+          csv.push(`"${row.join('","')}"`);
         }
+
         break;
       }
       case 'companies': {
@@ -207,7 +210,7 @@ router.get('/:collection', async(req, res) => {
   const fields = {
     contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source",
     persons: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
-    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.title,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.id&compiledRelease.memberships.parent.compiledRelease.area.id",
+    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.title,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.id",
     companies: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
     institutions: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
   }

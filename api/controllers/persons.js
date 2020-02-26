@@ -46,8 +46,8 @@ const MUJERES_JOINS = [
             as: 'organizations'
         }
     },
-    { $unwind: '$organizations' },
-]
+    { $unwind: '$organizations' }
+];
 
 function personDataMap(o) {
   // const object = o;
@@ -79,12 +79,15 @@ function allPersons(req, res) {
 
   // console.log("allPersons",query);
   // return {};
+ // { 'organizations.compiledRelease.area.id': query["compiledRelease.area.id"] }
 
+  let country_id = query.criteria["compiledRelease.area.id"];
   let joins = JOINS;
   if (mujeres_embed) {
-    let mujeres_joins = MUJERES_JOINS;
-    mujeres_joins.add({ $match: { 'organizations.compiledRelease.area.id': query["compiledRelease.area.id"] } });
-    joins = joins.add(mujeres_joins);
+    joins = [ ... joins,
+     ... MUJERES_JOINS,
+     { $match: { 'organizations.compiledRelease.area.id': country_id } }
+    ];
   }
 
   allDocuments(query, collection, joins, debug)
