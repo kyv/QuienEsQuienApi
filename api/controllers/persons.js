@@ -37,6 +37,18 @@ const JOINS = [
   },
 ];
 
+const MUJERES_JOINS = [
+    { $unwind: '$memberships.parent' },
+    { $lookup: {
+            from: 'organizations',
+            localField: 'memberships.parent.compiledRelease.organization_id',
+            foreignField: 'compiledRelease.id',
+            as: 'organizations'
+        }
+    },
+    { $unwind: '$organizations' },
+]
+
 function personDataMap(o) {
   // const object = o;
   // // console.log(o);
@@ -61,13 +73,21 @@ function personDataMap(o) {
 
 function allPersons(req, res) {
   const debug = req.query.debug;
+  const mujeres_embed = req.query.mujeres_embed;
   const query = getQuery(req,debug);
   const offset = query.options.skip || 0;
 
   // console.log("allPersons",query);
   // return {};
 
-  allDocuments(query, collection, JOINS, debug)
+  let joins = JOINS;
+  if (mujeres_embed) {
+    let mujeres_joins = MUJERES_JOINS;
+    mujeres_joins.add({ $match: { 'organizations.compiledRelease.area.id': query["compiledRelease.area.id"] } });
+    joins = joins.add(mujeres_joins);
+  }
+
+  allDocuments(query, collection, joins, debug)
     .then(array => (addGraphs(collection, array, db)))
     .catch(err => {
       console.error('allPersons query error', err);

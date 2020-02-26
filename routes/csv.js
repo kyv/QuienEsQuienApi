@@ -6,7 +6,7 @@ const pickBy = require('lodash/pickBy');
 const values = require('lodash/values');
 const countries = require("i18n-iso-countries");
 
-function api2csv(apiResponse, collection, debug) {
+function api2csv(apiResponse, collection, req, debug) {
   const csv = [];
   const headers = {
     contracts: [
@@ -107,10 +107,13 @@ function api2csv(apiResponse, collection, debug) {
           for (m in memberships) {
             let membership = memberships[m];
             // console.log("a",item.id,membership);
+
+            // Ignore stock exchanges from person memberships
             if (membership.compiledRelease.parent_subclass == "stock-exchange") {
               // console.log("Ignorando bolsa");
               continue;
             }
+
             const row = [item.compiledRelease.name];
             if (membership.compiledRelease) {
 
@@ -204,7 +207,7 @@ router.get('/:collection', async(req, res) => {
   const fields = {
     contracts: "&fields=ocid,compiledRelease.buyer.id,compiledRelease.buyer.name,compiledRelease.contracts.title,compiledRelease.contracts.awardID,compiledRelease.awards.documents.url,,compiledRelease.awards.suppliers.name,compiledRelease.awards.id,compiledRelease.parties,compiledRelease.total_amount,compiledRelease.tender.procurementMethod,compiledRelease.contracts.period.startDate,compiledRelease.contracts.period.endDate,compiledRelease.contracts.value,compiledRelease.source",
     persons: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
-    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.title,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.id",
+    mujeres: "&fields=compiledRelease.name,compiledRelease.memberships.parent.compiledRelease.role,compiledRelease.memberships.parent.compiledRelease.title,compiledRelease.memberships.parent.compiledRelease.organization_name,compiledRelease.area.id&compiledRelease.memberships.parent.compiledRelease.area.id",
     companies: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
     institutions: "&fields=compiledRelease.name,compiledRelease.id,compiledRelease.classification,compiledRelease.subclassification,compiledRelease.contract_count.buyer,compiledRelease.contract_amount.buyer,compiledRelease.contract_amount.supplier,compiledRelease.contract_count.supplier",
   }
@@ -235,7 +238,7 @@ router.get('/:collection', async(req, res) => {
     try {
       const responseJson = JSON.parse(response);
       if (responseJson.status == "success") {
-        const csv = api2csv(responseJson, collection, debug);
+        const csv = api2csv(responseJson, collection, req, debug);
 
         if (req.query.download == "true") {
           let nameParams = "";

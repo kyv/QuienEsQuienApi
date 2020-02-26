@@ -121,6 +121,7 @@ function getQuery(req, debug) {
 
   }
   delete query.criteria.debug;
+  delete query.criteria.mujeres_embed;
 
   // console.log("getQuery",JSON.stringify(query));
 
