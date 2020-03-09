@@ -9,37 +9,8 @@ const getDistinct = require('./lib').getDistinct;
 const dataReturn = require('./lib').dataReturn;
 const countries = require("i18n-iso-countries");
 
-//TODO: Estos lookups deben ser de estados, empresas, instituciones y persons
-const membershipJoins = [
-  {
-    $lookup: {
-      from: 'memberships',
-      localField: 'id',
-      foreignField: 'compiledRelease.organization_id',
-      as: 'memberships.child',
-    },
-  },
-  {
-    $lookup: {
-      from: 'memberships',
-      localField: 'id',
-      foreignField: 'compiledRelease.parent_id',
-      as: 'memberships.parent',
-    },
-  },
-  // {
-  //   $lookup: {
-  //     from: 'organizations',
-  //     localField: 'memberships.child.organization_id',
-  //     foreignField: 'id',
-  //     as: 'memberships.child_expanded',
-  //   },
-  // },
-];
-
-
 function aggregateCountries(array,embed) {
-  // console.log("aggregateCountries 1",array);
+  console.log("aggregateCountries 1",array);
 
   let countriesList = [];
 
@@ -48,32 +19,10 @@ function aggregateCountries(array,embed) {
     // console.log("aggregateCountries 2");
       for (s in array[c]) {
         // console.log("aggregateCountries 3",c,s,array[c][s]._id);
-        const countryId = array[c][s]._id;
+        const countryId = array[c][s].pais;
         if (countriesList.indexOf(countryId) == -1) {
-          countriesList.push(array[c][s]._id);
+          countriesList.push(array[c][s]);
         }
-        // if (c < 2) {
-        //   if (array[c][s]._id.hasOwnProperty("source")) {
-        //     sourceName = array[c][s]._id.source;
-        //     collectionName =  array[c][s]._id["classification"];
-        //   }
-        //   else {
-        //     sourceName = array[c][s]._id;
-        //   }
-        //   // console.log("aggregateSources",s,c,parseInt(array[c][s].count));
-        //
-        //   if (!sources[sourceName]) {
-        //     sources[sourceName] = {};
-        //   }
-        //   if (!sources[sourceName][collectionName]) {
-        //     sources[sourceName][collectionName] = {
-        //       count: 0,
-        //     };
-        //   }
-        //
-        //   sources[sourceName][collectionName].count += parseInt(array[c][s].count);
-        //   sources[sourceName][collectionName].lastModified = array[c][s].lastModified;
-        // }
       }
     }
     catch (e) {
@@ -94,17 +43,19 @@ function aggregateCountries(array,embed) {
   return [countriesData.length, countriesData];
 }
 
-function getCountryData(countryId,embed) {
+function getCountryData(originalCountryData,embed) {
+  let countryId = originalCountryData.pais;
   if (countries.isValid(countryId)) {
-    let countryData = { id: countryId, compiledRelease: { id: countryId, name: countries.getName(countryId,"es") }};
-    if (embed) {
-      countryData.summaries = {
-        top_states: [],
-        top_organizations: [],
-        top_persons: [],
-        top_mujeres: []
+    let countryData = { id: countryId,
+      compiledRelease: {
+        id: countryId,
+        name: countries.getName(countryId,"es"),
+        summaries: {
+          persons_count: originalCountryData.persons[0].count,
+          companies_count: originalCountryData.companies[0].count
+        }
       }
-    }
+    };
     return countryData;
   }
   else {
@@ -133,29 +84,72 @@ function allCountries(req, res) {
   const embed = req.query.embed;
 
   const id = (req.swagger.params.id) ? req.swagger.params.id.value : "";
-  let match = {$match: { "compiledRelease.area.classification": "country" }};
+  let match = {$match:
+    { $and: [
+      { "compiledRelease.area.classification": "country"},
+      {"compiledRelease.source.id": "mujeres2020" }
+    ]}
+  };
   if (id) {
-    match.$match["compiledRelease.area.id"] = id;
+    match.$match.$and.push({"compiledRelease.area.id": id });
   }
+
+  const countriesPipeline = [
+      { $unwind: '$compiledRelease.area' },
+      match,
+      { $group: { '_id': '$compiledRelease.area.id' } },
+      { $project: { '_id': 0, 'pais': '$_id' } },
+      { $lookup: {
+              from: 'persons',
+              let: { 'idpais': '$pais' },
+              pipeline: [
+                  { $unwind: '$compiledRelease.area' },
+                  { $match: { $expr: {
+                      $and: [
+                          {$eq: ['$compiledRelease.area.id', '$$idpais']},
+                          {$eq: ['$compiledRelease.area.classification', 'country']}
+                      ]
+                  }}},
+                  { $group: {
+                          '_id': 0,
+                          'count': { $sum: 1 }
+                  } },
+                  { $project: { '_id': 0 } }
+              ],
+              as: 'persons'
+          }
+      },
+      { $lookup: {
+              from: 'organizations',
+              let: { 'idpais': '$pais' },
+              pipeline: [
+                  { $unwind: '$compiledRelease.area' },
+                  { $match: { $expr: {
+                      $and: [
+                          {$eq: ['$compiledRelease.area.id', '$$idpais']},
+                          {$eq: ['$compiledRelease.area.classification', 'country']}
+                      ]
+                  }}},
+                  { $group: {
+                          '_id': 0,
+                          'count': { $sum: 1 }
+                  } },
+                  { $project: { '_id': 0 } }
+              ],
+              as: 'companies'
+          }
+      },
+      { $sort: { 'compiledRelease.area.id' : 1 } }
+  ];
 
   const queries = [
     // 0: organizations countries count
-    db.get("organizations").aggregate([
-        {$unwind: "$compiledRelease.area"},
-        match,
-        {$group: {_id: "$compiledRelease.area.id", count: {$sum: 1}}}
-    ]),
-    // 1: persons countries count
-    db.get("persons").aggregate([
-        {$unwind: "$compiledRelease.area"},
-        match,
-        {$group: {_id: "$compiledRelease.area.id", count: {$sum: 1}}}
-    ])
+    db.get('organizations').aggregate(countriesPipeline)
   ];
 
   console.log("allCountries")
   if (debug) {
-    console.log("allCountries",id,match);
+    console.log("allCountries",JSON.stringify(countriesPipeline));
   }
 
   Promise.all(queries)
