@@ -29,7 +29,7 @@ function aggregateCountries(array,embed) {
       console.error("Countries: Processing error:",e);
     }
   }
-  countriesList.sort();
+  // countriesList.sort();
 
   const countriesData = [];
 
@@ -139,7 +139,7 @@ function allCountries(req, res) {
               as: 'companies'
           }
       },
-      { $sort: { 'compiledRelease.area.id' : 1 } }
+      { $sort: { 'pais' : 1 } }
   ];
 
   const queries = [
