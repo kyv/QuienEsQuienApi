@@ -100,7 +100,7 @@ function allCountries(req, res) {
       db.get('mujeres_en_la_bolsa').find({id: id})
     ];
 
-    console.log("allCountries id embed")
+    // console.log("allCountries id embed")
     if (debug) {
       console.log("allCountries id embed 2",JSON.stringify(queries));
     }
@@ -183,7 +183,7 @@ function allCountries(req, res) {
         db.get('organizations').aggregate(countriesPipeline)
       ];
 
-      console.log("allCountries")
+      // console.log("allCountries")
       if (debug) {
         console.log("allCountries",JSON.stringify(countriesPipeline));
       }
