@@ -26,6 +26,15 @@ const membershipJoins = [
       as: 'memberships.parent',
     },
   },
+
+  { // Adding country info
+    $lookup: {
+      from: 'mujeres_en_la_bolsa',
+      localField: 'compiledRelease.area.id',
+      foreignField: 'id',
+      as: 'countryData',
+    }
+  },
   // {
   //   $lookup: {
   //     from: 'organizations',
