@@ -94,85 +94,123 @@ function allCountries(req, res) {
     match.$match.$and.push({"compiledRelease.area.id": id });
   }
 
-  const countriesPipeline = [
-      { $unwind: '$compiledRelease.area' },
-      match,
-      { $group: { '_id': '$compiledRelease.area.id' } },
-      { $project: { '_id': 0, 'pais': '$_id' } },
-      { $lookup: {
-              from: 'persons',
-              let: { 'idpais': '$pais' },
-              pipeline: [
-                  { $unwind: '$compiledRelease.area' },
-                  { $match: { $expr: {
-                      $and: [
-                          {$eq: ['$compiledRelease.area.id', '$$idpais']},
-                          {$eq: ['$compiledRelease.area.classification', 'country']}
-                      ]
-                  }}},
-                  { $group: {
-                          '_id': 0,
-                          'count': { $sum: 1 }
-                  } },
-                  { $project: { '_id': 0 } }
-              ],
-              as: 'persons'
-          }
-      },
-      { $lookup: {
-              from: 'organizations',
-              let: { 'idpais': '$pais' },
-              pipeline: [
-                  { $unwind: '$compiledRelease.area' },
-                  { $match: { $expr: {
-                      $and: [
-                          {$eq: ['$compiledRelease.area.id', '$$idpais']},
-                          {$eq: ['$compiledRelease.area.classification', 'country']}
-                      ]
-                  }}},
-                  { $group: {
-                          '_id': 0,
-                          'count': { $sum: 1 }
-                  } },
-                  { $project: { '_id': 0 } }
-              ],
-              as: 'companies'
-          }
-      },
-      { $sort: { 'pais' : 1 } }
-  ];
+  if (id && embed == "true") {
+    const queries = [
+      // 0: mujeres data
+      db.get('mujeres_en_la_bolsa').find({id: id})
+    ];
 
-  const queries = [
-    // 0: organizations countries count
-    db.get('organizations').aggregate(countriesPipeline)
-  ];
+    console.log("allCountries id embed")
+    if (debug) {
+      console.log("allCountries id embed 2",JSON.stringify(queries));
+    }
 
-  console.log("allCountries")
-  if (debug) {
-    console.log("allCountries",JSON.stringify(countriesPipeline));
+    Promise.all(queries)
+      .then(array => { return [1, array[0]]})
+      .catch(err => {
+        console.error('allCountries id embed query error', err);
+        if (err) {
+          return err;
+        }
+        return false;
+      })
+      .then(array => {
+        // console.log("aggregateCountries 0",array);
+
+        return dataReturn(res, array, 0, 0, embed, a=>a, debug);
+      })
+      .catch(err => {
+        console.error('aggregateCountries id embed error', err);
+        if (err) {
+          return err;
+        }
+        return false;
+      });
+
   }
+  else {
 
-  Promise.all(queries)
-    .then(array => (aggregateCountries(array, debug)))
-    .catch(err => {
-      console.error('allCountries query error', err);
-      if (err) {
-        return err;
-      }
-      return false;
-    })
-    .then(array => {
-      // console.log("aggregateCountries 0",array);
+      const countriesPipeline = [
+          { $unwind: '$compiledRelease.area' },
+          match,
+          { $group: { '_id': '$compiledRelease.area.id' } },
+          { $project: { '_id': 0, 'pais': '$_id' } },
+          { $lookup: {
+                  from: 'persons',
+                  let: { 'idpais': '$pais' },
+                  pipeline: [
+                      { $unwind: '$compiledRelease.area' },
+                      { $match: { $expr: {
+                          $and: [
+                              {$eq: ['$compiledRelease.area.id', '$$idpais']},
+                              {$eq: ['$compiledRelease.area.classification', 'country']}
+                          ]
+                      }}},
+                      { $group: {
+                              '_id': 0,
+                              'count': { $sum: 1 }
+                      } },
+                      { $project: { '_id': 0 } }
+                  ],
+                  as: 'persons'
+              }
+          },
+          { $lookup: {
+                  from: 'organizations',
+                  let: { 'idpais': '$pais' },
+                  pipeline: [
+                      { $unwind: '$compiledRelease.area' },
+                      { $match: { $expr: {
+                          $and: [
+                              {$eq: ['$compiledRelease.area.id', '$$idpais']},
+                              {$eq: ['$compiledRelease.area.classification', 'country']}
+                          ]
+                      }}},
+                      { $group: {
+                              '_id': 0,
+                              'count': { $sum: 1 }
+                      } },
+                      { $project: { '_id': 0 } }
+                  ],
+                  as: 'companies'
+              }
+          },
+          { $sort: { 'pais' : 1 } }
+      ];
 
-      return dataReturn(res, array, 0, 0, embed, a=>a, debug);
-    })
-    .catch(err => {
-      console.error('aggregateCountries error', err);
-      if (err) {
-        return err;
+      const queries = [
+        // 0: organizations countries count
+        db.get('organizations').aggregate(countriesPipeline)
+      ];
+
+      console.log("allCountries")
+      if (debug) {
+        console.log("allCountries",JSON.stringify(countriesPipeline));
       }
-      return false;
-    });
+
+      Promise.all(queries)
+        .then(array => (aggregateCountries(array, debug)))
+        .catch(err => {
+          console.error('allCountries query error', err);
+          if (err) {
+            return err;
+          }
+          return false;
+        })
+        .then(array => {
+          // console.log("aggregateCountries 0",array);
+
+          return dataReturn(res, array, 0, 0, embed, a=>a, debug);
+        })
+        .catch(err => {
+          console.error('aggregateCountries error', err);
+          if (err) {
+            return err;
+          }
+          return false;
+        });
+    }
+
 }
 
 module.exports = {
