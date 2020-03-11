@@ -51,11 +51,20 @@ function getCountryData(originalCountryData,embed) {
         id: countryId,
         name: countries.getName(countryId,"es"),
         summaries: {
-          persons_count: originalCountryData.persons[0].count,
-          companies_count: originalCountryData.companies[0].count
+          persons_count: originalCountryData.persons,
+          companies_count: originalCountryData.companies,
+          stock_exchanges_count: originalCountryData["stock-exchanges"],
+          states_count: originalCountryData.states,
+          institutions_count: originalCountryData.institutions,
+          mujeres_ranking: originalCountryData.ranking,
+          mujeres: originalCountryData["mujeres"],
+          bolsas: originalCountryData.bolsas,
         }
       }
     };
+    if (countryId == "mx") {
+      countryData.compiledRelease.summaries.estados =  originalCountryData.estados;
+    }
     return countryData;
   }
   else {
@@ -84,15 +93,6 @@ function allCountries(req, res) {
   const embed = req.query.embed;
 
   const id = (req.swagger.params.id) ? req.swagger.params.id.value : "";
-  let match = {$match:
-    { $and: [
-      { "compiledRelease.area.classification": "country"},
-      {"compiledRelease.source.id": "mujeres2020" }
-    ]}
-  };
-  if (id) {
-    match.$match.$and.push({"compiledRelease.area.id": id });
-  }
 
   if (id && embed == "true") {
     const queries = [
@@ -129,63 +129,76 @@ function allCountries(req, res) {
 
   }
   else {
+      let match = {$match: {}};
 
-      const countriesPipeline = [
-          { $unwind: '$compiledRelease.area' },
-          match,
-          { $group: { '_id': '$compiledRelease.area.id' } },
-          { $project: { '_id': 0, 'pais': '$_id' } },
+      if (id) {
+        match.$match = {"pais": id};
+        lookups = [
           { $lookup: {
-                  from: 'persons',
-                  let: { 'idpais': '$pais' },
-                  pipeline: [
-                      { $unwind: '$compiledRelease.area' },
-                      { $match: { $expr: {
-                          $and: [
-                              {$eq: ['$compiledRelease.area.id', '$$idpais']},
-                              {$eq: ['$compiledRelease.area.classification', 'country']}
-                          ]
-                      }}},
-                      { $group: {
-                              '_id': 0,
-                              'count': { $sum: 1 }
-                      } },
-                      { $project: { '_id': 0 } }
-                  ],
-                  as: 'persons'
+              from: 'mujeres_en_la_bolsa',
+              localField: "pais",
+              foreignField: "id",
+              as: "mujeres"
+          } },
+          { $unwind: "$mujeres" },
+          { $lookup: {
+              from: 'organizations',
+              let: { 'idpais': '$pais' },
+              pipeline: [
+                  { $unwind: '$compiledRelease.area' },
+                  { $match: { $expr: {
+                      $and: [
+                          {$eq: ['$compiledRelease.area.id', '$$idpais']},
+                          {$eq: ['$compiledRelease.area.classification', 'country']},
+                          {$eq: ['$compiledRelease.subclassification', 'stock-exchange']},
+                      ]
+                  }}}
+              ],
+              as: 'bolsas'
               }
           },
           { $lookup: {
                   from: 'organizations',
                   let: { 'idpais': '$pais' },
                   pipeline: [
-                      { $unwind: '$compiledRelease.area' },
-                      { $match: { $expr: {
-                          $and: [
-                              {$eq: ['$compiledRelease.area.id', '$$idpais']},
-                              {$eq: ['$compiledRelease.area.classification', 'country']}
-                          ]
-                      }}},
-                      { $group: {
-                              '_id': 0,
-                              'count': { $sum: 1 }
-                      } },
-                      { $project: { '_id': 0 } }
+                      { $match: { $expr: {$eq: ['$compiledRelease.classification', 'state']} }},
+                      { $lookup: {
+                              from: 'organizations',
+                              let: { 'state': '$compiledRelease.id' },
+                              pipeline: [
+                                  { $match: { $expr: { $and: [
+                                      {$eq: ['$compiledRelease.classification', 'municipality']},
+                                      {$eq: ['$compiledRelease.parent_id', '$$state']},
+                                  ] } }},
+                                  { $group: {
+                                      '_id': 0,
+                                      'count': { $sum: 1 }
+                                  } },
+                                  { $project: { '_id': 0 } }
+                              ],
+                              as: 'municipios'
+                          }
+                      },
+                      { $sort: { 'municipios.count': -1 } }
                   ],
-                  as: 'companies'
+                  as: 'estados'
               }
-          },
-          { $sort: { 'pais' : 1 } }
-      ];
+          }
+        ]
+      }
 
       const queries = [
         // 0: organizations countries count
-        db.get('organizations').aggregate(countriesPipeline)
+        db.get('countries').aggregate([
+          match,
+          ... lookups,
+          {$sort: {"pais": 1}}
+        ])
       ];
 
       // console.log("allCountries")
       if (debug) {
-        console.log("allCountries",JSON.stringify(countriesPipeline));
+        console.log("allCountries",JSON.stringify(queries));
       }
 
       Promise.all(queries)
