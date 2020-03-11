@@ -10,7 +10,7 @@ const dataReturn = require('./lib').dataReturn;
 const countries = require("i18n-iso-countries");
 
 function aggregateCountries(array,embed) {
-  console.log("aggregateCountries 1",array);
+  // console.log("aggregateCountries 1",array);
 
   let countriesList = [];
 
@@ -130,6 +130,7 @@ function allCountries(req, res) {
   }
   else {
       let match = {$match: {}};
+      let lookups = [];
 
       if (id) {
         match.$match = {"pais": id};
