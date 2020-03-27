@@ -117,21 +117,21 @@ function allSources(req, res) {
 
   const queries = [
     // 0: organizations sources count
-    db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"} }}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: {source:"$compiledRelease.source.id",classification:"$compiledRelease.classification"}, count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"} }}], {maxTimeMS: 3000 }),
     // 1: persons sources count
-    db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"}}}]),
+    db.get("persons").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}, lastModified: {$max:"$compiledRelease.date"}}}], {maxTimeMS: 3000 }),
     // 2: organizations type count
-    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", count: {$sum:1}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", count: {$sum:1}}}], {maxTimeMS: 3000 }),
     // 3: persons count
     db.get("persons").count(),
     // 4: records count
     db.get("records").count({hidden: false}),
     // 5: organizations lastModified
-    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", lastModified: {$max:"$compiledRelease.date"}}}]),
+    db.get("organizations").aggregate([{$unwind: "$compiledRelease.classification"},{$group: {_id: "$compiledRelease.classification", lastModified: {$max:"$compiledRelease.date"}}}], {maxTimeMS: 3000 }),
     // 6: persons lastModified
-    db.get("persons").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}),
+    db.get("persons").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}, {maxTimeMS: 3000 }),
     // 7: records lastModified
-    db.get("records").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}),
+    db.get("records").find({},{projection: {"compiledRelease.date": 1}, sort: {"compiledRelease.date": -1}, limit: 1}, {maxTimeMS: 3000 }),
     // 8: contracts sources count
     // db.get("records").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
   ];
