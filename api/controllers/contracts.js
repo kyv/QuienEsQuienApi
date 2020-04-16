@@ -101,9 +101,16 @@ async function allContracts(req, res) {
     query.embed = true;
     let memberOfQuery = { "$or": [{ "compiledRelease.name": query.criteria['compiledRelease.parties.memberOf.name'] },{ "compiledRelease.other_names.name": query.criteria['compiledRelease.parties.memberOf.name'] }]};
 
-    query.criteria['compiledRelease.parties.memberOf.id'] = { $in: await db.get('organizations').distinct('id',memberOfQuery),
-    };
-    delete query.criteria['compiledRelease.parties.memberOf.name'];
+    let matchingOrganizations = await db.get('organizations').distinct('id',memberOfQuery);
+    if (matchingOrganizations.length > 0) {
+      query.criteria['compiledRelease.parties.memberOf.id'] = { $in: matchingOrganizations };
+      delete query.criteria['compiledRelease.parties.memberOf.name'];
+    }
+    else {
+      console.error("allContracts error","No matching organizations");
+      res.json({"error": "error"})
+      return false;
+    }
   }
 
   //Double query system - contactPoint name
