@@ -10,8 +10,12 @@ const dataReturn = require('./lib').dataReturn;
 
 
 
-function aggregateSources(array) {
+function aggregateSources(array, debug) {
   // console.log("aggregateSources",array);
+  if (debug) {
+    console.log("aggregateSources");
+  }
+
 
   let sources = {};
   let collections = {};
@@ -109,11 +113,21 @@ function aggregateSources(array) {
       console.error("Sources: Processing error:",e);
     }
   }
-  // console.log("aggregateSources s",sources);
+  if (debug) {
+    console.log("aggregateSources s",sources);
+  }
   return [sources.length, [{sources: sources, collections: collections}]];
 }
 
 function allSources(req, res) {
+  let debug = false;
+  if (req.query.debug) {
+    debug = true;
+  }
+
+  if (debug) {
+    console.log("allSources");
+  }
 
   const queries = [
     // 0: organizations sources count
@@ -136,13 +150,17 @@ function allSources(req, res) {
     // db.get("records").aggregate([{$unwind: "$compiledRelease.source"},{$group: {_id: "$compiledRelease.source.id", count: {$sum:1}}}]),
   ];
 
-  // console.log("allSources")
+  if (debug) {
+    console.log("allSources queries promises", queries);
+  }
 
   Promise.all(queries)
     .then(array => {
-      // console.log("allSources",array);
+      if (debug) {
+        console.log("allSources array",array);
+      }
 
-      return dataReturn(res, aggregateSources(array), 0, 0, false, (a)=>a, false);
+      return dataReturn(res, aggregateSources(array, debug), 0, 0, false, (a)=>a, false);
     })
     .catch(err => {
       // console.error('allContracts', err);
