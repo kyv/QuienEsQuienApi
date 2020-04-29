@@ -349,6 +349,7 @@ async function getContracts(type, id, db, limit) {
 
 function addLink(relationSummary, link) {
   if (relationSummary.links.length > 1000) {
+    // console.log("skipping link", link)
     return false;
   }
 
@@ -357,7 +358,7 @@ function addLink(relationSummary, link) {
 
   if (source && target) {
 
-    // console.log('addLink',link,sourceId,target.id);
+    // console.log('addLink',link,source.id,target.id);
     const existentLink = find(relationSummary.links, { source: source.id, target: target.id });
 
     if (!existentLink) {
@@ -366,7 +367,7 @@ function addLink(relationSummary, link) {
         source: source.id,
         target: target.id,
         weight: link.weight || 1,
-        type: link.type || "regular"
+        type: link.type || "undefined"
       };
       // console.log('addLink',newLink);
       relationSummary.links.push(newLink);
@@ -438,25 +439,26 @@ function calculateSummaries(orgID, records) {
     if (Object.prototype.hasOwnProperty.call(records, r)) {
       const compiledRelease = records[r].compiledRelease;
 
+      const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
+      const funderParty = find(compiledRelease.parties, { roles: ["funder"] });
+      // console.log("funderParty",funderParty,compiledRelease.parties);
+      const memberOfParty = find(compiledRelease.parties, 'memberOf');
+      // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
+      const procurementMethod = compiledRelease.tender.procurementMethod;
+
+      const isFunderContract = funderParty ? (funderParty.id === orgID) : false;
+
+      const isBuyerContract =
+        buyerParty.id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID) || memberOfParty && memberOfParty.memberOf[0].id === orgID;
+
       for (const c in compiledRelease.contracts) {
         if (Object.prototype.hasOwnProperty.call(compiledRelease.contracts, c)) {
           const contract = compiledRelease.contracts[c];
           const award = find(compiledRelease.awards, { id: contract.awardID });
-          const buyerParty = find(compiledRelease.parties, { id: compiledRelease.buyer.id });
-          const funderParty = find(compiledRelease.parties, { roles: ["funder"] }) || {};
-          // console.log("funderParty",funderParty,compiledRelease.parties);
-          const memberOfParty = find(compiledRelease.parties, 'memberOf');
-          // console.log('calculateSummaries memberOfParty', memberOfParty.memberOf[0].id === orgID, buyerParty.id === orgID || memberOfParty.memberOf[0].id === orgID);
-          const procurementMethod = compiledRelease.tender.procurementMethod;
           const isSupplierContract = find(award.suppliers, { id: orgID }) || false;
           // console.log("compiledRelease.buyer.id",compiledRelease.buyer.id);
-          if (!buyerParty) {
-            // console.log("compiledRelease.parties",compiledRelease.parties);
+          //console.log("contract.period",contract.period,compiledRelease.ocid);
 
-          }
-          const isBuyerContract = buyerParty.id === orgID || (buyerParty.contactPoint && buyerParty.contactPoint.id === orgID) || memberOfParty && memberOfParty.memberOf[0].id === orgID;
-          const isFunderContract = (funderParty.id === orgID) ;
-          // console.log("contract.period",contract.period,compiledRelease.ocid);
           let year = "undefined";
           if (contract.period) {
             year = new Date(contract.period.startDate).getFullYear();
@@ -541,10 +543,6 @@ function calculateSummaries(orgID, records) {
 
           const linkWeight = Math.round((parseFloat(contract.value.amount)/parseFloat(maxContractAmount))*10);
 
-          if (funderParty.details) {
-            addNode(relationSummary, { id: funderParty.id,label: funderParty.name, type: funderParty.details.type });
-            addLink(relationSummary, { source: buyerParty.id, target: funderParty.id, weight: linkWeight });
-          }
 
 
           for (const a in award.suppliers) {
@@ -553,7 +551,7 @@ function calculateSummaries(orgID, records) {
 
               if (supplierParty) {
                 addNode(relationSummary, { id: award.suppliers[a].id,label: award.suppliers[a].name, type: supplierParty.details.type });
-                addLink(relationSummary, { source: buyerParty.id, target: award.suppliers[a].id, weight: linkWeight, type: procurementMethod });
+                addLink(relationSummary, { source: buyerParty.id, target: award.suppliers[a].id, weight: linkWeight, type: procurementMethod || "supplier" });
 
                 if (isBuyerContract) {
                   // To calculate top3suppliers
@@ -575,10 +573,20 @@ function calculateSummaries(orgID, records) {
 
             if (buyerParty.memberOf[0].name) {
               addNode(relationSummary, { id: buyerParty.memberOf[0].id, label: buyerParty.memberOf[0].name, type: "dependency" });
-              addLink(relationSummary, { source: buyerParty.id, target: buyerParty.memberOf[0].id });
+              addLink(relationSummary, { source: buyerParty.id, target: buyerParty.memberOf[0].id, type: "buyer" });
             }
           }
 
+          if (funderParty) {
+            addNode(relationSummary, { id: funderParty.id,label: funderParty.name, type: funderParty.details.type });
+
+            if (buyerParty.memberOf) {
+              addLink(relationSummary, { source: buyerParty.memberOf[0].id, target: funderParty.id, weight: linkWeight, type: "funder" });
+            }
+            else {
+              addLink(relationSummary, { source: buyerParty.id, target: funderParty.id, weight: linkWeight, type: "funder" });
+            }
+          }
 
         }
       }
