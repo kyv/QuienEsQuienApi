@@ -151,7 +151,7 @@ async function allContracts(req, res) {
   }
 
 
-  if (query.options.limit == 1) {
+  if (query.embed == true) {
     joins = clone(flagJoins);
   }
 
